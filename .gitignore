@@ -1,0 +1,72 @@
+### Gradle ###
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/**/build/
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/**/out/
+
+.run/
+
+### Eclipse ###
+.apt_generated
+.classpath
+.eclipse/
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/**/bin/
+
+### VS Code ###
+.vscode/
+
+### Mac OS ###
+.DS_Store
+
+### Minecraft Modding ###
+run/
+!**/src/**/run/
+**/src/generated/**/.cache/
+repo/
+!**/src/**/repo/
+
+### Generated / Temp ###
+tmp/
+**/.continue/
+*.log
+*.exit
+
+### Example templates ###
+examplemod-template-26.1.1/
+
+### Python venv ###
+.venv/
+
+### Windows trash ###
+**/*Zone.Identifier
+
+### Reference imports ###
+ae2src/
+~/
+
+### Build artifacts ###
+*.jar
+!src/**/*.jar
+
+### Dev scratch files (root level) ###
+*.txt
+*.exit
+*.json
+1bash
+*.png
+*.py
+ae2jars.txt
