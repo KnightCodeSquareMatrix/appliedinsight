@@ -60,6 +60,7 @@ ae2src/
 
 ### Build artifacts ###
 *.jar
+!gradle/wrapper/gradle-wrapper.jar
 !src/**/*.jar
 
 ### Dev scratch files (root level) ###
