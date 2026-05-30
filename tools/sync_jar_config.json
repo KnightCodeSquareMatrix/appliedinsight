@@ -1,0 +1,12 @@
+{
+  "server": {
+    "host": "172.16.201.63",
+    "port": 22,
+    "user": "root",
+    "key": null,
+    "remote_jar_path": "/data/appliedstoragesorter/tools/serve/appliedstoragesorter.jar"
+  },
+  "watch_interval": 5,
+  "destinations": [],
+  "rename_to": "appliedstoragesorter.jar"
+}
