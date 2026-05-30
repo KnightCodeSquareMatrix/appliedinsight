@@ -64,10 +64,11 @@ ae2src/
 !src/**/*.jar
 
 ### Dev scratch files (root level) ###
-*.txt
-*.exit
-*.json
-1bash
-*.png
-*.py
-ae2jars.txt
+/*.txt
+/*.exit
+/*.json
+/1bash
+/*.png
+/*.py
+/ae2jars.txt
+.aider*

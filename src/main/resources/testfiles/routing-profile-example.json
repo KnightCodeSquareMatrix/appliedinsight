@@ -1,0 +1,86 @@
+{
+  "id": "default_profile",
+  "name": "Default Profile",
+  "description": "Example routing profile for standalone Java testing",
+  "enabled": true,
+  "defaultZoneId": "misc",
+  "version": 1,
+  "zones": [
+    {
+      "id": "bulk",
+      "name": "Bulk",
+      "description": "Large-volume items",
+      "enabled": true,
+      "kind": "BULK",
+      "allowAsDefault": false
+    },
+    {
+      "id": "misc",
+      "name": "Misc",
+      "description": "Default catch-all zone",
+      "enabled": true,
+      "kind": "MISC",
+      "allowAsDefault": true
+    }
+  ],
+  "filters": [
+    {
+      "id": "bulk_filter",
+      "name": "Bulk threshold",
+      "description": "",
+      "enabled": true,
+      "root": {
+        "combinator": "AND",
+        "rules": [
+          {
+            "field": "TOTAL_AMOUNT",
+            "operator": "GREATER_OR_EQUAL",
+            "value": "4096"
+          }
+        ]
+      }
+    },
+    {
+      "id": "component_filter",
+      "name": "Component-safe items",
+      "description": "",
+      "enabled": true,
+      "root": {
+        "combinator": "AND",
+        "rules": [
+          {
+            "field": "HAS_COMPONENTS",
+            "operator": "IS_TRUE",
+            "value": null
+          }
+        ]
+      }
+    }
+  ],
+  "routeRules": [
+    {
+      "id": "bulk_route",
+      "name": "Route bulk items",
+      "description": "",
+      "enabled": true,
+      "priority": 10,
+      "filterId": "bulk_filter",
+      "targetZoneId": "bulk",
+      "continueOnMatch": false,
+      "action": "ROUTE_TO_ZONE",
+      "explanation": ""
+    },
+    {
+      "id": "component_route",
+      "name": "Route component items",
+      "description": "",
+      "enabled": true,
+      "priority": 20,
+      "filterId": "component_filter",
+      "targetZoneId": "misc",
+      "continueOnMatch": false,
+      "action": "ROUTE_TO_ZONE",
+      "explanation": "Components are routed conservatively."
+    }
+  ]
+}

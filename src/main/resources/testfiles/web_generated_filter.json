@@ -1,0 +1,165 @@
+{
+  "id": "minecraft-applied-storage-profile",
+  "name": "Minecraft Applied Storage Sorter Profile",
+  "description": "根据 React Query Builder 对接说明建立的首版 routing profile，用于外部 Minecraft 物品分类与分区路由。",
+  "enabled": true,
+  "defaultZoneId": "misc_zone",
+  "zones": [
+    {
+      "id": "vanilla_zone",
+      "name": "Vanilla Items",
+      "description": "原版物品默认收纳区。",
+      "enabled": true,
+      "kind": "CUSTOM"
+    },
+    {
+      "id": "bulk_zone",
+      "name": "Bulk Materials",
+      "description": "锭、矿、建材等大宗物资。",
+      "enabled": true,
+      "kind": "BULK"
+    },
+    {
+      "id": "misc_zone",
+      "name": "Misc Fallback",
+      "description": "未命中路由规则时的默认区域。",
+      "enabled": true,
+      "kind": "MISC"
+    },
+    {
+      "id": "zone_hvvks8ok",
+      "name": "精华",
+      "description": "新建分区，待补充分区用途。",
+      "enabled": true,
+      "kind": "BULK",
+      "allowAsDefault": false
+    }
+  ],
+  "filters": [
+    {
+      "id": "vanilla_items_filter",
+      "name": "Vanilla Items Filter",
+      "description": "匹配 (Mod ID 等于 “mysticalagriculture” 且 Display Name 包含 “精华”) 的物品",
+      "enabled": true,
+      "root": {
+        "combinator": "AND",
+        "rules": [
+          {
+            "field": "MOD_ID",
+            "operator": "EQUALS",
+            "value": "mysticalagriculture"
+          },
+          {
+            "field": "DISPLAY_NAME",
+            "operator": "CONTAINS",
+            "value": "精华"
+          }
+        ]
+      }
+    },
+    {
+      "id": "bulk_materials_filter",
+      "name": "Bulk Materials Filter",
+      "description": "匹配 (Tag 包含 “c:ingots” 或 Total Amount 大于等于 “4096”) 的物品",
+      "enabled": true,
+      "root": {
+        "combinator": "OR",
+        "rules": [
+          {
+            "field": "TAG",
+            "operator": "CONTAINS",
+            "value": "c:ingots"
+          },
+          {
+            "field": "TOTAL_AMOUNT",
+            "operator": "GREATER_OR_EQUAL",
+            "value": "4096"
+          }
+        ]
+      }
+    },
+    {
+      "id": "component_items_filter",
+      "name": "Component Items Filter",
+      "description": "识别带有组件数据、需要特殊处理的物品。",
+      "enabled": true,
+      "root": {
+        "combinator": "AND",
+        "rules": [
+          {
+            "field": "HAS_COMPONENTS",
+            "operator": "IS_TRUE",
+            "value": null
+          }
+        ]
+      }
+    },
+    {
+      "id": "filter_m181n8jn",
+      "name": "筛选精华",
+      "description": "匹配 (Mod ID 等于 “mysticalagriculture” 且 Display Name 包含 “精华”) 的物品",
+      "enabled": true,
+      "root": {
+        "combinator": "AND",
+        "rules": [
+          {
+            "field": "MOD_ID",
+            "operator": "EQUALS",
+            "value": "mysticalagriculture"
+          },
+          {
+            "field": "DISPLAY_NAME",
+            "operator": "CONTAINS",
+            "value": "精华"
+          }
+        ]
+      }
+    }
+  ],
+  "routeRules": [
+    {
+      "id": "route_rule_ah5p68xz",
+      "name": "精华存储",
+      "description": "新建的路由规则，待补充业务含义。",
+      "enabled": true,
+      "priority": 1,
+      "filterId": "filter_m181n8jn",
+      "targetZoneId": "zone_hvvks8ok",
+      "continueOnMatch": false,
+      "action": "ROUTE_TO_ZONE"
+    },
+    {
+      "id": "rule-vanilla-route",
+      "name": "Route Vanilla Items",
+      "description": "原版物品优先进入原版区。",
+      "enabled": true,
+      "priority": 2,
+      "filterId": "vanilla_items_filter",
+      "targetZoneId": "vanilla_zone",
+      "continueOnMatch": false,
+      "action": "ROUTE_TO_ZONE"
+    },
+    {
+      "id": "rule-bulk-route",
+      "name": "Route Bulk Materials",
+      "description": "高库存材料进入大宗物资区。",
+      "enabled": true,
+      "priority": 3,
+      "filterId": "bulk_materials_filter",
+      "targetZoneId": "bulk_zone",
+      "continueOnMatch": false,
+      "action": "ROUTE_TO_ZONE"
+    },
+    {
+      "id": "rule-components-mark",
+      "name": "Mark Component Items",
+      "description": "带组件数据的物品先标记，允许继续命中后续规则。",
+      "enabled": true,
+      "priority": 4,
+      "filterId": "component_items_filter",
+      "targetZoneId": "misc_zone",
+      "continueOnMatch": true,
+      "action": "ONLY_MARK"
+    }
+  ]
+}
