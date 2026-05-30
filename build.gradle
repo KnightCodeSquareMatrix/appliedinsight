@@ -43,7 +43,6 @@ base {
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
-        vendor = JvmVendorSpec.MICROSOFT
     }
 }
 
@@ -93,6 +92,13 @@ neoForge {
             programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
         }
 
+        guide {
+            client()
+            systemProperty 'guideDev.ae2guide.sources', file('guidebook').absolutePath
+            systemProperty 'guideDev.ae2guide.sourcesNamespace', "${mod_id}"
+            systemProperty 'guideDev.ae2guide.startupPage', "${mod_id}:index.md"
+        }
+
         // applies to all the run configs above
         configureEach {
             // Recommended logging data for a userdev environment
@@ -139,6 +145,10 @@ dependencies {
     // implementation classes such as ControllerBlockEntity and DriveBlockEntity.
     compileOnly "org.appliedenergistics:appliedenergistics2:${ae2_version}"
     localRuntime "org.appliedenergistics:appliedenergistics2:${ae2_version}"
+
+    // GuideME — 用于编译 OpenGuideButton / GuidesCommon / PageAnchor 等类
+    // 运行时由 AE2 的 transitive 依赖提供（Guideme 21.1.1 对应 1.21.1）
+    compileOnly "org.appliedenergistics:guideme:21.1.1"
 
     // Example optional mod dependency with JEI
     // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
@@ -347,6 +357,12 @@ def prismModsDir = rootProject.file(
     'C:/Users/KnightCode/AppData/Roaming/PrismLauncher/instances/1.21.1/minecraft/mods'
 )
 
+// 远程开发同步目录：构建后自动拷贝 jar 到此目录
+// 本机运行 tools/sync_jar.py 通过 SSH 监听此文件变化，自动下载到本地 mods 文件夹
+def fileServerDir = rootProject.file(
+    project.findProperty('fileServerDir') ?: 'tools/serve'
+)
+
 tasks.register('copyModJar', Copy) {
     dependsOn jar
     from tasks.named('jar').map { it.archiveFile }
@@ -365,6 +381,20 @@ tasks.register('copyModJarToPrism', Copy) {
     rename '(.+)-([0-9].+\\.jar)', '$1.jar'
     // 强制覆盖，即使 Gradle 认为已是最新
     outputs.upToDateWhen { false }
+}
+
+// ── 拷贝到长期文件服务器目录 ─────────────────────────────────────────────────────
+// 适用于远程开发：服务器上长期运行 HTTP 文件服务器，
+// 每次 build 后自动更新 jar，本机通过固定 URL 下载。
+tasks.register('copyModJarToFileServer', Copy) {
+    dependsOn jar
+    from tasks.named('jar').map { it.archiveFile }
+    into fileServerDir
+    rename '(.+)-([0-9].+\\.jar)', '$1.jar'
+    outputs.upToDateWhen { false }
+    doLast {
+        logger.lifecycle("  ✓ jar 已更新到文件服务器目录: ${fileServerDir}/appliedstoragesorter.jar")
+    }
 }
 
 // ── 快速构建（跳过测试，直接拷贝到 Prism）─────────────────────────────────────────
@@ -418,7 +448,13 @@ tasks.register('syncDumpToReact', Copy) {
     description = '从 dumps/appliedstoragesorter 同步最新 JSON 到 React 项目的 public/dumps/。'
 }
 
-// build 时自动执行拷贝到 run/mods 和 PrismLauncher
+// build 时自动执行拷贝任务
+// - 本地开发（Windows）：拷贝到 run/mods + PrismLauncher mods 目录
+// - 远程开发（服务器）：拷贝到 run/mods + 文件服务器目录（本机通过 HTTP 下载）
 tasks.named('build') {
-    finalizedBy 'copyModJar', 'copyModJarToPrism'
+    finalizedBy 'copyModJar'
+    finalizedBy 'copyModJarToFileServer'
+    if (prismModsDir.exists()) {
+        finalizedBy 'copyModJarToPrism'
+    }
 }

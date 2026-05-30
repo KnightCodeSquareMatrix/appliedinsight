@@ -22,7 +22,7 @@ public final class SorterCommands {
     }
 
     public static void register(RegisterCommandsEvent event) {
-        event.getDispatcher().register(Commands.literal("sorter")
+        var sorterRoot = Commands.literal("sorter")
                 .then(Commands.literal("merge")
                         .executes(SorterCommands::runMerge))
                 .then(Commands.literal("me")
@@ -40,7 +40,12 @@ public final class SorterCommands {
                         .then(Commands.literal("plan")
                                 .executes(SorterCommands::runPlan))
                         .then(Commands.literal("planAndMove")
-                                .executes(SorterCommands::runPlanAndMove))));
+                                .executes(SorterCommands::runPlanAndMove)));
+
+        // 注册 genTestItems 子命令（开发调试工具，不属于三条主线）
+        GenTestItemsCommand.register(sorterRoot);
+
+        event.getDispatcher().register(sorterRoot);
     }
 
     private static int runMerge(CommandContext<CommandSourceStack> context) {

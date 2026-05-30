@@ -19,6 +19,7 @@
 - `com.knightcode.appliedstoragesorter.application.SorterPlanService`
 - `com.knightcode.appliedstoragesorter.application.SorterProfileBindingService`
 - `com.knightcode.appliedstoragesorter.application.result.SorterFeedbackResult`
+- `com.knightcode.appliedstoragesorter.command.GenTestItemsCommand` — 注册 genTestItems 子命令
 - `com.mojang.brigadier.Command`
 - `com.mojang.brigadier.arguments.IntegerArgumentType`
 - `com.mojang.brigadier.context.CommandContext`
@@ -29,3 +30,4 @@
 
 ## 维护备注
 - 当前命令树已经明确：`/sorter merge` 负责快速合并，`/sorter me ...` 负责 dump/profile/plan 主线。
+- `/sorter genTestItems` 由 `GenTestItemsCommand.register()` 注册，属于开发调试工具，不属于三条主线。

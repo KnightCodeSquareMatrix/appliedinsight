@@ -1,5 +1,7 @@
 # Applied Storage Sorter — 前端 Vibe-Coding Prompt
 
+> **完整版 prompt**（本文档）。如需精简入口，见 [`FRONTEND_PROMPT.md`](FRONTEND_PROMPT.md)。
+
 ## 项目简介
 
 这是一个 Minecraft AE2 模组 `appliedstoragesorter` 的前端控制台。
@@ -658,9 +660,21 @@ interface RuleTreeNode {
 
 ## 13. 参考文件路径
 
+### 数据文件
 - me-dump 示例: `dumps/appliedstoragesorter/me-dump-20260519-225051.json`（约 140KB）
 - storage-analysis 示例: `dumps/appliedstoragesorter/storage-analysis-*.json`
 - JSON Schema: `src/main/resources/schema/sorter-network-dump.schema.json`
+
+### 后端文档
 - 后端契约文档: `docs/前端对接契约-需求-约束.md`
 - 后端对接说明: `docs/前端对接说明.md`
 - 字段契约: `docs/日志与JSON字段契约.md`
+- 后端 API 参考: `docs/API_REFERENCE.md`
+- 命令参考: `docs/COMMANDS_REFERENCE.md`
+- 架构参考 + 术语表: `docs/架构/FACTS.md`
+- Dashboard 设计哲学: `docs/dashboard的设计哲学.md`
+- 过滤路由表 JSON 契约: `docs/前端过滤路由表JSON契约.md`
+
+### 前端文档
+- 精简入口: `docs/ai/FRONTEND_PROMPT.md`
+- 完整 prompt（本文档）: `docs/ai/frontend-vibe-coding-prompt.md`

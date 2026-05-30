@@ -18,10 +18,12 @@
 - `com.knightcode.appliedstoragesorter.ae2.sort.SorterMoveOperation`
 - `com.knightcode.appliedstoragesorter.plan.ZoneAllocationPlan`
 - `appeng.api.networking.IGrid`
+- `net.minecraft.core.HolderLookup.Provider`
 
 ## 维护备注
 - 重构后已非常薄，可以考虑合并到 `SorterPlanService`，但保留独立的 API 入口有利于保持调用链清晰。
 - 如果后续需要引入执行重试 / 事务 / 补偿机制，应在 `SorterMoveOperation.execute()` 中增强，而非在此处。
+- `execute()` 和 `executeDetailed()` 方法新增 `HolderLookup.Provider registryAccess` 参数，用于传递给 `ZoneMergePlanner.plan()`。
 
 ## 近期重构 (2026-05-24)
 - **删除内联执行逻辑**：原本 200+ 行的 `executePlannedMoves()` / `attemptMove()` / `ExecutionCollector` 全部移除
@@ -33,3 +35,6 @@
 - 现在两种能力线共享同一执行引擎：
   - `/sorter merge` → `MergeMovePlanner` → `SorterMoveOperation.execute()`
   - `/sorter me planAndMove` → `ZoneMergePlanner` → `SorterMoveOperation.execute()`
+
+## 近期变更 (2026-05-28)
+- **新增 `registryAccess` 参数**：`execute()` 和 `executeDetailed()` 方法新增 `HolderLookup.Provider registryAccess` 参数，传递给 `ZoneMergePlanner.plan()`，用于在 `indexAssignments()` 中反序列化 assignment 的 NBT。

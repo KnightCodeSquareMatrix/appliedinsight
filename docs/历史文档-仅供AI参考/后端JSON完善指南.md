@@ -290,7 +290,11 @@ function zoneAggregate(cells: NormalizedCell[]): ZoneHealth[] {
 | `src/main/java/.../ae2/analysis/Ae2StorageAnalyzer.java` | storage-analysis 分析器，未修改 |
 | `src/main/java/.../ae2/analysis/StorageAnalyzerReport.java` | 分析报告类型，未修改 |
 | `src/main/resources/schema/sorter-network-dump.schema.json` | me-dump JSON Schema，已同步 |
-| `docs/日志与JSON字段契约.md` | 字段契约文档，已同步 |
-| `docs/前端对接说明.md` | 前端对接说明，已同步 |
-| `docs/前端对接契约-需求-约束.md` | 前端契约需求，已同步 |
-| `docs/ai/frontend-vibe-coding-prompt.md` | AI 前端编码 prompt，已同步 |
+| [`docs/日志与JSON字段契约.md`](日志与JSON字段契约.md) | 字段契约文档，已同步 |
+| [`docs/前端对接说明.md`](前端对接说明.md) | 前端对接说明，已同步 |
+| [`docs/前端对接契约-需求-约束.md`](前端对接契约-需求-约束.md) | 前端契约需求，已同步 |
+| [`docs/前端过滤路由表JSON契约.md`](前端过滤路由表JSON契约.md) | 前端过滤路由表 JSON 契约 |
+| [`docs/ai/frontend-vibe-coding-prompt.md`](ai/frontend-vibe-coding-prompt.md) | AI 前端编码 prompt，已同步 |
+| [`docs/COMMANDS_REFERENCE.md`](COMMANDS_REFERENCE.md) | 命令参考 — 所有命令的详细说明 |
+| [`docs/GLOSSARY.md`](GLOSSARY.md) | 术语表 — 中英文交叉索引 |
+| [`docs/ARCHITECTURE_REFERENCE.md`](ARCHITECTURE_REFERENCE.md) | 架构参考手册 — 六层架构、三条能力路径 |

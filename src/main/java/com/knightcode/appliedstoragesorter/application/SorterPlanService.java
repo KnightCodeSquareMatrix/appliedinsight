@@ -93,12 +93,20 @@ public final class SorterPlanService {
                         gridTarget.grid(),
                         plan,
                         runtimeTopology,
-                        Config.MAX_TRANSFERS_PER_OPERATION.get());
+                        Config.MAX_TRANSFERS_PER_OPERATION.get(),
+                        source.getServer().registryAccess());
                 lines.add(SorterComponentHelper.keyValue("move.attempted", String.valueOf(detailedResult.executionResult().attemptedMoveCount())));
                 lines.add(SorterComponentHelper.keyValue("move.completed", String.valueOf(detailedResult.executionResult().completedMoveCount())));
                 lines.add(SorterComponentHelper.keyValue("move.failed", String.valueOf(detailedResult.executionResult().failedMoveCount())));
                 lines.add(SorterComponentHelper.keyValue("move.requestedAmount", String.valueOf(detailedResult.executionResult().requestedAmount())));
                 lines.add(SorterComponentHelper.keyValue("move.movedAmount", String.valueOf(detailedResult.executionResult().movedAmount())));
+
+                // 电量消耗展示（受 Config.ENERGY_COST_ENABLED 控制）
+                if (detailedResult.executionResult().energyCost() != null) {
+                    lines.add(SorterComponentHelper.keyValue("move.energyCost",
+                            String.valueOf(detailedResult.executionResult().energyCost().totalCost())));
+                }
+
                 String logPath = SorterPlanFileLogger.logPlanAndMove(
                         source,
                         gridTarget,

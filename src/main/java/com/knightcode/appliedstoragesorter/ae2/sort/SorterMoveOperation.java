@@ -3,6 +3,8 @@ package com.knightcode.appliedstoragesorter.ae2.sort;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.knightcode.appliedstoragesorter.Config;
+
 import appeng.api.config.Actionable;
 import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.security.IActionSource;
@@ -78,13 +80,23 @@ public final class SorterMoveOperation {
             moveResults.add(new SorterMoveExecutionResult.MoveResult(executableMove.plannedMove, extracted, inserted));
         }
 
-        return new SorterMoveExecutionResult(
+        // 构建基础结果
+        var result = new SorterMoveExecutionResult(
                 executableMoves.size(),
                 completedMoveCount,
                 failedMoveCount,
                 totalPlannedAmount,
                 movedAmount,
-                List.copyOf(moveResults));
+                List.copyOf(moveResults),
+                null);
+
+        // 执行后计量：若开启电量消耗则计算并附加
+        if (Config.ENERGY_COST_ENABLED.get()) {
+            var energyCost = EnergyCostCalculator.estimate(result);
+            result = result.withEnergyCost(energyCost);
+        }
+
+        return result;
     }
 
     public static SorterMoveOperation empty() {

@@ -17,6 +17,7 @@ import com.knightcode.appliedstoragesorter.ae2.zone.RuntimeCell;
 import com.knightcode.appliedstoragesorter.ae2.zone.RuntimeTopology;
 import com.knightcode.appliedstoragesorter.ae2.zone.RuntimeZone;
 import com.knightcode.appliedstoragesorter.ae2.zone.ZoneMoveExecutionDetailedResult;
+import com.knightcode.appliedstoragesorter.ae2.zone.ZoneMoveExecutionResult;
 import com.knightcode.appliedstoragesorter.plan.ItemZoneAssignment;
 import com.knightcode.appliedstoragesorter.plan.ZoneAllocationPlan;
 import com.knightcode.appliedstoragesorter.rule.route.RoutingProfile;
@@ -337,16 +338,17 @@ public final class SorterPlanFileLogger {
         content.append("[move_samples]\n");
         if (debugReport.sampleMessages().isEmpty()) {
             content.append("<none>\n\n");
-            return;
+        } else {
+            for (int i = 0; i < debugReport.sampleMessages().size(); i++) {
+                content.append(i + 1)
+                        .append(". ")
+                        .append(debugReport.sampleMessages().get(i))
+                        .append('\n');
+            }
+            content.append('\n');
         }
 
-        for (int i = 0; i < debugReport.sampleMessages().size(); i++) {
-            content.append(i + 1)
-                    .append(". ")
-                    .append(debugReport.sampleMessages().get(i))
-                    .append('\n');
-        }
-        content.append('\n');
+        appendEnergyCostSection(content, executionResult);
     }
 
     private static String writeLog(String fileName, String content) {
@@ -373,5 +375,41 @@ public final class SorterPlanFileLogger {
 
     private static String valueOrPlaceholder(String value) {
         return ReportFileSupport.valueOrPlaceholder(value);
+    }
+
+    private static void appendEnergyCostSection(StringBuilder content, ZoneMoveExecutionResult executionResult) {
+        var energyCost = executionResult.energyCost();
+        content.append("[energy_cost]\n");
+        if (energyCost == null) {
+            content.append("enabled=false\n\n");
+            return;
+        }
+
+        var breakdown = energyCost.breakdown();
+        content.append("enabled=true\n")
+                .append("total_cost=")
+                .append(energyCost.totalCost())
+                .append('\n')
+                .append("move_count=")
+                .append(energyCost.moveCount())
+                .append('\n')
+                .append("moved_amount=")
+                .append(energyCost.movedAmount())
+                .append('\n')
+                .append("distinct_item_types=")
+                .append(energyCost.distinctItemTypes())
+                .append('\n')
+                .append("average_distance=")
+                .append(energyCost.averageDistance())
+                .append('\n')
+                .append("cost_breakdown: base=")
+                .append(breakdown.baseCost())
+                .append("|amount=")
+                .append(breakdown.amountCost())
+                .append("|type=")
+                .append(breakdown.typeCost())
+                .append("|distance=")
+                .append(breakdown.distanceCost())
+                .append("\n\n");
     }
 }

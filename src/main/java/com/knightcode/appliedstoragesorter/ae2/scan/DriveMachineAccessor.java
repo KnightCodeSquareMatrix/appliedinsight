@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import com.knightcode.appliedstoragesorter.blockentity.DigitalAssetVaultBlockEntity;
 
+import appeng.api.implementations.blockentities.IChestOrDrive;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.security.IActionHost;
 import appeng.api.storage.MEStorage;
@@ -64,6 +65,13 @@ public final class DriveMachineAccessor {
         return null;
     }
 
+    /**
+     * Creates a {@link DriveMachine} from a drive block entity.
+     * <p>
+     * Prefers the compile-time {@link IChestOrDrive} interface when available.
+     * Falls back to reflection for block entities that do not implement the
+     * interface.
+     */
     private static DriveMachine tryCreateDrive(BlockEntity blockEntity) {
         if (!(blockEntity instanceof IActionHost actionHost)) {
             return null;
@@ -74,6 +82,21 @@ public final class DriveMachineAccessor {
             return null;
         }
 
+        // Priority path: IChestOrDrive interface (compile-time safe)
+        if (blockEntity instanceof IChestOrDrive chestOrDrive) {
+            int cellCount = chestOrDrive.getCellCount();
+            return new DriveMachine(
+                    blockEntity,
+                    actionHost,
+                    blockId,
+                    cellCount,
+                    null,
+                    null,
+                    chestOrDrive,
+                    false);
+        }
+
+        // Fallback path: reflection for block entities that don't implement IChestOrDrive
         var getCellCount = findZeroArgMethod(blockEntity.getClass(), "getCellCount");
         var getOriginalCellInventory = findSingleIntMethod(blockEntity.getClass(), "getOriginalCellInventory");
         var getCellInventory = findSingleIntMethod(blockEntity.getClass(), "getCellInventory");
@@ -122,6 +145,8 @@ public final class DriveMachineAccessor {
         };
     }
 
+    // ── Reflection fallback helpers ──────────────────────────────────────────
+
     private static Method findZeroArgMethod(Class<?> type, String name) {
         try {
             var method = type.getMethod(name);
@@ -149,10 +174,35 @@ public final class DriveMachineAccessor {
         private final int cellCount;
         private final @Nullable BlockPos attachedStoragePos;
         private final @Nullable Direction attachmentSide;
-        private final Method getOriginalCellInventory;
-        private final Method getCellInventory;
+        // Non-null when using IChestOrDrive API path
+        private final @Nullable IChestOrDrive chestOrDrive;
+        // Non-null when using reflection fallback path
+        private final @Nullable Method getOriginalCellInventory;
+        private final @Nullable Method getCellInventory;
         private final boolean externalStorageBus;
 
+        /**
+         * Constructor for the IChestOrDrive API path.
+         */
+        private DriveMachine(BlockEntity blockEntity, IActionHost actionHost, String blockId, int cellCount,
+                @Nullable BlockPos attachedStoragePos, @Nullable Direction attachmentSide,
+                @Nullable IChestOrDrive chestOrDrive,
+                boolean externalStorageBus) {
+            this.blockEntity = blockEntity;
+            this.actionHost = actionHost;
+            this.blockId = blockId;
+            this.cellCount = cellCount;
+            this.attachedStoragePos = attachedStoragePos;
+            this.attachmentSide = attachmentSide;
+            this.chestOrDrive = chestOrDrive;
+            this.getOriginalCellInventory = null;
+            this.getCellInventory = null;
+            this.externalStorageBus = externalStorageBus;
+        }
+
+        /**
+         * Constructor for the reflection fallback path.
+         */
         private DriveMachine(BlockEntity blockEntity, IActionHost actionHost, String blockId, int cellCount,
                 @Nullable BlockPos attachedStoragePos, @Nullable Direction attachmentSide,
                 @Nullable Method getOriginalCellInventory,
@@ -164,6 +214,7 @@ public final class DriveMachineAccessor {
             this.cellCount = cellCount;
             this.attachedStoragePos = attachedStoragePos;
             this.attachmentSide = attachmentSide;
+            this.chestOrDrive = null;
             this.getOriginalCellInventory = getOriginalCellInventory;
             this.getCellInventory = getCellInventory;
             this.externalStorageBus = externalStorageBus;
@@ -228,13 +279,25 @@ public final class DriveMachineAccessor {
 
         /**
          * Get the registry name of the cell item in the given slot.
-         * Uses reflection to call {@code getCellItem(int)} on the block entity.
+         * Uses {@link IChestOrDrive#getCellItem(int)} when available,
+         * falls back to reflection.
          * Returns empty for external storage buses or if the method is unavailable.
          */
         public Optional<String> getCellItemId(int slot) {
             if (externalStorageBus) {
                 return Optional.empty();
             }
+
+            // Priority path: IChestOrDrive API
+            if (chestOrDrive != null) {
+                var item = chestOrDrive.getCellItem(slot);
+                if (item != null) {
+                    return Optional.of(BuiltInRegistries.ITEM.getKey(item).toString());
+                }
+                return Optional.empty();
+            }
+
+            // Fallback path: reflection
             try {
                 var method = blockEntity.getClass().getMethod("getCellItem", int.class);
                 method.setAccessible(true);
@@ -248,7 +311,13 @@ public final class DriveMachineAccessor {
             return Optional.empty();
         }
 
-        public StorageCell getOriginalCellInventory(int slot) {
+        public @Nullable StorageCell getOriginalCellInventory(int slot) {
+            // Priority path: IChestOrDrive API
+            if (chestOrDrive != null) {
+                return chestOrDrive.getOriginalCellInventory(slot);
+            }
+
+            // Fallback path: reflection
             if (getOriginalCellInventory == null) {
                 return null;
             }
@@ -259,7 +328,13 @@ public final class DriveMachineAccessor {
             }
         }
 
-        public MEStorage getCellInventory(int slot) {
+        public @Nullable MEStorage getCellInventory(int slot) {
+            // Priority path: IChestOrDrive API
+            if (chestOrDrive != null) {
+                return chestOrDrive.getCellInventory(slot);
+            }
+
+            // Fallback path: reflection
             if (getCellInventory == null) {
                 return null;
             }

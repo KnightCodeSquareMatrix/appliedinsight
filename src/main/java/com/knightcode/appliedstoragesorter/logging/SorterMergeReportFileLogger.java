@@ -199,6 +199,7 @@ public final class SorterMergeReportFileLogger {
         appendTopBenefitSection(content, beforeSnapshot, afterSnapshot, executionResult);
         appendChangedItemSection(content, beforeSnapshot, afterSnapshot, executionResult);
         appendExecutedMoveSection(content, executionResult);
+        appendEnergyCostSection(content, executionResult);
         return content.toString();
     }
 
@@ -426,6 +427,42 @@ public final class SorterMergeReportFileLogger {
                     .append('\n');
         }
         content.append('\n');
+    }
+
+    private static void appendEnergyCostSection(StringBuilder content, SorterMoveExecutionResult executionResult) {
+        var energyCost = executionResult.energyCost();
+        content.append("[energy_cost]\n");
+        if (energyCost == null) {
+            content.append("enabled=false\n\n");
+            return;
+        }
+
+        var breakdown = energyCost.breakdown();
+        content.append("enabled=true\n")
+                .append("total_cost=")
+                .append(energyCost.totalCost())
+                .append('\n')
+                .append("move_count=")
+                .append(energyCost.moveCount())
+                .append('\n')
+                .append("moved_amount=")
+                .append(energyCost.movedAmount())
+                .append('\n')
+                .append("distinct_item_types=")
+                .append(energyCost.distinctItemTypes())
+                .append('\n')
+                .append("average_distance=")
+                .append(energyCost.averageDistance())
+                .append('\n')
+                .append("cost_breakdown: base=")
+                .append(breakdown.baseCost())
+                .append("|amount=")
+                .append(breakdown.amountCost())
+                .append("|type=")
+                .append(breakdown.typeCost())
+                .append("|distance=")
+                .append(breakdown.distanceCost())
+                .append("\n\n");
     }
 
     private static void appendLocationMap(StringBuilder content, String label, Map<String, Long> amountByLocation) {

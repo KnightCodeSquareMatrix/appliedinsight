@@ -1,9 +1,11 @@
 package com.knightcode.appliedstoragesorter.ae2.zone;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.knightcode.appliedstoragesorter.ae2.scan.DriveCellReference;
 import com.knightcode.appliedstoragesorter.ae2.scan.DriveMachineAccessor;
@@ -15,7 +17,13 @@ import com.knightcode.appliedstoragesorter.plan.ZoneAllocationPlan;
 import appeng.api.networking.IGrid;
 import appeng.api.stacks.AEItemKey;
 import appeng.api.storage.MEStorage;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 
 /**
  * Zone merge planner — 将 zone 分配计划转化为可执行的 merge 操作。
@@ -42,14 +50,16 @@ public final class ZoneMergePlanner {
      * @param topology       运行时拓扑（含 zone/cell 结构）
      * @param grid           AE2 网络
      * @param maxTransfers   最大搬运次数限制
+     * @param registryAccess registry lookup，用于反序列化 assignment 中的 NBT
      * @return 包含 SorterMoveOperation 和诊断统计的 plan 结果
      */
     public static PlanResult plan(
             ZoneAllocationPlan allocationPlan,
             RuntimeTopology topology,
             IGrid grid,
-            int maxTransfers) {
-        Map<ItemFingerprint, ItemZoneAssignment> assignmentsByItem = indexAssignments(allocationPlan);
+            int maxTransfers,
+            HolderLookup.Provider registryAccess) {
+        Map<ItemFingerprint, ItemZoneAssignment> assignmentsByItem = indexAssignments(allocationPlan, registryAccess);
         var drives = DriveMachineAccessor.findSupportedDrives(grid);
 
         List<PlannedMove> plannedMoves = new ArrayList<>();
@@ -171,21 +181,68 @@ public final class ZoneMergePlanner {
                 sourceDrive.attachmentSide().map(side -> side.getSerializedName()).orElse(null));
     }
 
-    private static Map<ItemFingerprint, ItemZoneAssignment> indexAssignments(ZoneAllocationPlan plan) {
-        Map<ItemFingerprint, ItemZoneAssignment> assignmentsByItem = new HashMap<>();
+    private static Map<ItemFingerprint, ItemZoneAssignment> indexAssignments(
+            ZoneAllocationPlan plan, HolderLookup.Provider registryAccess) {
+        Map<ItemFingerprint, ItemZoneAssignment> map = new HashMap<>();
         for (ItemZoneAssignment assignment : plan.movableAssignments()) {
-            assignmentsByItem.put(
-                    new ItemFingerprint(assignment.itemId(), assignment.serializedStackNbt()), assignment);
+            String nbtString = assignment.serializedStackNbt();
+            if (nbtString == null || nbtString.isEmpty()) {
+                continue;
+            }
+            CompoundTag tag;
+            try {
+                tag = TagParser.parseTag(nbtString);
+            } catch (Exception e) {
+                continue;
+            }
+            var stackOpt = ItemStack.parse(registryAccess, tag);
+            if (stackOpt.isEmpty()) {
+                continue;
+            }
+            ItemStack stack = stackOpt.get();
+
+            String itemId = assignment.itemId();
+            int componentHash = AEItemKey.of(stack).hashCode();
+            int damageValue = stack.isDamageableItem() ? stack.getDamageValue() : 0;
+            long[] enchantData = extractEnchantData(stack);
+
+            map.put(new ItemFingerprint(itemId, componentHash, damageValue, enchantData), assignment);
         }
-        return assignmentsByItem;
+        return map;
     }
 
     private static ItemFingerprint fingerprintOf(DriveMachineAccessor.DriveMachine drive, AEItemKey itemKey) {
         var stack = itemKey.getReadOnlyStack();
-        var level = drive.blockEntity().getLevel();
-        String serializedStackNbt = level != null ? stack.saveOptional(level.registryAccess()).toString() : "";
         String itemId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
-        return new ItemFingerprint(itemId, serializedStackNbt);
+        int componentHash = itemKey.hashCode();
+        int damageValue = stack.isDamageableItem() ? stack.getDamageValue() : 0;
+        long[] enchantData = extractEnchantData(stack);
+        return new ItemFingerprint(itemId, componentHash, damageValue, enchantData);
+    }
+
+    /**
+     * 从 ItemStack 中提取附魔数据，编码为 long[] bitset。
+     *
+     * <p>每 8 bit 存一种附魔的等级（0-255），每个 long 存 8 种附魔。
+     * 无附魔时返回空数组。
+     */
+    private static long[] extractEnchantData(ItemStack stack) {
+        ItemEnchantments ench = stack.get(DataComponents.ENCHANTMENTS);
+        if (ench == null || ench.isEmpty()) {
+            return new long[0];
+        }
+        int size = (ench.size() + 7) / 8;
+        long[] data = new long[size];
+        int index = 0;
+        for (var entry : ench.entrySet()) {
+            int level = entry.getIntValue();
+            if (level <= 0) continue;
+            int longIndex = index / 8;
+            int bitOffset = (index % 8) * 8;
+            data[longIndex] |= ((long) level & 0xFF) << bitOffset;
+            index++;
+        }
+        return data;
     }
 
     private static void addSample(List<String> sampleMessages, String message) {
@@ -214,7 +271,32 @@ public final class ZoneMergePlanner {
         return value != null ? value : "<none>";
     }
 
-    private record ItemFingerprint(String itemId, String serializedStackNbt) {
+    /**
+     * 物品指纹，用于快速匹配 zone assignment。
+     *
+     * <p>使用 {@link AEItemKey#hashCode()}（已缓存，O(1)）替代完整 NBT 序列化，
+     * 配合耐久值和附魔 bitset 区分同一物品的不同状态。
+     */
+    private record ItemFingerprint(
+            String itemId,
+            int componentHash,
+            int damageValue,
+            long[] enchantData
+    ) {
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof ItemFingerprint that)) return false;
+            return componentHash == that.componentHash
+                    && damageValue == that.damageValue
+                    && itemId.equals(that.itemId)
+                    && Arrays.equals(enchantData, that.enchantData);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(itemId, componentHash, damageValue, Arrays.hashCode(enchantData));
+        }
     }
 
     /**

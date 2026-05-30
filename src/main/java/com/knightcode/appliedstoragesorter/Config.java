@@ -25,6 +25,37 @@ public final class Config {
             .comment("Enable developer mode. When disabled, /sorter commands are restricted.")
             .define("developerMode", false);
 
+    // ── 电量消耗（Energy Cost）配置 ────────────────────────────────
+
+    public static final ModConfigSpec.BooleanValue ENERGY_COST_ENABLED = BUILDER
+            .comment("Enable energy cost estimation for sorter operations. "
+                    + "When enabled, /sorter merge and /sorter me planAndMove will display "
+                    + "an estimated energy cost based on move count, item amount, item types, "
+                    + "and Manhattan distance. Default: false (backward compatible).")
+            .define("energyCostEnabled", false);
+
+    public static final ModConfigSpec.DoubleValue ENERGY_COST_BASE_FEE = BUILDER
+            .comment("Base energy cost per move operation (coefficient α). "
+                    + "Formula: totalCost = α×N + β×log₂(1+A) + γ×log₂(1+T) + δ×log₂(1+avgDist).")
+            .defineInRange("energyCostBaseFee", 2.0, 0.0, 100.0);
+
+    public static final ModConfigSpec.DoubleValue ENERGY_COST_AMOUNT_COEFF = BUILDER
+            .comment("Energy cost coefficient for moved item amount (coefficient β). "
+                    + "Applied to log₂(1 + total moved amount).")
+            .defineInRange("energyCostAmountCoeff", 20.0, 0.0, 1000.0);
+
+    public static final ModConfigSpec.DoubleValue ENERGY_COST_TYPE_COEFF = BUILDER
+            .comment("Energy cost coefficient for distinct item types (coefficient γ). "
+                    + "Applied to log₂(1 + distinct item types).")
+            .defineInRange("energyCostTypeCoeff", 30.0, 0.0, 1000.0);
+
+    public static final ModConfigSpec.DoubleValue ENERGY_COST_DISTANCE_COEFF = BUILDER
+            .comment("Energy cost coefficient for average Manhattan distance (coefficient δ). "
+                    + "Applied to log₂(1 + average Manhattan distance) between drives.")
+            .defineInRange("energyCostDistanceCoeff", 15.0, 0.0, 1000.0);
+
+    // ── 配置规格 ────────────────────────────────────────────────────
+
     public static final ModConfigSpec SPEC = BUILDER.build();
 
     private Config() {

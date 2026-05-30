@@ -45,10 +45,9 @@ appliedstoragesorter-template-1.21.1/
 │   ├── generated/                # datagen 输出 (勿手动编辑)
 │   └── test/                     # 测试代码
 ├── docs/                         # 项目文档
-│   ├── ARCHITECTURE_REFERENCE.md # 架构参考
-│   ├── GLOSSARY.md               # 术语表
+│   ├── 架构/FACTS.md              # 事实库（取代旧版 ARCHITECTURE_REFERENCE + GLOSSARY）
 │   ├── ai/                       # AI协作者文档
-│   ├── 类职责/                   # 类职责文档 (99个)
+│   ├── 类职责/                   # 类职责文档 (129个)
 │   └── 历史文档-仅供AI参考/       # 历史档案
 ├── build.gradle                  # 构建配置
 ├── settings.gradle               # 项目设置
@@ -85,7 +84,75 @@ appliedstoragesorter-template-1.21.1/
 
 生成产物输出到 `src/generated/resources/`。这些文件不应手动编辑。
 
-### 3.4 运行测试
+### 3.4 远程开发 — 自动同步 Mod JAR
+
+> 适用于 SSH 连接服务器开发，Minecraft 客户端在本地 Windows 运行的情况。
+
+服务器上每次 `./gradlew build` 后，jar 自动拷贝到 `tools/serve/` 目录。
+本机运行 [`tools/sync_jar.py`](tools/sync_jar.py) 脚本，通过 SSH 监听文件变化，有更新时自动下载到多个指定目录（如 PrismLauncher mods 文件夹）。
+
+#### 3.4.1 一次性设置：配置本机同步脚本
+
+在**本机 Windows** 上，首次运行脚本生成配置文件：
+
+```bash
+python tools/sync_jar.py
+```
+
+脚本会在 `tools/` 目录下生成 `sync_jar_config.json`，编辑该文件：
+
+```json
+{
+    "server": {
+        "host": "172.16.201.63",
+        "port": 22,
+        "user": "root",
+        "key": null,
+        "remote_jar_path": "/data/appliedstoragesorter/tools/serve/appliedstoragesorter.jar"
+    },
+    "watch_interval": 5,
+    "destinations": [
+        "C:/Users/KnightCode/AppData/Roaming/PrismLauncher/instances/1.21.1/minecraft/mods",
+        "C:/Users/KnightCode/AppData/Roaming/MultiMC/instances/1.21.1/.minecraft/mods"
+    ],
+    "rename_to": "appliedstoragesorter.jar"
+}
+```
+
+| 配置项 | 说明 |
+|--------|------|
+| `server.host` | 服务器 IP |
+| `server.port` | SSH 端口（默认 22） |
+| `server.user` | SSH 用户名 |
+| `server.key` | SSH 密钥路径（`null` 则用默认 `~/.ssh/id_rsa`） |
+| `destinations` | 目标目录列表（支持多个） |
+| `watch_interval` | 轮询间隔（秒） |
+
+#### 3.4.2 日常使用
+
+**服务器上**（构建）：
+```bash
+./gradlew build
+```
+
+**本机 Windows 上**（保持运行）：
+```bash
+python tools/sync_jar.py
+```
+
+脚本会自动：
+1. 通过 SSH 连接服务器
+2. 每 5 秒检查 jar 文件的 MD5
+3. 检测到更新时自动下载
+4. 拷贝到所有配置的目标目录
+
+效果：**服务器上 `./gradlew build` → 本机自动同步到所有 mods 文件夹**，无需任何手动操作。
+
+> **💡 提示**：本机需要安装 Python 3 和 SSH 客户端（Windows 10/11 自带 OpenSSH Client）。首次连接需要确认服务器指纹。
+
+---
+
+### 3.5 运行测试
 
 ```bash
 # 运行所有测试
@@ -119,7 +186,7 @@ appliedstoragesorter-template-1.21.1/
 2. 在 `docs/类职责/` 下创建同名 `.md` 职责文档
 3. 更新 `docs/类职责/索引.md` 添加索引条目
 4. 若新增涉及架构边界，同步更新：
-   - `docs/整体逻辑.md`
+   - `docs/架构/FACTS.md`
    - `docs/类职责总览.md`
 
 ### 4.2 修改现有类
@@ -144,7 +211,7 @@ appliedstoragesorter-template-1.21.1/
 **最小原则**：
 - 给 AI 协作者提供 `docs/ai/AI_ENTRY.md` 作为入口
 - 提供相关 `docs/类职责/` 文档作为具体上下文
-- 涉及架构判断时，提供 `docs/ARCHITECTURE_REFERENCE.md` 的对应章节
+- 涉及架构判断时，提供 `docs/架构/FACTS.md` 的对应章节
 
 ---
 
@@ -268,11 +335,15 @@ dumps/appliedstoragesorter/me-dump-*.json  # 网络快照
 
 ### 8.3 代码审查检查清单
 
+详细的代码审查清单请参考 [`docs/ai/CODE_REVIEW_CHECKLIST.md`](ai/CODE_REVIEW_CHECKLIST.md)，这里列出最关键的几项：
+
 - [ ] `rule/**` 是否引入了 Minecraft/AE2 依赖？
 - [ ] 新类或方法是否在正确的层？
 - [ ] 是否更新了对应的职责文档？
 - [ ] 是否保持了现有命令语义不变？
 - [ ] 是否引入了不必要的抽象或框架？
+- [ ] 网络通信（`network/**`）是否遵循了分块传输模式？
+- [ ] GUI 方块修改是否同步更新了 Block / BlockEntity / Menu / Screen 四件套？
 
 ---
 
@@ -287,6 +358,7 @@ dumps/appliedstoragesorter/me-dump-*.json  # 网络快照
 ./gradlew runDatagen     # 数据生成
 ./gradlew test           # 运行测试
 ./gradlew clean          # 清理
+./gradlew serveModJar    # 启动 HTTP 下载服务器（远程开发用）
 ```
 
 ### 版本信息
@@ -301,4 +373,4 @@ dumps/appliedstoragesorter/me-dump-*.json  # 网络快照
 
 ---
 
-> **参考文档**: `docs/ARCHITECTURE_REFERENCE.md` | `docs/GLOSSARY.md` | `docs/类职责/索引.md`
+> **参考文档**: [`docs/架构/FACTS.md`](docs/架构/FACTS.md) | [`docs/类职责/索引.md`](类职责/索引.md) | [`docs/API_REFERENCE.md`](API_REFERENCE.md) | [`docs/COMMANDS_REFERENCE.md`](COMMANDS_REFERENCE.md) | [`docs/DEVELOPER_QUICKSTART.md`](DEVELOPER_QUICKSTART.md) | [`docs/TESTING_GUIDE.md`](TESTING_GUIDE.md) | [`docs/EXTENSION_GUIDE.md`](EXTENSION_GUIDE.md) | [`docs/ARCHITECTURE_DECISIONS.md`](ARCHITECTURE_DECISIONS.md)

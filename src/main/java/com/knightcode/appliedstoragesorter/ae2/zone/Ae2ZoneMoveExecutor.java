@@ -8,6 +8,7 @@ import com.knightcode.appliedstoragesorter.ae2.sort.SorterMoveOperation;
 import com.knightcode.appliedstoragesorter.plan.ZoneAllocationPlan;
 
 import appeng.api.networking.IGrid;
+import net.minecraft.core.HolderLookup;
 
 /**
  * Zone move executor — 将 zone 分配计划转化为真实的搬运操作。
@@ -22,11 +23,11 @@ public final class Ae2ZoneMoveExecutor {
     private Ae2ZoneMoveExecutor() {
     }
 
-    public static ZoneMoveExecutionResult execute(IGrid grid, ZoneAllocationPlan plan, RuntimeTopology topology, int maxTransfers) {
-        return executeDetailed(grid, plan, topology, maxTransfers).executionResult();
+    public static ZoneMoveExecutionResult execute(IGrid grid, ZoneAllocationPlan plan, RuntimeTopology topology, int maxTransfers, HolderLookup.Provider registryAccess) {
+        return executeDetailed(grid, plan, topology, maxTransfers, registryAccess).executionResult();
     }
 
-    public static ZoneMoveExecutionDetailedResult executeDetailed(IGrid grid, ZoneAllocationPlan plan, RuntimeTopology topology, int maxTransfers) {
+    public static ZoneMoveExecutionDetailedResult executeDetailed(IGrid grid, ZoneAllocationPlan plan, RuntimeTopology topology, int maxTransfers, HolderLookup.Provider registryAccess) {
         if (maxTransfers <= 0) {
             return buildResult(topology, "maxTransfers <= 0");
         }
@@ -38,9 +39,10 @@ public final class Ae2ZoneMoveExecutor {
         }
 
         // 1. ZoneMergePlanner 根据 plan + topology 生成 merge 操作 + 诊断统计
-        ZoneMergePlanner.PlanResult planResult = ZoneMergePlanner.plan(plan, topology, grid, maxTransfers);
+        ZoneMergePlanner.PlanResult planResult = ZoneMergePlanner.plan(plan, topology, grid, maxTransfers, registryAccess);
 
         // 2. 通过 SorterMoveOperation.execute() 执行批量搬运
+        //    execute() 内部已根据 Config.ENERGY_COST_ENABLED 计算电量消耗并附着
         SorterMoveExecutionResult execResult = planResult.operation().execute();
 
         // 3. 统计失败分类
@@ -62,7 +64,7 @@ public final class Ae2ZoneMoveExecutor {
             }
         }
 
-        // 4. 组装详细结果
+        // 4. 组装详细结果（传播电量消耗）
         List<String> sampleMessages = new ArrayList<>(planResult.sampleMessages());
 
         return new ZoneMoveExecutionDetailedResult(
@@ -71,7 +73,8 @@ public final class Ae2ZoneMoveExecutor {
                         execResult.completedMoveCount(),
                         execResult.failedMoveCount(),
                         execResult.requestedAmount(),
-                        execResult.movedAmount()),
+                        execResult.movedAmount(),
+                        execResult.energyCost()),      // ← 传播 SorterMoveExecutionResult 的 energyCost
                 new ZoneMoveExecutionDebugReport(
                         topology,
                         planResult.scannedSourceDriveCount(),
@@ -92,7 +95,7 @@ public final class Ae2ZoneMoveExecutor {
         List<String> sampleMessages = new ArrayList<>();
         sampleMessages.add(summaryMessage);
         return new ZoneMoveExecutionDetailedResult(
-                new ZoneMoveExecutionResult(0, 0, 0, 0, 0),
+                new ZoneMoveExecutionResult(0, 0, 0, 0, 0, null),
                 new ZoneMoveExecutionDebugReport(
                         topology != null ? topology : new RuntimeTopology(List.of(), List.of(), List.of(), true),
                         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, sampleMessages));

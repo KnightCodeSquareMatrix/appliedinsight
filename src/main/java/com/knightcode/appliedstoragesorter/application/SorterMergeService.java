@@ -1,5 +1,6 @@
 package com.knightcode.appliedstoragesorter.application;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.knightcode.appliedstoragesorter.Config;
@@ -66,9 +67,16 @@ public final class SorterMergeService {
                 executionResult.movedAmount(), executionResult.requestedAmount(), mergeReportPath);
         SorterFileLogger.logSorterMergeExecution(source, gridTarget, executionResult, mergeReportPath);
 
-        return SorterFeedbackResult.success(List.of(
+        var feedbackLines = new ArrayList<>(List.of(
                 SorterComponentHelper.keyValue("plannedMergeCount", String.valueOf(moveOperation.plannedMoveCount())),
                 SorterComponentHelper.keyValue("mergedAmount", executionResult.movedAmount() + "/" + executionResult.requestedAmount()),
                 SorterComponentHelper.clickableFile("mergeReport", mergeReportPath)));
+
+        // 电量消耗展示（受 Config.ENERGY_COST_ENABLED 控制）
+        if (executionResult.energyCost() != null) {
+            feedbackLines.add(1, SorterComponentHelper.keyValue("energyCost", String.valueOf(executionResult.energyCost().totalCost())));
+        }
+
+        return SorterFeedbackResult.success(feedbackLines);
     }
 }

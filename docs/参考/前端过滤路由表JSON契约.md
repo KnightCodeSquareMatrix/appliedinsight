@@ -1098,3 +1098,17 @@ export interface RuleEvaluation {
   explanation: string;
 }
 ```
+
+---
+
+## 附录：相关文档
+
+| 文档 | 说明 |
+|------|------|
+| [`前端对接说明.md`](前端对接说明.md) | 前端对接说明 — 前端边界与后端消费方式 |
+| [`前端对接契约-需求-约束.md`](前端对接契约-需求-约束.md) | 前端对接契约、需求与约束 |
+| [`日志与JSON字段契约.md`](日志与JSON字段契约.md) | 日志与 JSON 字段契约 — 第 9 节 profile JSON 字段定义 |
+| [`后端JSON完善指南.md`](后端JSON完善指南.md) | 后端 JSON 完善指南 |
+| [`COMMANDS_REFERENCE.md`](COMMANDS_REFERENCE.md) | 命令参考 — 所有命令的详细说明 |
+| [`docs/架构/FACTS.md`](docs/架构/FACTS.md) | 架构参考 + 术语表 — 六层架构、三条能力路径、术语定义（FACT-091 ~ FACT-120） |
+| [`dashboard的设计哲学.md`](dashboard的设计哲学.md) | Dashboard 设计哲学 — 先给结果再纠偏 |

@@ -304,6 +304,24 @@ cell 字段：
 - 每行是 debug report 采样消息
 - 格式不保证稳定解析，适合人类阅读，不适合作为强结构输入
 
+### 5.5 `[energy_cost]`
+
+电量消耗估计，仅在配置 `energyCostEnabled=true` 时输出。
+
+| 字段 | 类型 | 示例 | 说明 |
+|------|------|------|------|
+| `enabled` | boolean | true | 是否启用电量消耗 |
+| `total_cost` | long | 185 | 总消耗 |
+| `move_count` | int | 12 | 搬运次数 |
+| `moved_amount` | long | 896 | 实际搬运量 |
+| `distinct_item_types` | int | 7 | 涉及物品种类数 |
+| `average_distance` | int | 24 | 平均曼哈顿距离 |
+| `cost_breakdown` | string | base=24\|amount=62\|type=76\|distance=23 | 各项明细 |
+
+计算公式: `floor(α·N + β·log2(1+A) + γ·log2(1+T) + δ·log2(1+avgDist))`
+
+其中 α=2.0（基础搬运费）, β=20.0（数量系数）, γ=30.0（种类系数）, δ=15.0（距离系数）。所有系数可通过 Config 调整。
+
 ---
 
 ## 6. `logs/appliedstoragesorter/merge-*.log`
@@ -446,6 +464,24 @@ cell 字段：
 | `success` | boolean | `inserted == requested` |
 | `source` | string | 来源位置 |
 | `destination` | string | 目标位置 |
+
+### 6.8 `[energy_cost]`
+
+电量消耗估计，仅在配置 `energyCostEnabled=true` 时输出。
+
+| 字段 | 类型 | 示例 | 说明 |
+|------|------|------|------|
+| `enabled` | boolean | true | 是否启用电量消耗 |
+| `total_cost` | long | 185 | 总消耗 |
+| `move_count` | int | 12 | 搬运次数 |
+| `moved_amount` | long | 896 | 实际搬运量 |
+| `distinct_item_types` | int | 7 | 涉及物品种类数 |
+| `average_distance` | int | 24 | 平均曼哈顿距离 |
+| `cost_breakdown` | string | base=24\|amount=62\|type=76\|distance=23 | 各项明细 |
+
+计算公式: `floor(α·N + β·log2(1+A) + γ·log2(1+T) + δ·log2(1+avgDist))`
+
+其中 α=2.0（基础搬运费）, β=20.0（数量系数）, γ=30.0（种类系数）, δ=15.0（距离系数）。所有系数可通过 Config 调整。
 
 ---
 
@@ -834,3 +870,15 @@ cell 字段：
 - 列表顺序在未来绝不调整
 
 如果后续要把某类日志升级为正式前端契约，建议优先把它改造成 JSON 或者更严格的 key-value block 格式。
+
+---
+
+## 10. 相关文档
+
+| 文档 | 说明 |
+|------|------|
+| [`COMMANDS_REFERENCE.md`](COMMANDS_REFERENCE.md) | 命令参考 — 所有命令的详细说明 |
+| [`docs/架构/FACTS.md`](docs/架构/FACTS.md) | 架构 + 整体逻辑 + 术语表 — 六层架构、三条能力路径、术语定义（FACT-091 ~ FACT-120） |
+| [`前端对接说明.md`](前端对接说明.md) | 前端对接说明 — 前端边界与后端消费方式 |
+| [`dashboard的设计哲学.md`](dashboard的设计哲学.md) | Dashboard 设计哲学 — 先给结果再纠偏 |
+| [`存储节点语义层.md`](存储节点语义层.md) | 存储节点语义层 — 节点语义推断与 dashboard 理论基础 |

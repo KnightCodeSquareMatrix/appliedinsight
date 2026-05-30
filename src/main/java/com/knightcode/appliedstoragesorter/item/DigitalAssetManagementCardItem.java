@@ -25,16 +25,54 @@ public class DigitalAssetManagementCardItem extends Item {
         return getZoneId(stack).isPresent();
     }
 
+    /**
+     * 获取区域 ID。优先级：
+     * <ol>
+     *   <li>CUSTOM_DATA 中持久化的 zoneId</li>
+     *   <li>DataComponents.ITEM_NAME（Inscriber 重命名）</li>
+     *   <li>DataComponents.CUSTOM_NAME（铁砧重命名）</li>
+     * </ol>
+     */
     public static Optional<String> getZoneId(ItemStack stack) {
-        return getCustomDataTag(stack)
+        // 1. 优先读取持久化的 zoneId
+        var fromCustomData = getCustomDataTag(stack)
                 .map(tag -> normalize(tag.getString(ZONE_ID_TAG)));
+        if (fromCustomData.isPresent()) return fromCustomData;
+
+        // 2. 从物品名称读取（铁砧/Inscriber 重命名）
+        var itemName = stack.get(DataComponents.ITEM_NAME);
+        if (itemName != null) {
+            String text = normalize(itemName.getString());
+            if (text != null) return Optional.of(text);
+        }
+
+        // 3. 从 custom_name 读取（兼容旧版铁砧）
+        var customName = stack.get(DataComponents.CUSTOM_NAME);
+        if (customName != null) {
+            String text = normalize(customName.getString());
+            if (text != null) return Optional.of(text);
+        }
+
+        return Optional.empty();
     }
 
+    /**
+     * 获取区域名称。如果物品有自定义名称且未持久化 zoneName，则使用名称作为 zoneName。
+     */
     public static Optional<String> getZoneName(ItemStack stack) {
-        return getCustomDataTag(stack)
+        // 1. 优先读取持久化的 zoneName
+        var fromCustomData = getCustomDataTag(stack)
                 .map(tag -> normalize(tag.getString(ZONE_NAME_TAG)));
+        if (fromCustomData.isPresent()) return fromCustomData;
+
+        // 2. 回退到物品名称
+        return getZoneId(stack);
     }
 
+    /**
+     * 将区域数据持久化到卡片的 CUSTOM_DATA 中。
+     * 当 DAV 绑定卡片时调用此方法，将运行时识别的区域写入持久数据。
+     */
     public static void setZoneData(ItemStack stack, String zoneId, @Nullable String zoneName) {
         Objects.requireNonNull(stack, "stack");
         String normalizedZoneId = Objects.requireNonNull(normalize(zoneId), "zoneId must not be blank");
@@ -66,13 +104,14 @@ public class DigitalAssetManagementCardItem extends Item {
 
         String zoneId = getZoneId(stack).orElse(null);
         if (zoneId == null) {
-            tooltipComponents.add(Component.translatable("item.appliedstoragesorter.digital_asset_management_card.zone.unassigned")
+            tooltipComponents.add(Component.translatable(
+                    "item.appliedstoragesorter.digital_asset_management_card.zone.unassigned")
                     .withStyle(ChatFormatting.GRAY));
             return;
         }
 
         String zoneName = getZoneName(stack).orElse(null);
-        if (zoneName != null) {
+        if (zoneName != null && !zoneName.equals(zoneId)) {
             tooltipComponents.add(Component.translatable(
                     "item.appliedstoragesorter.digital_asset_management_card.zone.named",
                     zoneName,

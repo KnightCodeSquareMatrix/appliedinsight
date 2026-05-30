@@ -5,16 +5,33 @@
 - **所属层**: AE2 集成层
 
 ## 职责
-作为轻量值对象/结果对象承载 ZoneMoveExecutionResult 对应的数据快照。
+作为 zone 搬运执行阶段的聚合结果对象，承载整体执行摘要（与 `SorterMoveExecutionResult` 类似但精简）。
+新增 `energyCost` 字段传播来自底层 `SorterMoveExecutionResult` 的电量消耗估算。
+
+## 字段
+
+| 字段 | 类型 | 说明 |
+|------|------|------|
+| `attemptedMoveCount` | `int` | 尝试执行的总 move 数 |
+| `completedMoveCount` | `int` | 完全成功的 move 数 |
+| `failedMoveCount` | `int` | 失败的 move 数 |
+| `requestedAmount` | `long` | 计划搬运总量 |
+| `movedAmount` | `long` | 实际成功搬运量 |
+| `energyCost` | `@Nullable EnergyCostEstimate` | 电量消耗估算（从 SorterMoveExecutionResult 传播）|
+
+## 方法
+
+### `withEnergyCost(EnergyCostEstimate)`
+创建一个新的 `ZoneMoveExecutionResult` 实例，仅替换 `energyCost` 字段。
 
 ## 边界检查
-边界健康。该类型明确属于 AE2 集成层，依赖 Minecraft/AE2 API 是合理的，并未反向污染规则层。
-
-## 抽象检查
-没有过度抽象；以值对象/枚举形式存在是合适的。
+边界健康。仅依赖 `ae2.sort.EnergyCostEstimate`，属于 AE2 集成层内部引用。
 
 ## 主要协作者
-- 主要依赖为 JDK 或同文件内部成员。
+- `com.knightcode.appliedstoragesorter.ae2.sort.EnergyCostEstimate`
+- `com.knightcode.appliedstoragesorter.ae2.zone.Ae2ZoneMoveExecutor`（构造者）
+- `com.knightcode.appliedstoragesorter.ae2.zone.ZoneMoveExecutionDetailedResult`（容器）
 
-## 维护备注
-- 当前更像稳定的数据/常量定义，无需进一步拆分。
+## 近期变更 (2026-05-25)
+- **新增 `energyCost` 字段** — `@Nullable EnergyCostEstimate`，从底层 `SorterMoveExecutionResult.energyCost()` 传播
+- **新增 `withEnergyCost()` 方法** — 保留其他字段不变，仅替换 `energyCost`

@@ -23,7 +23,7 @@ class RuntimeCellTransferTest {
 
     @Test
     void executionResult_holdsPrimitiveCounts() {
-        var result = new ZoneMoveExecutionResult(10, 7, 3, 512L, 448L);
+        var result = new ZoneMoveExecutionResult(10, 7, 3, 512L, 448L, null);
         assertEquals(10, result.attemptedMoveCount());
         assertEquals(7, result.completedMoveCount());
         assertEquals(3, result.failedMoveCount());
@@ -33,7 +33,7 @@ class RuntimeCellTransferTest {
 
     @Test
     void executionResult_zeroValues() {
-        var result = new ZoneMoveExecutionResult(0, 0, 0, 0L, 0L);
+        var result = new ZoneMoveExecutionResult(0, 0, 0, 0L, 0L, null);
         assertEquals(0, result.attemptedMoveCount());
         assertEquals(0, result.completedMoveCount());
         assertEquals(0, result.failedMoveCount());
@@ -41,7 +41,7 @@ class RuntimeCellTransferTest {
 
     @Test
     void executionResult_completedEqualsAttempted() {
-        var result = new ZoneMoveExecutionResult(5, 5, 0, 320L, 320L);
+        var result = new ZoneMoveExecutionResult(5, 5, 0, 320L, 320L, null);
         assertEquals(5, result.attemptedMoveCount());
         assertEquals(5, result.completedMoveCount());
         assertEquals(0, result.failedMoveCount());
@@ -59,14 +59,14 @@ class RuntimeCellTransferTest {
 
     @Test
     void detailedResult_rejectsNullDebugReport() {
-        var exec = new ZoneMoveExecutionResult(0, 0, 0, 0L, 0L);
+        var exec = new ZoneMoveExecutionResult(0, 0, 0, 0L, 0L, null);
         assertThrows(NullPointerException.class,
                 () -> new ZoneMoveExecutionDetailedResult(exec, null));
     }
 
     @Test
     void detailedResult_wrapsBothParts() {
-        var exec = new ZoneMoveExecutionResult(1, 1, 0, 64L, 64L);
+        var exec = new ZoneMoveExecutionResult(1, 1, 0, 64L, 64L, null);
         var debug = new ZoneMoveExecutionDebugReport(
                 emptyTopology(), 2, 3, 10, 1, 0, 0, 0, 0, 0, 0, 0, java.util.List.of("ok"));
         var detailed = new ZoneMoveExecutionDetailedResult(exec, debug);
