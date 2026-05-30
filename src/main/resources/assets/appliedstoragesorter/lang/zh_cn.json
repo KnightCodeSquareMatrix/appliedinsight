@@ -1,0 +1,8 @@
+{
+  "block.appliedstoragesorter.digital_asset_vault": "数字资产库",
+  "block.appliedstoragesorter.sorter_command_block": "整理命令方块",
+  "item.appliedstoragesorter.digital_asset_management_card": "数字资产管理卡",
+  "item.appliedstoragesorter.digital_asset_management_card.zone.unassigned": "未分配至任何区域",
+  "item.appliedstoragesorter.digital_asset_management_card.zone.named": "区域: %s (%s)",
+  "item.appliedstoragesorter.digital_asset_management_card.zone.id": "区域 ID: %s"
+}

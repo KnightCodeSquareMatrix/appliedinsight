@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "appliedstoragesorter:block/digital_asset_vault" }
+  }
+}
