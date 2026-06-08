@@ -41,7 +41,15 @@ Optional: set `filterEditorUrl` only if you host a custom editor elsewhere.
 
 Files bundled: `index.html`, `app.js`, `i18n.js`, `templates.js`, `style.css`, `metadata.js`.
 
-**Quick templates**: All items, Durability items, Ores — click to load, then copy to game.
+**Quick templates** (same definitions as in-game presets; source: `templates.js` + `SmartBusFilterPresets.java`):
+
+| Template | Meaning |
+|----------|---------|
+| **All items** | `ITEM_ID` REGEX `.+` |
+| **Durability items** | OR: `TAG` = `minecraft:enchantable/durability`; or NBT `max_damage` / `damage` components (durability wear, **not** attack damage) |
+| **Ores** | `c:ores` tag, `*:ores/*` paths, or IDs ending with `_ore` |
+
+More templates may be added in future releases.
 
 Language: click **中文** / **English** in the toolbar. Preference is saved in `localStorage`. Default follows browser language.
 

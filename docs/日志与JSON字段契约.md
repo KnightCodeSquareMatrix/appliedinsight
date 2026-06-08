@@ -818,7 +818,27 @@ cell 字段：
 
 若不包含 `||`，整条 value 作为 NBT 路径，比较值等于路径本身（仅简单场景可用）。
 
-### 9.11 `routeRules[]`
+**NBT 数据来源：** Smart Bus / dump 使用 `ItemStack.saveOptional(...).toString()` 的 SNBT 字符串；`NbtPathExtractor` 通过 Gson 解析（与测试 dump 中 `{components:{"minecraft:damage":0},...}` 格式兼容）。
+
+**耐久相关路径（勿与攻击力混淆）：**
+
+| 路径 | 含义 |
+|---|---|
+| `components.minecraft:damage` | 已消耗耐久（数值越大越接近损坏） |
+| `components.minecraft:max_damage` | 最大耐久 |
+| `components.minecraft:attribute_modifiers` | 属性修饰（含攻击力等，**不是**耐久预设的主条件） |
+
+### 9.11 Smart Bus 内置预设
+
+游戏内 GUI 与 `tools/filter-editor/templates.js` 共用以下预设（实现：`SmartBusFilterPresets`）。点击即写入 FilterExpression JSON；更多预设计划在后续版本扩展。
+
+| 预设 id | 显示名 | 逻辑摘要 |
+|---|---|---|
+| `all_items` | 所有物品 | `ITEM_ID` REGEX `.+` |
+| `durability_items` | 有耐久 | OR: `TAG` = `minecraft:enchantable/durability`；NBT `max_damage`；NBT `damage`（mod 兜底） |
+| `ores` | 矿石 | OR: `TAG` CONTAINS `c:ores`；`TAG` REGEX `.+:ores/.*`；`ITEM_ID` REGEX `.*_ore$` |
+
+### 9.12 `routeRules[]`
 
 | 字段 | 类型 | 说明 |
 |---|---|---|
@@ -833,7 +853,7 @@ cell 字段：
 | `action` | enum | `ROUTE_TO_ZONE` / `REJECT` / `ONLY_MARK` / `FALLBACK` |
 | `explanation` | string | 说明文本，默认为 `""` |
 
-### 9.12 RouteAction 枚举
+### 9.13 RouteAction 枚举
 
 | 枚举值 | 语义 |
 |---|---|

@@ -70,15 +70,58 @@ Smart Bus 使用与 AE2 输入总线相同的动态 tick 节奏（有货时加�
 
 ### 游戏内快速预设
 
-JSON 文本框上方有三个一键预设（点击即写入并保存）：
+JSON 文本框上方有三个一键预设（点击即写入并保存）。更多样板将在后续版本添加。
 
 | 预设 | 含义 |
 | :--- | :--- |
-| **所有物品** | 匹配任意物品 |
-| **有耐久** | 含耐久组件的物品 |
-| **矿石** | 常见矿石标签与命名 |
+| **所有物品** | 匹配任意物品（`ITEM_ID` 正则 `.+`） |
+| **有耐久** | 见下方「有耐久」说明 |
+| **矿石** | `c:ores` 标签、`*:ores/*` 路径，或 ID 以 `_ore` 结尾 |
 
 悬停按钮可查看简要说明。需要更复杂的规则时再使用 **网页编辑**。
+
+#### 「有耐久」预设
+
+匹配**具有耐久机制**的物品（盔甲、工具、武器、盾牌等），**不是**按攻击力筛选。
+
+| 条件（OR，满足任一即可） | 说明 |
+| :--- | :--- |
+| `TAG` = `minecraft:enchantable/durability` | 主条件：原版与多数 mod 的可耐久物品（含满耐久盔甲） |
+| `NBT_PATH` `components.minecraft:max_damage` | 显式带有最大耐久组件 |
+| `NBT_PATH` `components.minecraft:damage` | 兜底：部分 mod 物品无上述标签但 NBT 中有耐久损耗 |
+
+> **命名说明：** Minecraft 1.21 中 `minecraft:damage` 组件表示**已消耗的耐久**，不是攻击力。攻击力在 `minecraft:attribute_modifiers` 中（如 `minecraft:attack_damage`）。
+
+**通常会匹配：** 钻甲、下界合金工具、盾牌、用过的剑/镐。
+
+**通常不会匹配：** 马铠（无 `enchantable/durability` 标签）、部分用 mod 自定义耐久系统的饰品（如部分 Curio 装备）。
+
+对应 JSON：
+
+```json
+{
+  "combinator": "OR",
+  "rules": [
+    {
+      "field": "TAG",
+      "operator": "EQUALS",
+      "value": "minecraft:enchantable/durability"
+    },
+    {
+      "field": "NBT_PATH",
+      "operator": "REGEX",
+      "value": "components.minecraft:max_damage||.+"
+    },
+    {
+      "field": "NBT_PATH",
+      "operator": "REGEX",
+      "value": "components.minecraft:damage||.+"
+    }
+  ]
+}
+```
+
+源码：`SmartBusFilterPresets.Preset.DURABILITY_ITEMS`（与网页编辑器 `templates.js` 中 `durability_items` 样板一致）。
 
 未配置过滤器时，总线不会传输任何物品。
 
@@ -118,12 +161,12 @@ JSON 文本框上方有三个一键预设（点击即写入并保存）：
 
 ### 网页编辑器快速样板
 
-离线编辑器提供三个一键样板（加载后仍需 **复制到游戏 → 粘贴 → 保存**）：
+离线编辑器提供三个一键样板（加载后仍需 **复制到游戏 → 粘贴 → 保存**）。与游戏内预设同源，定义在 `tools/filter-editor/templates.js`。
 
 | 样板 | 含义 |
 | :--- | :--- |
 | **所有物品** | 匹配任意物品 |
-| **有耐久的物品** | 含 `minecraft:damage` / `minecraft:max_damage` 组件 |
+| **有耐久的物品** | 同游戏内「有耐久」预设（标签 + NBT 兜底，见上文） |
 | **矿石** | `c:ores` 标签、`*:ores/*` 路径，或 ID 以 `_ore` 结尾 |
 
 过滤器与路由配置（服主 profiles）使用同一套 FilterExpression 语法，但 Smart Bus 只需粘贴**表达式对象本身**，不需要完整的 routing profile 文件。

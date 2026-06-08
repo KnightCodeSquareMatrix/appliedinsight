@@ -22,6 +22,7 @@ import appeng.api.networking.crafting.ICraftingLink;
 import appeng.api.networking.crafting.ICraftingPlan;
 import appeng.api.networking.crafting.ICraftingRequester;
 import appeng.api.networking.crafting.ICraftingService;
+import appeng.api.networking.crafting.ICraftingSimulationRequester;
 import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEItemKey;
@@ -71,7 +72,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
         implements InternalInventoryHost, ISaveProvider, IInWorldGridNodeHost, IActionHost, ICraftingRequester,
-        ItemPersistable {
+        ICraftingSimulationRequester, ItemPersistable {
     private static final Component TITLE = Component.translatable("block.appliedinsight.digital_asset_vault");
     private static final String INVENTORY_TAG = "InputInventory";
     private static final String ABSORBED_CELL_COUNT_TAG = "AbsorbedCellCount";
@@ -88,6 +89,11 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
     private static final int MAX_MIGRATION_IDLE_BACKOFF_STREAK = 9;
     private static final int AUTO_EXPAND_BLOCKED_LOG_INTERVAL = 200;
     private static final int CRAFTABILITY_REFRESH_INTERVAL = 20;
+    private static final int AUTO_EXPAND_COOLDOWN_TICKS = 40;
+    /** Built-in vault capacity equivalent to two empty AE2 1k storage cells (2 x 1024 bytes). */
+    private static final long BUILTIN_BYTES = 2048L;
+    /** Built-in type slots equivalent to two empty AE2 1k storage cells (2 x 63 types). */
+    private static final long BUILTIN_TYPE_CAPACITY = 126L;
 
     private final AppEngInternalInventory inputInventory = new AppEngInternalInventory(this, 1, 1);
     private final IActionSource actionSource;
@@ -112,8 +118,12 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
     private boolean expansionCellValid;
     private boolean expansionCellCraftable;
     private int craftabilityRefreshCooldown;
+    private int autoExpandCooldownTicks;
+    private boolean manualExpandSession;
+    private String expandOnceDetail = "";
     private Future<ICraftingPlan> craftingFuture;
     private ICraftingLink expansionCraftingLink;
+    private ExpansionMode pendingExpansionMode;
 
     public DigitalAssetVaultBlockEntity(BlockPos pos, BlockState state) {
         super(SorterBlockEntities.DIGITAL_ASSET_VAULT.get(), pos, state);
@@ -142,11 +152,11 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
     }
 
     public long getAbsorbedBytes() {
-        return absorbedBytes;
+        return BUILTIN_BYTES + absorbedBytes;
     }
 
     public long getAbsorbedTypeCapacity() {
-        return absorbedTypeCapacity;
+        return BUILTIN_TYPE_CAPACITY + absorbedTypeCapacity;
     }
 
     public long getUsedBytes() {
@@ -173,9 +183,9 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
                 migrateExistingItems,
                 node != null && node.isActive(),
                 getUsedBytes(),
-                absorbedBytes,
+                getAbsorbedBytes(),
                 getUsedTypeCapacity(),
-                absorbedTypeCapacity,
+                getAbsorbedTypeCapacity(),
                 storedItems.size(),
                 migrationCooldownTicks);
         setChanged();
@@ -217,9 +227,9 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
                 expansionCellId.isEmpty() ? "<none>" : expansionCellId,
                 expansionCellCraftable,
                 getUsedBytes(),
-                absorbedBytes,
+                getAbsorbedBytes(),
                 getUsedTypeCapacity(),
-                absorbedTypeCapacity);
+                getAbsorbedTypeCapacity());
         setChanged();
         if (autoExpandEnabled) {
             checkAutoExpandTrigger();
@@ -228,6 +238,10 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
 
     public String getExpansionCellId() {
         return expansionCellId;
+    }
+
+    public String getExpandOnceDetail() {
+        return expandOnceDetail;
     }
 
     public void setExpansionCellId(String expansionCellId) {
@@ -313,7 +327,7 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
 
     @Override
     public long insertCraftedItems(ICraftingLink link, AEKey what, long amount, Actionable mode) {
-        if (level == null || level.isClientSide() || link != expansionCraftingLink || !autoExpandEnabled
+        if (level == null || level.isClientSide() || link != expansionCraftingLink
                 || expansionCellId.isEmpty() || amount <= 0) {
             return 0;
         }
@@ -350,7 +364,7 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
         craftingFuture = null;
         if (link.isCanceled()) {
             logAutoExpand("crafting job canceled  [cell={}]", expansionCellId);
-            setStatus(Status.AUTO_EXPAND_FAILED);
+            applyExpansionFailureStatus();
         }
         setChanged();
     }
@@ -395,6 +409,9 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
         blockEntity.tickCraftabilityRefresh();
         blockEntity.tickAutoExpandPoll();
         blockEntity.checkAutoExpandTrigger();
+        if (blockEntity.autoExpandCooldownTicks > 0) {
+            blockEntity.autoExpandCooldownTicks--;
+        }
     }
 
     private void tickCraftabilityRefresh() {
@@ -430,6 +447,22 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
             return;
         }
         readBreakPersistedData(blockEntityData.copyTag(), registries);
+    }
+
+    @Override
+    public void importSettings(SettingsFrom mode, DataComponentMap input, @Nullable Player player) {
+        super.importSettings(mode, input, player);
+        if (mode != SettingsFrom.DISMANTLE_ITEM || level == null) {
+            return;
+        }
+        var blockEntityData = input.get(DataComponents.BLOCK_ENTITY_DATA);
+        if (blockEntityData == null) {
+            return;
+        }
+        readBreakPersistedData(blockEntityData.copyTag(), level.registryAccess());
+        validateExpansionCell();
+        requestStorageUpdate();
+        setChanged();
     }
 
     @Override
@@ -472,8 +505,8 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
         if (amount <= 0) {
             return 0;
         }
-        long freeBytes = Math.max(0, absorbedBytes - getUsedBytes());
-        long freeTypes = Math.max(0, absorbedTypeCapacity - getUsedTypeCapacity());
+        long freeBytes = Math.max(0, getAbsorbedBytes() - getUsedBytes());
+        long freeTypes = Math.max(0, getAbsorbedTypeCapacity() - getUsedTypeCapacity());
         boolean newType = !storedItems.containsKey(key);
         if (newType && freeTypes <= 0) {
             return 0;
@@ -555,7 +588,37 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
         }
     }
 
+    public void requestExpandOnce() {
+        if (level == null || level.isClientSide()) {
+            return;
+        }
+        manualExpandSession = true;
+        expandOnceDetail = "";
+        runExpansionAttempt(ExpansionMode.MANUAL);
+    }
+
+    public void showMigrateToSqlTbd() {
+        if (level == null || level.isClientSide()) {
+            return;
+        }
+        expandOnceDetail = "";
+        setStatus(Status.MIGRATE_TO_SQL_TBD);
+    }
+
+    @Override
+    public IActionSource getActionSource() {
+        return actionSource;
+    }
+
+    private enum ExpansionMode {
+        AUTO,
+        MANUAL
+    }
+
     private void checkAutoExpandTrigger() {
+        if (autoExpandCooldownTicks > 0) {
+            return;
+        }
         if (autoExpandBlockedLogCooldown > 0) {
             autoExpandBlockedLogCooldown--;
         }
@@ -566,8 +629,10 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
         long usedT = getUsedTypeCapacity();
         double bytesThreshold = Config.DAV_AUTO_EXPAND_BYTES_THRESHOLD.get();
         double typesThreshold = Config.DAV_AUTO_EXPAND_TYPES_THRESHOLD.get();
-        boolean bytesTriggered = absorbedBytes > 0 && (double) usedB / (double) absorbedBytes >= bytesThreshold;
-        boolean typesTriggered = absorbedTypeCapacity > 0 && (double) usedT / (double) absorbedTypeCapacity >= typesThreshold;
+        long totalBytes = getAbsorbedBytes();
+        long totalTypes = getAbsorbedTypeCapacity();
+        boolean bytesTriggered = totalBytes > 0 && (double) usedB / (double) totalBytes >= bytesThreshold;
+        boolean typesTriggered = totalTypes > 0 && (double) usedT / (double) totalTypes >= typesThreshold;
         if (!bytesTriggered && !typesTriggered) {
             return;
         }
@@ -581,16 +646,29 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
                         autoExpandEnabled,
                         expansionCellId.isEmpty() ? "<none>" : expansionCellId,
                         usedT,
-                        absorbedTypeCapacity,
-                        formatPercent(absorbedTypeCapacity > 0 ? (double) usedT / absorbedTypeCapacity : 0.0),
+                        totalTypes,
+                        formatPercent(totalTypes > 0 ? (double) usedT / totalTypes : 0.0),
                         usedB,
-                        absorbedBytes,
-                        formatPercent(absorbedBytes > 0 ? (double) usedB / absorbedBytes : 0.0));
+                        totalBytes,
+                        formatPercent(totalBytes > 0 ? (double) usedB / totalBytes : 0.0));
+            }
+            return;
+        }
+
+        runExpansionAttempt(ExpansionMode.AUTO);
+    }
+
+    private void runExpansionAttempt(ExpansionMode mode) {
+        if (expansionCellId.isEmpty()) {
+            if (mode == ExpansionMode.MANUAL) {
+                setManualExpandStatus(Status.EXPAND_ONCE_NO_CELL);
             }
             return;
         }
         if (isExpansionJobActive()) {
-            if (autoExpandBusyLogCooldown <= 0) {
+            if (mode == ExpansionMode.MANUAL) {
+                setManualExpandStatus(Status.EXPAND_ONCE_BUSY);
+            } else if (autoExpandBusyLogCooldown <= 0) {
                 autoExpandBusyLogCooldown = AUTO_EXPAND_BLOCKED_LOG_INTERVAL;
                 logAutoExpandVerbose(
                         "threshold exceeded but expansion job is busy  [craftingFuture={}, craftingLink={}]",
@@ -602,63 +680,93 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
 
         var grid = mainNode.getGrid();
         if (grid == null) {
-            logAutoExpandVerbose("threshold hit but ME grid is not connected  [bytesTriggered={}, typesTriggered={}]",
-                    bytesTriggered, typesTriggered);
+            if (mode == ExpansionMode.MANUAL) {
+                setManualExpandStatus(Status.EXPAND_ONCE_NO_GRID);
+            } else {
+                logAutoExpandVerbose("threshold hit but ME grid is not connected");
+            }
             return;
         }
         var item = BuiltInRegistries.ITEM.get(ResourceLocation.parse(expansionCellId));
         if (item == null) {
-            logAutoExpand("threshold hit but expansion cell item is unknown  [cell={}]", expansionCellId);
+            logAutoExpand("expansion cell item is unknown  [cell={}, manual={}]", expansionCellId, mode == ExpansionMode.MANUAL);
             return;
         }
         var key = AEItemKey.of(item);
         if (key == null) {
-            logAutoExpand("threshold hit but expansion cell key is invalid  [cell={}]", expansionCellId);
+            logAutoExpand("expansion cell key is invalid  [cell={}, manual={}]", expansionCellId, mode == ExpansionMode.MANUAL);
             return;
         }
 
         var craftingService = grid.getCraftingService();
         if (craftingService == null) {
-            logAutoExpand("threshold hit but crafting service is unavailable  [cell={}]", expansionCellId);
+            logAutoExpand("crafting service is unavailable  [cell={}, manual={}]", expansionCellId, mode == ExpansionMode.MANUAL);
             return;
         }
-        if (tryAbsorbExpansionCellFromNetwork(grid, item, "network-storage")) {
+        if (tryAbsorbExpansionCellFromNetwork(grid, item, mode == ExpansionMode.MANUAL ? "manual-request" : "network-storage")) {
             return;
         }
 
         var craftKey = ExpansionCellCrafting.resolveCraftingKey(craftingService, key);
         if (craftKey == null) {
-            logAutoExpand("threshold hit but no crafting pattern found  [cell={}, exactPatterns={}, craftableItems={}]",
+            logAutoExpand("no crafting pattern found  [cell={}, manual={}, exactPatterns={}, craftableItems={}]",
                     expansionCellId,
+                    mode == ExpansionMode.MANUAL,
                     craftingService.getCraftingFor(key).size(),
                     craftingService.getCraftables(AEItemKey.filter()).size());
-            setStatus(Status.AUTO_EXPAND_NO_PATTERN);
+            if (mode == ExpansionMode.MANUAL) {
+                setManualExpandStatus(Status.EXPAND_ONCE_NO_PATTERN);
+            } else {
+                setAutoExpandStatus(Status.AUTO_EXPAND_NO_PATTERN);
+                markAutoExpandCooldown();
+            }
             return;
         }
 
-        double bytesUsage = absorbedBytes > 0 ? (double) usedB / (double) absorbedBytes : 0.0;
-        double typesUsage = absorbedTypeCapacity > 0 ? (double) usedT / (double) absorbedTypeCapacity : 0.0;
-        AppliedStorageSorter.LOGGER.info(
-                "[DAV-Expand] pos={} threshold hit, starting craft  [cell={}, bytes={}/{} ({}% >= {}%), types={}/{} ({}% >= {}%), triggeredBy={}]",
-                worldPosition,
-                expansionCellId,
-                usedB,
-                absorbedBytes,
-                formatPercent(bytesUsage),
-                formatPercent(bytesThreshold),
-                usedT,
-                absorbedTypeCapacity,
-                formatPercent(typesUsage),
-                formatPercent(typesThreshold),
-                bytesTriggered ? (typesTriggered ? "bytes+types" : "bytes") : "types");
+        if (mode == ExpansionMode.AUTO) {
+            long usedB = getUsedBytes();
+            long usedT = getUsedTypeCapacity();
+            double bytesThreshold = Config.DAV_AUTO_EXPAND_BYTES_THRESHOLD.get();
+            double typesThreshold = Config.DAV_AUTO_EXPAND_TYPES_THRESHOLD.get();
+            long totalBytes = getAbsorbedBytes();
+            long totalTypes = getAbsorbedTypeCapacity();
+            double bytesUsage = totalBytes > 0 ? (double) usedB / (double) totalBytes : 0.0;
+            double typesUsage = totalTypes > 0 ? (double) usedT / (double) totalTypes : 0.0;
+            boolean bytesTriggered = totalBytes > 0 && bytesUsage >= bytesThreshold;
+            boolean typesTriggered = totalTypes > 0 && typesUsage >= typesThreshold;
+            AppliedStorageSorter.LOGGER.info(
+                    "[DAV-Expand] pos={} threshold hit, starting craft  [cell={}, bytes={}/{} ({}% >= {}%), types={}/{} ({}% >= {}%), triggeredBy={}]",
+                    worldPosition,
+                    expansionCellId,
+                    usedB,
+                    totalBytes,
+                    formatPercent(bytesUsage),
+                    formatPercent(bytesThreshold),
+                    usedT,
+                    totalTypes,
+                    formatPercent(typesUsage),
+                    formatPercent(typesThreshold),
+                    bytesTriggered ? (typesTriggered ? "bytes+types" : "bytes") : "types");
+        } else {
+            AppliedStorageSorter.LOGGER.info(
+                    "[DAV-Expand] pos={} manual expand-once, starting craft  [cell={}]",
+                    worldPosition,
+                    expansionCellId);
+        }
 
-        setStatus(Status.AUTO_EXPAND_CRAFTING);
+        if (mode == ExpansionMode.MANUAL) {
+            manualExpandSession = true;
+            setManualExpandStatus(Status.EXPAND_ONCE_CRAFTING);
+        } else {
+            setAutoExpandStatus(Status.AUTO_EXPAND_CRAFTING);
+        }
+        pendingExpansionMode = mode;
 
         if (!craftKey.equals(key)) {
             logAutoExpandVerbose("using fuzzy crafting key  [cell={}, craftKey={}]", expansionCellId, craftKey);
         }
         craftingFuture = craftingService.beginCraftingCalculation(
-                level, () -> actionSource, craftKey, 1, CalculationStrategy.CRAFT_LESS);
+                level, this, craftKey, 1, CalculationStrategy.CRAFT_LESS);
         setChanged();
     }
 
@@ -676,7 +784,7 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
         } catch (Exception e) {
             clearExpansionJobState();
             logAutoExpand("craft calculation failed  [cell={}, error={}]", expansionCellId, e.toString());
-            setStatus(Status.AUTO_EXPAND_FAILED);
+            applyExpansionFailureStatus();
             return;
         }
         craftingFuture = null;
@@ -684,15 +792,22 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
         if (plan == null) {
             clearExpansionJobState();
             logAutoExpand("craft calculation returned no plan  [cell={}]", expansionCellId);
-            setStatus(Status.AUTO_EXPAND_FAILED);
+            applyExpansionFailureStatus();
             return;
         }
         if (plan.simulation()) {
             clearExpansionJobState();
-            logAutoExpand("craft plan is simulation only (missing ingredients?)  [cell={}, missingItems={}]",
+            var missingSummary = formatMissingItems(plan.missingItems());
+            logAutoExpand("craft plan is simulation only (missing ingredients?)  [cell={}, missingItems={}, missing={}]",
                     expansionCellId,
-                    plan.missingItems().size());
-            setStatus(Status.AUTO_EXPAND_FAILED);
+                    plan.missingItems().size(),
+                    missingSummary);
+            if (manualExpandSession) {
+                setManualExpandStatus(Status.EXPAND_ONCE_MISSING_INGREDIENTS, missingSummary);
+            } else {
+                setAutoExpandStatus(Status.AUTO_EXPAND_FAILED);
+                markAutoExpandCooldown();
+            }
             return;
         }
 
@@ -700,12 +815,14 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
         if (grid == null) {
             clearExpansionJobState();
             logAutoExpand("craft plan ready but ME grid disconnected  [cell={}]", expansionCellId);
+            applyExpansionFailureStatus();
             return;
         }
         var craftingService = grid.getCraftingService();
         if (craftingService == null) {
             clearExpansionJobState();
             logAutoExpand("craft plan ready but crafting service unavailable  [cell={}]", expansionCellId);
+            applyExpansionFailureStatus();
             return;
         }
 
@@ -716,10 +833,13 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
                     expansionCellId,
                     result.errorCode(),
                     result.errorDetail());
-            setStatus(Status.AUTO_EXPAND_FAILED);
+            applyExpansionFailureStatus();
             return;
         }
         expansionCraftingLink = result.link();
+        if (manualExpandSession) {
+            setManualExpandStatus(Status.EXPAND_ONCE_CRAFTING);
+        }
         logAutoExpand("craft job submitted, waiting for crafted cell  [cell={}, link={}]",
                 expansionCellId,
                 expansionCraftingLink != null ? expansionCraftingLink.getCraftingID() : null);
@@ -739,14 +859,39 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
     private void clearExpansionJobState() {
         craftingFuture = null;
         expansionCraftingLink = null;
+        pendingExpansionMode = null;
+    }
+
+    private static String formatMissingItems(KeyCounter missing) {
+        if (missing == null || missing.isEmpty()) {
+            return "<none>";
+        }
+        var summary = new StringBuilder();
+        for (var entry : missing) {
+            if (!summary.isEmpty()) {
+                summary.append(", ");
+            }
+            summary.append(entry.getKey().getDisplayName().getString())
+                    .append('×')
+                    .append(entry.getLongValue());
+        }
+        return summary.toString();
     }
 
     private boolean tryAbsorbExpansionCellFromNetwork(IGrid grid, Item item, String source) {
-        var stack = ExpansionCellCrafting.extractOneStackFromNetwork(grid, item);
+        var stack = ExpansionCellCrafting.extractOneEmptyCellStackFromNetwork(grid, item, actionSource);
         if (stack.isEmpty()) {
             return false;
         }
         if (!completeExpansionCellAbsorb(stack, source)) {
+            var storageService = grid.getStorageService();
+            if (storageService != null) {
+                var key = AEItemKey.of(stack);
+                if (key != null) {
+                    storageService.getInventory().insert(key, stack.getCount(), Actionable.MODULATE, actionSource);
+                }
+            }
+            logAutoExpand("network cell could not be absorbed  [cell={}, source={}]", expansionCellId, source);
             return false;
         }
         logAutoExpand("absorbed cell from {} without crafting  [cell={}]", source, expansionCellId);
@@ -782,15 +927,20 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
             return false;
         }
         long previousCellCount = absorbedCellCount;
-        long previousBytes = absorbedBytes;
-        long previousTypeCapacity = absorbedTypeCapacity;
+        long previousBytes = getAbsorbedBytes();
+        long previousTypeCapacity = getAbsorbedTypeCapacity();
         absorbedCellCount = Math.addExact(absorbedCellCount, 1L);
         absorbedBytes = Math.addExact(absorbedBytes, capacity.totalBytes());
         absorbedTypeCapacity = Math.addExact(absorbedTypeCapacity, capacity.totalItemTypes().longValue());
         migrationIdleStreak = 0;
         clearExpansionJobState();
         requestStorageUpdate();
-        setStatus(Status.AUTO_EXPAND_COMPLETED);
+        if (manualExpandSession) {
+            setManualExpandStatus(Status.EXPAND_ONCE_COMPLETED);
+            manualExpandSession = false;
+        } else {
+            setAutoExpandStatus(Status.AUTO_EXPAND_COMPLETED);
+        }
         AppliedStorageSorter.LOGGER.info(
                 "[DAV-Expand] pos={} cell absorbed  [source={}, cell={}, addedBytes={}, addedTypes={}, cells={} -> {}, bytes={} -> {}, types={} -> {}, usedBytes={}/{}, usedTypes={}/{}]",
                 worldPosition,
@@ -801,13 +951,13 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
                 previousCellCount,
                 absorbedCellCount,
                 previousBytes,
-                absorbedBytes,
+                getAbsorbedBytes(),
                 previousTypeCapacity,
-                absorbedTypeCapacity,
+                getAbsorbedTypeCapacity(),
                 getUsedBytes(),
-                absorbedBytes,
+                getAbsorbedBytes(),
                 getUsedTypeCapacity(),
-                absorbedTypeCapacity);
+                getAbsorbedTypeCapacity());
         setChanged();
         return true;
     }
@@ -846,7 +996,9 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
 
         var stack = inputInventory.getStackInSlot(0);
         if (stack.isEmpty()) {
-            setStatus(Status.IDLE);
+            if (lastStatus.isInputSlotFeedback()) {
+                setStatus(Status.IDLE);
+            }
             return;
         }
         if (!StorageCells.isCellHandled(stack)) {
@@ -912,6 +1064,41 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
         }
     }
 
+    private void setManualExpandStatus(Status status) {
+        setManualExpandStatus(status, "");
+    }
+
+    private void setManualExpandStatus(Status status, String detail) {
+        expandOnceDetail = trimExpandOnceDetail(detail);
+        setStatus(status);
+    }
+
+    private void setAutoExpandStatus(Status status) {
+        expandOnceDetail = "";
+        setStatus(status);
+    }
+
+    private void applyExpansionFailureStatus() {
+        if (manualExpandSession) {
+            setManualExpandStatus(Status.EXPAND_ONCE_FAILED);
+            manualExpandSession = false;
+        } else {
+            setAutoExpandStatus(Status.AUTO_EXPAND_FAILED);
+            markAutoExpandCooldown();
+        }
+    }
+
+    private void markAutoExpandCooldown() {
+        autoExpandCooldownTicks = AUTO_EXPAND_COOLDOWN_TICKS;
+    }
+
+    private static String trimExpandOnceDetail(String detail) {
+        if (detail == null || detail.isEmpty()) {
+            return "";
+        }
+        return detail.length() <= 64 ? detail : detail.substring(0, 61) + "...";
+    }
+
     @Override
     public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
@@ -959,6 +1146,7 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
         tag.putString("ExpansionCellId", expansionCellId);
         tag.putBoolean("ExpansionCellValid", expansionCellValid);
         tag.putBoolean("ExpansionCellCraftable", expansionCellCraftable);
+        tag.putString("ExpandOnceDetail", expandOnceDetail);
     }
 
     private void readBreakPersistedData(CompoundTag tag, HolderLookup.Provider registries) {
@@ -979,6 +1167,7 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
         expansionCellId = tag.contains("ExpansionCellId") ? tag.getString("ExpansionCellId") : "";
         expansionCellValid = tag.getBoolean("ExpansionCellValid");
         expansionCellCraftable = tag.getBoolean("ExpansionCellCraftable");
+        expandOnceDetail = tag.contains("ExpandOnceDetail") ? tag.getString("ExpandOnceDetail") : "";
         craftingFuture = null;
         expansionCraftingLink = null;
     }
@@ -1073,7 +1262,16 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
         AUTO_EXPAND_CRAFTING("auto_expand_crafting"),
         AUTO_EXPAND_COMPLETED("auto_expand_completed"),
         AUTO_EXPAND_NO_PATTERN("auto_expand_no_pattern"),
-        AUTO_EXPAND_FAILED("auto_expand_failed");
+        AUTO_EXPAND_FAILED("auto_expand_failed"),
+        EXPAND_ONCE_NO_CELL("expand_once_no_cell"),
+        EXPAND_ONCE_BUSY("expand_once_busy"),
+        EXPAND_ONCE_NO_GRID("expand_once_no_grid"),
+        EXPAND_ONCE_MISSING_INGREDIENTS("expand_once_missing_ingredients"),
+        EXPAND_ONCE_CRAFTING("expand_once_crafting"),
+        EXPAND_ONCE_COMPLETED("expand_once_completed"),
+        EXPAND_ONCE_FAILED("expand_once_failed"),
+        EXPAND_ONCE_NO_PATTERN("expand_once_no_pattern"),
+        MIGRATE_TO_SQL_TBD("migrate_to_sql_tbd");
 
         private final String translationKeySuffix;
 
@@ -1083,6 +1281,18 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
 
         public String translationKey() {
             return "screen.appliedinsight.digital_asset_vault.status." + translationKeySuffix;
+        }
+
+        public boolean isInputSlotFeedback() {
+            return switch (this) {
+                case IDLE, ABSORBED, NOT_STORAGE_CELL, STACK_COUNT_NOT_ONE, NON_EMPTY_CELL, UNKNOWN_CAPACITY,
+                        UNKNOWN_TYPE_CAPACITY, INFINITE_CELL -> true;
+                default -> false;
+            };
+        }
+
+        public boolean isExpandOnceFeedback() {
+            return name().startsWith("EXPAND_ONCE_");
         }
 
         public static Status fromOrdinal(int ordinal) {

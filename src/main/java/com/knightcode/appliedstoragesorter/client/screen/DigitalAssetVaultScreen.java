@@ -4,9 +4,13 @@ import appeng.client.gui.style.ScreenStyle;
 import com.knightcode.appliedstoragesorter.client.format.ByteUnitFormatter;
 import com.knightcode.appliedstoragesorter.client.gui.SorterBaseScreen;
 import com.knightcode.appliedstoragesorter.client.gui.theme.GuiThemeProvider;
+import com.knightcode.appliedstoragesorter.blockentity.DigitalAssetVaultBlockEntity;
 import com.knightcode.appliedstoragesorter.client.gui.widget.ExpansionCellPickerWidget;
 import com.knightcode.appliedstoragesorter.client.gui.widget.NewDavToggleButton;
+import com.knightcode.appliedstoragesorter.client.gui.widget.ThemedAE2Button;
 import com.knightcode.appliedstoragesorter.menu.DigitalAssetVaultMenu;
+import com.knightcode.appliedstoragesorter.network.NewDavExpandOncePayload;
+import com.knightcode.appliedstoragesorter.network.NewDavMigrateToSqlPayload;
 import com.knightcode.appliedstoragesorter.network.NewDavTogglePayload;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
@@ -14,17 +18,17 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 
 public class DigitalAssetVaultScreen extends SorterBaseScreen<DigitalAssetVaultMenu> {
-    private static final int LEFT_COL_X = 14;
-    private static final int LEFT_COL_WIDTH = 106;
-    private static final int TOGGLE_HEIGHT = 18;
     private static final int CONTROL_TOP_Y = 26;
+    private static final int TOGGLE_ROW_SPACING = 24;
     private static final int TOGGLE_ROW_1_Y = CONTROL_TOP_Y;
-    private static final int TOGGLE_ROW_2_Y = CONTROL_TOP_Y + 22;
-    private static final int TOGGLE_ROW_3_Y = CONTROL_TOP_Y + 44;
+    private static final int TOGGLE_ROW_2_Y = CONTROL_TOP_Y + TOGGLE_ROW_SPACING;
+    private static final int TOGGLE_ROW_3_Y = CONTROL_TOP_Y + TOGGLE_ROW_SPACING * 2;
 
     private NewDavToggleButton migrateToggle;
     private NewDavToggleButton autoAcceptToggle;
     private NewDavToggleButton autoExpandToggle;
+    private ThemedAE2Button expandOnceButton;
+    private ThemedAE2Button migrateToSqlButton;
     private ExpansionCellPickerWidget expansionCellPicker;
 
     public DigitalAssetVaultScreen(DigitalAssetVaultMenu menu, Inventory playerInventory, Component title,
@@ -41,7 +45,7 @@ public class DigitalAssetVaultScreen extends SorterBaseScreen<DigitalAssetVaultM
     protected void init() {
         super.init();
 
-        int toggleX = leftPos + LEFT_COL_X;
+        int toggleX = leftPos + DigitalAssetVaultMenu.LEFT_COL_X;
 
         migrateToggle = addToggle(toggleX, TOGGLE_ROW_1_Y,
                 "screen.appliedinsight.digital_asset_vault.toggle.migrate",
@@ -61,6 +65,28 @@ public class DigitalAssetVaultScreen extends SorterBaseScreen<DigitalAssetVaultM
                 menu.isAutoExpandEnabled(),
                 NewDavTogglePayload.SETTING_AUTO_EXPAND);
 
+        expandOnceButton = new ThemedAE2Button(
+                leftPos + DigitalAssetVaultMenu.EXPAND_ONCE_BUTTON_X,
+                topPos + DigitalAssetVaultMenu.EXPAND_ONCE_BUTTON_Y,
+                DigitalAssetVaultMenu.EXPAND_ONCE_BUTTON_WIDTH,
+                DigitalAssetVaultMenu.EXPAND_ONCE_BUTTON_HEIGHT,
+                Component.translatable("screen.appliedinsight.digital_asset_vault.button.expand_once"),
+                btn -> sendExpandOnce());
+        expandOnceButton.setTooltip(Tooltip.create(
+                Component.translatable("screen.appliedinsight.digital_asset_vault.tooltip.expand_once")));
+        addRenderableWidget(expandOnceButton);
+
+        migrateToSqlButton = new ThemedAE2Button(
+                leftPos + DigitalAssetVaultMenu.MIGRATE_TO_SQL_BUTTON_X,
+                topPos + DigitalAssetVaultMenu.MIGRATE_TO_SQL_BUTTON_Y,
+                DigitalAssetVaultMenu.MIGRATE_TO_SQL_BUTTON_WIDTH,
+                DigitalAssetVaultMenu.MIGRATE_TO_SQL_BUTTON_HEIGHT,
+                Component.translatable("screen.appliedinsight.digital_asset_vault.button.migrate_to_sql"),
+                btn -> onMigrateToSql());
+        migrateToSqlButton.setTooltip(Tooltip.create(
+                Component.translatable("screen.appliedinsight.digital_asset_vault.tooltip.migrate_to_sql")));
+        addRenderableWidget(migrateToSqlButton);
+
         expansionCellPicker = new ExpansionCellPickerWidget(
                 leftPos + DigitalAssetVaultMenu.EXPANSION_SLOT_X,
                 topPos + DigitalAssetVaultMenu.EXPANSION_SLOT_Y,
@@ -73,7 +99,7 @@ public class DigitalAssetVaultScreen extends SorterBaseScreen<DigitalAssetVaultM
     private NewDavToggleButton addToggle(int x, int localY, String labelKey, String tooltipKey,
             boolean initialState, int setting) {
         NewDavToggleButton toggle = new NewDavToggleButton(
-                x, topPos + localY, LEFT_COL_WIDTH, TOGGLE_HEIGHT, labelKey, initialState,
+                x, topPos + localY, DigitalAssetVaultMenu.LEFT_COL_WIDTH, DigitalAssetVaultMenu.TOGGLE_HEIGHT, labelKey, initialState,
                 newState -> sendToggle(setting));
         toggle.setTooltip(Tooltip.create(Component.translatable(tooltipKey)));
         addRenderableWidget(toggle);
@@ -85,12 +111,28 @@ public class DigitalAssetVaultScreen extends SorterBaseScreen<DigitalAssetVaultM
                 new NewDavTogglePayload(menu.getBlockEntity().getBlockPos(), setting));
     }
 
+    private void sendExpandOnce() {
+        net.neoforged.neoforge.network.PacketDistributor.sendToServer(
+                new NewDavExpandOncePayload(menu.getBlockEntity().getBlockPos()));
+    }
+
+    private void onMigrateToSql() {
+        net.neoforged.neoforge.network.PacketDistributor.sendToServer(
+                new NewDavMigrateToSqlPayload(menu.getBlockEntity().getBlockPos()));
+    }
+
     @Override
     public void containerTick() {
         super.containerTick();
         syncToggle(migrateToggle, menu.isMigrateExistingItems());
         syncToggle(autoAcceptToggle, menu.isAutoAcceptIncoming());
         syncToggle(autoExpandToggle, menu.isAutoExpandEnabled());
+        if (expandOnceButton != null) {
+            var status = menu.getStatus();
+            boolean busy = status == DigitalAssetVaultBlockEntity.Status.EXPAND_ONCE_CRAFTING
+                    || status == DigitalAssetVaultBlockEntity.Status.AUTO_EXPAND_CRAFTING;
+            expandOnceButton.active = !menu.getExpansionCellId().isEmpty() && !busy;
+        }
     }
 
     private void syncToggle(NewDavToggleButton toggle, boolean serverState) {
@@ -144,11 +186,62 @@ public class DigitalAssetVaultScreen extends SorterBaseScreen<DigitalAssetVaultM
                 leftPos + rightX, topPos + DigitalAssetVaultMenu.EXPANSION_LABEL_Y, mutedColor, false);
 
         renderCellIndicator(guiGraphics, theme, rightX);
+        renderStatusLine(guiGraphics, textColor);
+    }
 
-        Component statusText = Component.translatable(menu.getStatus().translationKey());
-        guiGraphics.drawString(font,
-                Component.translatable("screen.appliedinsight.digital_asset_vault.status", statusText),
-                leftPos + rightX, topPos + DigitalAssetVaultMenu.STATUS_Y, textColor, false);
+    private void renderStatusLine(GuiGraphics guiGraphics, int textColor) {
+        DigitalAssetVaultBlockEntity.Status status = menu.getStatus();
+        if (status == DigitalAssetVaultBlockEntity.Status.IDLE) {
+            return;
+        }
+
+        int color = resolveStatusColor(status, textColor);
+        Component statusMessage = resolveStatusMessage(status);
+        Component statusLine = Component.translatable("screen.appliedinsight.digital_asset_vault.status",
+                statusMessage);
+        drawWrappedText(guiGraphics, statusLine,
+                leftPos + DigitalAssetVaultMenu.STATUS_X,
+                topPos + DigitalAssetVaultMenu.STATUS_Y,
+                DigitalAssetVaultMenu.STATUS_WIDTH,
+                DigitalAssetVaultMenu.STATUS_MAX_LINES,
+                color);
+    }
+
+    private Component resolveStatusMessage(DigitalAssetVaultBlockEntity.Status status) {
+        if (status == DigitalAssetVaultBlockEntity.Status.EXPAND_ONCE_MISSING_INGREDIENTS
+                && !menu.getExpandOnceDetail().isEmpty()) {
+            return Component.translatable(
+                    "screen.appliedinsight.digital_asset_vault.status.expand_once_missing_ingredients.detail",
+                    menu.getExpandOnceDetail());
+        }
+        return Component.translatable(status.translationKey());
+    }
+
+    private int resolveStatusColor(DigitalAssetVaultBlockEntity.Status status, int defaultColor) {
+        if (status == DigitalAssetVaultBlockEntity.Status.EXPAND_ONCE_COMPLETED) {
+            return 0xFF55FF55;
+        }
+        if (status.isExpandOnceFeedback()
+                && status != DigitalAssetVaultBlockEntity.Status.EXPAND_ONCE_CRAFTING) {
+            return 0xFFFFAA44;
+        }
+        if (status == DigitalAssetVaultBlockEntity.Status.MIGRATE_TO_SQL_TBD) {
+            return 0xFFFFAA44;
+        }
+        return defaultColor;
+    }
+
+    private void drawWrappedText(GuiGraphics guiGraphics, Component text, int x, int y, int maxWidth,
+            int maxLines, int color) {
+        int line = 0;
+        for (var part : font.split(text, maxWidth)) {
+            if (line >= maxLines) {
+                break;
+            }
+            guiGraphics.drawString(font, part, x, y, color, false);
+            y += DigitalAssetVaultMenu.STATUS_LINE_HEIGHT;
+            line++;
+        }
     }
 
     private String trimToWidth(String text, int maxWidth) {

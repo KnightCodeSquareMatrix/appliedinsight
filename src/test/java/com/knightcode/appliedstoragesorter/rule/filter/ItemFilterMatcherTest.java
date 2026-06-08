@@ -240,4 +240,42 @@ class ItemFilterMatcherTest {
     void extractEmptyNbtReturnsNull() {
         assertNull(NbtPathExtractor.extract("", "path"));
     }
+
+    @Test
+    void extractSnbtStackNbt() {
+        String snbt = "{components:{\"minecraft:damage\":276},count:1,id:\"minecraft:diamond_pickaxe\"}";
+        String extracted = NbtPathExtractor.extract(snbt, "components.minecraft:damage");
+        assertNotNull(extracted, "SNBT should parse; got null");
+        assertEquals("276", extracted);
+    }
+
+    @Test
+    void durabilityPresetMatchesTagOnlyItem() {
+        var filter = new ItemFilter(
+                "durability",
+                "durability",
+                "",
+                true,
+                SmartBusFilterPresets.Preset.DURABILITY_ITEMS.expression());
+        var shield = new ItemMatchContext(
+                "minecraft:shield",
+                "minecraft",
+                "Shield",
+                Set.of("minecraft:enchantable/durability"),
+                true,
+                1L,
+                "{components:{\"minecraft:enchantments\":{levels:{\"minecraft:unbreaking\":3}}},count:1,id:\"minecraft:shield\"}");
+        assertTrue(ItemFilterMatcher.matches(filter, shield));
+    }
+
+    @Test
+    void durabilityPresetDoesNotMatchNonDurabilityItem() {
+        var filter = new ItemFilter(
+                "durability",
+                "durability",
+                "",
+                true,
+                SmartBusFilterPresets.Preset.DURABILITY_ITEMS.expression());
+        assertFalse(ItemFilterMatcher.matches(filter, SIMPLE_CONTEXT));
+    }
 }

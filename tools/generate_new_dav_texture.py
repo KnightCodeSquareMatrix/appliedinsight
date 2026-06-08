@@ -17,32 +17,31 @@ from gui_texture_common import (
 
 OUTPUT = (
     Path(__file__).resolve().parent.parent
-    / "src/main/resources/assets/appliedstoragesorter/textures/gui/new_digital_asset_vault.png"
+    / "src/main/resources/assets/appliedinsight/textures/gui/digital_asset_vault.png"
 )
 
-PANEL_WIDTH = 226
-PANEL_HEIGHT = 238
-FILE_WIDTH = 256
-FILE_HEIGHT = 256
+PANEL_WIDTH = 360
+PANEL_HEIGHT = 262
+FILE_WIDTH = 384
+FILE_HEIGHT = 320
 
 HEADER_HEIGHT = 20
-INVENTORY_SECTION_Y = 156
-COLUMN_DIVIDER_X = 128
+INVENTORY_SECTION_Y = 178
+COLUMN_DIVIDER_X = 178
 
-LEFT_SECTION = (8, 22, 116, 132)
-# Right column: title (28) → slot (44) → stats (68+); panel wraps content with bottom padding
-RIGHT_SECTION = (134, 22, 84, 88)
+LEFT_SECTION = (8, 22, 168, 148)
+RIGHT_SECTION = (182, 22, 170, 148)
 
-# Sync with NewDigitalAssetVaultMenu
-RIGHT_SECTION_X = 134
-RIGHT_SECTION_WIDTH = 84
+# Sync with DigitalAssetVaultMenu
+RIGHT_SECTION_X = 182
+RIGHT_SECTION_WIDTH = 170
 SLOT_SIZE = 18
 INPUT_SLOT_X = RIGHT_SECTION_X + (RIGHT_SECTION_WIDTH - SLOT_SIZE) // 2
-INPUT_SLOT_Y = 44
+INPUT_SLOT_Y = 46
 
-PLAYER_INV_X = 30
-PLAYER_INV_ROWS = (162, 180, 198)
-PLAYER_HOTBAR_Y = 220
+PLAYER_INV_X = 99
+PLAYER_INV_ROWS = (184, 202, 220)
+PLAYER_HOTBAR_Y = 244
 PLAYER_INV_COLS = 9
 SLOT_STEP = 18
 

@@ -259,14 +259,19 @@ public class SmartBusPart extends AEBasePart implements IGridTickable {
     public void writeToStream(RegistryFriendlyByteBuf data) {
         super.writeToStream(data);
         data.writeByte(mode.ordinal());
+        data.writeUtf(filterJson == null ? "" : filterJson);
     }
 
     @Override
     public boolean readFromStream(RegistryFriendlyByteBuf data) {
         boolean changed = super.readFromStream(data);
-        SmartBusMode previous = mode;
+        SmartBusMode previousMode = mode;
+        String previousFilter = filterJson;
         mode = SmartBusMode.fromNetworkOrdinal(data.readByte());
-        boolean anyChange = changed || previous != mode;
+        String receivedFilter = data.readUtf();
+        filterJson = receivedFilter.isBlank() ? null : receivedFilter;
+        boolean anyChange = changed || previousMode != mode
+                || !java.util.Objects.equals(previousFilter, filterJson);
         if (anyChange && getHost() != null) {
             getHost().markForUpdate();
         }

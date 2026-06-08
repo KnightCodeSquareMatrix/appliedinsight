@@ -22,14 +22,19 @@ window.FILTER_EDITOR_TEMPLATES = [
       combinator: "OR",
       rules: [
         {
-          field: "NBT_PATH",
-          operator: "REGEX",
-          value: "components.minecraft:damage||.*",
+          field: "TAG",
+          operator: "EQUALS",
+          value: "minecraft:enchantable/durability",
         },
         {
           field: "NBT_PATH",
           operator: "REGEX",
-          value: "components.minecraft:max_damage||.*",
+          value: "components.minecraft:max_damage||.+",
+        },
+        {
+          field: "NBT_PATH",
+          operator: "REGEX",
+          value: "components.minecraft:damage||.+",
         },
       ],
     },

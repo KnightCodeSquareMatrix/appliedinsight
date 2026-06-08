@@ -14,7 +14,7 @@
   <img src="https://img.shields.io/badge/AE2-19.2.17-brightgreen" alt="AE2 19.2.17"/>
   <img src="https://img.shields.io/badge/Java-21-red?logo=openjdk" alt="Java 21"/>
   <img src="https://img.shields.io/badge/license-ARR-lightgrey" alt="License: ARR"/>
-  <img src="https://img.shields.io/badge/version-0.9.0--beta-yellow" alt="Version 0.9.0-beta"/>
+  <img src="https://img.shields.io/badge/version-0.9.1-yellow" alt="Version 0.9.1"/>
 </p>
 
 ---
@@ -23,7 +23,7 @@
 >
 > **应用能源：洞察**（Applied Energistics: Insight，社区常称 **AE 洞察**）是 AE2 的存储扩展模组。
 >
-> - **数字资产库（DAV）** — 把多个 Storage Cell **吸收聚合成一个超大存储池**；容量吃紧时**自动提取或合成新 Cell 并吸收**，仓库自己「长大」
+> - **数字资产库（DAV）** — 自带 **2k 字节 / 126 种**初始容量，并可将多个 Storage Cell **吸收聚合成更大存储池**；容量吃紧时**自动提取或合成新 Cell 并吸收**，仓库自己「长大」
 > - **智能总线（Smart Bus）** — 带 **JSON 自定义过滤器** 的输入/输出总线；游戏内预设 + 离线网页编辑器，精确控制什么货进、什么货出
 > - **命令执行块** — 存储分析、碎片合并、（可选）规则路由整理的一键终端
 
@@ -33,16 +33,17 @@ Mod ID: `appliedinsight` · MC 1.21.1 · NeoForge 21.1.224 · AE2 19.2.17
 
 ## 数字资产库 — 吸收 Cell，自动扩容
 
-DAV 不是一格一格插 Cell 的驱动器，而是把**空的 AE2 Storage Cell 吸收掉**，把 Cell 的字节上限和物品种类上限**合并进一个集中存储池**。
+DAV 不是一格一格插 Cell 的驱动器，而是**放置即可用的集中存储池**（内置相当于两张空 1k Cell：**2048 字节 / 126 种**），并可将**空的 AE2 Storage Cell 吸收掉**，把 Cell 的字节上限和物品种类上限**叠加进同一池子**。
 
 | 能力 | 说明 |
 |------|------|
-| **Cell 吸收聚合** | 放入空 Storage Cell → Cell 消失，DAV 容量叠加。多个 Cell 合成一个「大仓库」 |
+| **内置初始容量** | 无需先吸收 Cell；每个 DAV 固定提供 2048 字节与 126 种物品上限 |
+| **Cell 吸收聚合** | 放入空 Storage Cell → Cell 消失，在基础容量之上继续叠加。多个 Cell 合成一个「大仓库」 |
 | **导入现有库存** | 刚接入网络时，周期性把网络里散落的物品迁入 DAV |
 | **自动接收后续物品** | 开启后 DAV 作为优先存储目标，新货主动进入 DAV |
 | **自动扩容** | 字节或种类占用达到阈值（默认 80%）时，自动从网络提取空 Cell **或** 向 ME 自动合成提交任务，成品 Cell 吸收进 DAV |
 
-**推荐流程：** 接入 ME 网络 → 手动吸收第一个 Cell → （可选）导入库存 → 开启自动接收 → 在扩容槽指定 Cell 类型并确认样板可用 → 开启自动扩容。之后容量紧张时 DAV 会自行扩容，无需反复手工造 Cell。
+**推荐流程：** 接入 ME 网络 → 开启自动接收 → （可选）导入库存 → （可选）吸收 Cell 进一步扩容 → 在扩容槽指定 Cell 类型并确认样板可用 → 开启自动扩容。之后容量紧张时 DAV 会自行扩容，无需反复手工造 Cell。
 
 ```
   [空 Cell] ──吸收──▶ [ DAV 存储池 ] ◀── 网络物品迁入
@@ -104,7 +105,7 @@ Smart Bus 是 AE2 线缆部件，在输入/输出总线基础上增加 **FilterE
 
 ### 安装
 
-1. 从 [Releases](https://github.com/KnightCodeSquareMatrix/appliedinsight/releases) 下载 `appliedinsight-0.9.0-beta.jar`
+1. 从 [Releases](https://github.com/KnightCodeSquareMatrix/appliedinsight/releases) 下载 `appliedinsight-0.9.1.jar`
 2. 放入实例 `mods/` 目录（需已安装 AE2）
 3. 进游戏合成 **数字资产库**、**智能总线**、**命令执行块**，接入 ME 网络即可
 

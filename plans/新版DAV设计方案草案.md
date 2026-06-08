@@ -91,6 +91,17 @@ DAV 直接暴露给 AE2 网络
 
 ## 4. DAV 的存储模型
 
+### 4.0 内置基础容量（已实现）
+
+每个 DAV 放置后自带固定基础容量，相当于**两张空 1k 物品存储元件**：
+
+```text
+BUILTIN_BYTES         = 2048   // 2 × 1024
+BUILTIN_TYPE_CAPACITY = 126    // 2 × 63 types
+```
+
+实现上通过 `getAbsorbedBytes()` / `getAbsorbedTypeCapacity()` 叠加，NBT 只持久化吸收获得的额外容量；旧存档加载后也会自动获得基础值。界面「已吸收 Cell」计数仅统计真实吸收的 Cell，不含内置部分。
+
 ### 4.1 Cell 被吸收为容量
 
 玩家向 DAV 放入 AE2 Storage Cell 后，Cell 不再作为独立物理容器存在，而是被转化为 DAV 后端 vault 的容量。

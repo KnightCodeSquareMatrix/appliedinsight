@@ -7,7 +7,7 @@
 ## 职责
 智能总线 GUI（400×280 大面板）：
 - 顶栏：模式名 + 切换模式 / 打开网页编辑器
-- 三枚**预设**按钮（`SmartBusFilterPresets`）
+- 三枚**预设**按钮（`SmartBusFilterPresets`：`all_items` / `durability_items` / `ores`）
 - **MultiLineEditBox**（360×166）编辑 filter JSON
 - 实时摘要 + 校验反馈；粘贴/复制/保存/清除
 - 发包：`SmartBusModePayload`、`SmartBusFilterPayload`

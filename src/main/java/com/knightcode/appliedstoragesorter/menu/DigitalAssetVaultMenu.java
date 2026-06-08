@@ -21,31 +21,47 @@ public class DigitalAssetVaultMenu extends AEBaseMenu {
     public static final SlotSemantic INPUT_CELL = SlotSemantics.register(
             "appliedinsight_INPUT_CELL", true, 501);
 
-    public static final int RIGHT_SECTION_X = 134;
+    public static final int RIGHT_SECTION_X = 182;
     public static final int RIGHT_COL_X = RIGHT_SECTION_X + 6;
-    public static final int GUI_WIDTH = 226;
+    public static final int GUI_WIDTH = 360;
     public static final int RIGHT_COL_WIDTH = GUI_WIDTH - RIGHT_COL_X - 8;
 
     public static final int SLOT_LABEL_X = RIGHT_SECTION_X + 8;
     public static final int SLOT_LABEL_Y = 28;
-    public static final int INPUT_SLOT_X = 167;
-    public static final int INPUT_SLOT_Y = 44;
+    public static final int INPUT_SLOT_X = 258;
+    public static final int INPUT_SLOT_Y = 46;
 
     public static final int ABSORPTION_TEXT_X = RIGHT_COL_X;
     public static final int STAT_TEXT_MAX_WIDTH = RIGHT_COL_WIDTH;
-    public static final int ABSORPTION_STAT_1_Y = 66;
-    public static final int ABSORPTION_BYTES_VALUE_Y = 76;
-    public static final int ABSORPTION_TYPES_TOTAL_Y = 86;
-    public static final int ABSORPTION_TYPES_USED_Y = 96;
+    public static final int ABSORPTION_STAT_1_Y = 70;
+    public static final int ABSORPTION_BYTES_VALUE_Y = 83;
+    public static final int ABSORPTION_TYPES_TOTAL_Y = 96;
+    public static final int ABSORPTION_TYPES_USED_Y = 109;
 
-    public static final int EXPANSION_LABEL_Y = 110;
+    public static final int EXPANSION_LABEL_Y = 124;
     public static final int EXPANSION_SLOT_X = INPUT_SLOT_X;
-    public static final int EXPANSION_SLOT_Y = 120;
+    public static final int EXPANSION_SLOT_Y = 136;
     public static final int EXPANSION_SLOT_SIZE = 18;
 
-    public static final int INDICATOR_Y = 140;
-    public static final int STATUS_Y = 150;
-    public static final int PLAYER_INV_Y = 162;
+    public static final int LEFT_COL_X = 14;
+    public static final int LEFT_COL_WIDTH = 158;
+    public static final int TOGGLE_HEIGHT = 18;
+    public static final int EXPAND_ONCE_BUTTON_X = LEFT_COL_X;
+    public static final int EXPAND_ONCE_BUTTON_Y = 92;
+    public static final int EXPAND_ONCE_BUTTON_WIDTH = LEFT_COL_WIDTH;
+    public static final int EXPAND_ONCE_BUTTON_HEIGHT = TOGGLE_HEIGHT;
+    public static final int MIGRATE_TO_SQL_BUTTON_X = LEFT_COL_X;
+    public static final int MIGRATE_TO_SQL_BUTTON_Y = EXPAND_ONCE_BUTTON_Y + EXPAND_ONCE_BUTTON_HEIGHT + 4;
+    public static final int MIGRATE_TO_SQL_BUTTON_WIDTH = LEFT_COL_WIDTH;
+    public static final int MIGRATE_TO_SQL_BUTTON_HEIGHT = TOGGLE_HEIGHT;
+
+    public static final int INDICATOR_Y = 158;
+    public static final int STATUS_X = 14;
+    public static final int STATUS_Y = 162;
+    public static final int STATUS_WIDTH = GUI_WIDTH - 28;
+    public static final int STATUS_MAX_LINES = 3;
+    public static final int STATUS_LINE_HEIGHT = 9;
+    public static final int PLAYER_INV_Y = 184;
 
     private static final int PLAYER_INV_START = 1;
     private static final int PLAYER_INV_END = PLAYER_INV_START + 27;
@@ -54,6 +70,10 @@ public class DigitalAssetVaultMenu extends AEBaseMenu {
     /** Max synced chars for expansion cell item id (e.g. ae2:item_storage_cell_64k). */
     private static final int EXPANSION_CELL_ID_MAX_LENGTH = 64;
     private static final int EXPANSION_CELL_ID_CHAR_SLOTS = 32;
+
+    /** Max synced chars for expand-once detail (missing ingredients summary). */
+    private static final int EXPAND_ONCE_DETAIL_MAX_LENGTH = 64;
+    private static final int EXPAND_ONCE_DETAIL_CHAR_SLOTS = 32;
 
     private final DigitalAssetVaultBlockEntity blockEntity;
     private final ContainerLevelAccess access;
@@ -69,6 +89,9 @@ public class DigitalAssetVaultMenu extends AEBaseMenu {
     private boolean expansionCellValid;
     private boolean expansionCellCraftable;
     private int statusOrdinal;
+    private String expandOnceDetail = "";
+    private int syncedExpandOnceDetailLength;
+    private final int[] syncedExpandOnceDetailChars = new int[EXPAND_ONCE_DETAIL_CHAR_SLOTS];
     private int syncedExpansionCellIdLength;
     private final int[] syncedExpansionCellIdChars = new int[EXPANSION_CELL_ID_CHAR_SLOTS];
 
@@ -159,6 +182,10 @@ public class DigitalAssetVaultMenu extends AEBaseMenu {
 
     public DigitalAssetVaultBlockEntity.Status getStatus() {
         return DigitalAssetVaultBlockEntity.Status.fromOrdinal(statusOrdinal);
+    }
+
+    public String getExpandOnceDetail() {
+        return expandOnceDetail;
     }
 
     @Override
@@ -290,6 +317,7 @@ public class DigitalAssetVaultMenu extends AEBaseMenu {
             }
         });
         addExpansionCellIdDataSlots();
+        addExpandOnceDetailDataSlots();
     }
 
     private void addExpansionCellIdDataSlots() {
@@ -341,6 +369,55 @@ public class DigitalAssetVaultMenu extends AEBaseMenu {
         expansionCellId = builder.toString();
     }
 
+    private void addExpandOnceDetailDataSlots() {
+        addDataSlot(new DataSlot() {
+            @Override
+            public int get() {
+                return Math.min(expandOnceDetail.length(), EXPAND_ONCE_DETAIL_MAX_LENGTH);
+            }
+
+            @Override
+            public void set(int value) {
+                syncedExpandOnceDetailLength = Math.max(0, Math.min(value, EXPAND_ONCE_DETAIL_MAX_LENGTH));
+                applySyncedExpandOnceDetail();
+            }
+        });
+        for (int i = 0; i < EXPAND_ONCE_DETAIL_CHAR_SLOTS; i++) {
+            final int index = i;
+            addDataSlot(new DataSlot() {
+                @Override
+                public int get() {
+                    if (index >= expandOnceDetail.length()) {
+                        return 0;
+                    }
+                    return expandOnceDetail.charAt(index);
+                }
+
+                @Override
+                public void set(int value) {
+                    syncedExpandOnceDetailChars[index] = value & 0xFFFF;
+                    applySyncedExpandOnceDetail();
+                }
+            });
+        }
+    }
+
+    private void applySyncedExpandOnceDetail() {
+        if (syncedExpandOnceDetailLength <= 0) {
+            expandOnceDetail = "";
+            return;
+        }
+        var builder = new StringBuilder(syncedExpandOnceDetailLength);
+        for (int i = 0; i < syncedExpandOnceDetailLength && i < EXPAND_ONCE_DETAIL_CHAR_SLOTS; i++) {
+            char c = (char) syncedExpandOnceDetailChars[i];
+            if (c == 0) {
+                break;
+            }
+            builder.append(c);
+        }
+        expandOnceDetail = builder.toString();
+    }
+
     private void addLongDataSlots(LongGetter getter, LongSetter setter) {
         for (int part = 0; part < 4; part++) {
             final int shift = part * 16;
@@ -374,6 +451,7 @@ public class DigitalAssetVaultMenu extends AEBaseMenu {
         expansionCellValid = blockEntity.isExpansionCellValid();
         expansionCellCraftable = blockEntity.isExpansionCellCraftable();
         statusOrdinal = blockEntity.getLastStatus().ordinal();
+        expandOnceDetail = blockEntity.getExpandOnceDetail();
     }
 
     @FunctionalInterface

@@ -6,7 +6,7 @@
 
 ## 1. 项目定位
 
-- FACT-001: 应用能源：洞察（Applied Energistics: Insight）是一个 Minecraft NeoForge 模组，MC 1.21.1，当前版本 **0.9.0-beta**。
+- FACT-001: 应用能源：洞察（Applied Energistics: Insight）是一个 Minecraft NeoForge 模组，MC 1.21.1，当前版本 **0.9.1**。
 - FACT-002: 模组为 AE2 提供存储观测、整理与扩展（merge / route / analyze / DAV / Smart Bus）。
 - FACT-003: 扫描与分析覆盖内部 drive 与 DAV；宏观分析含 external 统计，merge/plan 执行仍以 cell 为操作对象。
 - FACT-004: 支持的 drive 类方块：`ae2:drive`、`extendedae:ex_drive`、`appliedinsight:digital_asset_vault`。
@@ -46,7 +46,7 @@
 - FACT-035: 分析层高度可疑节点默认按 infinite-like 处理，用户可纠偏（开箱即用优先原则）。
 - FACT-036: analysis/ 和 profilegen/ 可离线运行，不污染在线命令链。
 - FACT-037: 玩家输入层 — SorterCommandBlock GUI、DAV 扩容 GUI、Smart Bus 过滤器 GUI；Profile 文件绑定替代旧管理卡。
-- FACT-038: DAV (Digital Asset Vault / 数字资产库) — 方块 ID `digital_asset_vault`，吸收空 Storage Cell 扩容，作为 ME 存储节点。
+- FACT-038: DAV (Digital Asset Vault / 数字资产库) — 方块 ID `digital_asset_vault`，自带 2048 字节 / 126 types 基础容量（相当于 2×1k Cell），吸收空 Storage Cell 可继续扩容，作为 ME 存储节点。
 - FACT-039: DAV 不承担 route 决策，不承担 zone move 执行；内部实现类仍带 `NewDav*` 前缀（历史命名）。
 - FACT-040: **管理卡 (DigitalAssetManagementCard) 已在 beta 移除**；zone 数据改由 `config/appliedinsight/profiles/` + 网络绑定表达。
 - FACT-041: SorterCommandBlock 是推荐给普通玩家的操作入口（GUI 按钮触发命令）。
@@ -115,7 +115,7 @@
 
 ## 6. 术语表（精简版，仅核心术语，中英文对照 + 一句话定义）
 
-- **DAV (Digital Asset Vault / 数字资产库)** — 方块 ID `digital_asset_vault`，吸收 Cell 扩容，ME 存储节点。
+- **DAV (Digital Asset Vault / 数字资产库)** — 方块 ID `digital_asset_vault`，内置 2048 字节 / 126 types，吸收 Cell 可继续扩容，ME 存储节点。
 - **管理卡 (DigitalAssetManagementCard)** — **已移除**（beta）；由 Profile 文件 + bindProfile 替代。
 - FACT-093: **SorterCommandBlock (命令执行方块)** — GUI 操作入口，推荐给普通玩家，提供 3 个核心操作按钮和存储概览面板。
 - FACT-094: **RoutingProfile (路由配置)** — 规则层的配置文件，包含一组 RouteRule。
@@ -163,10 +163,10 @@
 
 - FACT-131: Minecraft 1.21.1, NeoForge 21.1.224, AE2 19.2.17。
 - FACT-132: Java 21, Parchment Mappings 2024.11.17。
-- FACT-133: Mod 版本 **0.9.0-beta**（对外名：Applied Energistics: Insight / 应用能源：洞察）。
+- FACT-133: Mod 版本 **0.9.1**（对外名：Applied Energistics: Insight / 应用能源：洞察）。
 - FACT-134: 所有命令使用 Brigadier 框架注册；根命令仍为 `/sorter`。
 - FACT-135: Config.java 含 ENABLE_SORTER、DEVELOPER_MODE、SMART_BUS_STACK_TRANSFERS_PER_TICK、DAV 自动扩容、Filter Editor URL 等。
 - FACT-136: 客户端分析翻译层 (`client/analysis/`) — `AnalysisPresenter` 将服务端 `StorageDiagnosis` 转为 `PlayerFacingAnalysis`。
 - FACT-137: `dark_matter_controller` 方块类仍保留于源码，**未注册**到游戏（材质测试用，beta 对玩家不可见）。
 
-> **最后更新**: 2026-06-08（0.9.0-beta 品牌与注册表同步）
+> **最后更新**: 2026-06-09（0.9.1 发布）

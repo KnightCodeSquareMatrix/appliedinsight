@@ -475,7 +475,7 @@ CREATE TABLE item_distributions (
 
 ### 上下文
 
-DAV 采用 Cell 吸收模型：玩家插入空 Cell，Cell 被消耗并转化为 bytes + types 容量。当 DAV 容量即将耗尽时，目标玩家（不会维护 AE2 的大冒险家）不应被要求手动监控容量、手动物造 Cell、手动插入。系统应当自动通过 ME 网络补齐容量。
+DAV 采用 Cell 吸收模型：每个 DAV 自带相当于两张空 1k Cell 的基础容量（2048 bytes + 126 types，通过 getter 叠加、不写入 NBT）；玩家插入空 Cell 时，Cell 被消耗并转化为额外的 bytes + types 容量。当 DAV 容量即将耗尽时，目标玩家（不会维护 AE2 的大冒险家）不应被要求手动监控容量、手动物造 Cell、手动插入。系统应当自动通过 ME 网络补齐容量。
 
 ### 决策
 

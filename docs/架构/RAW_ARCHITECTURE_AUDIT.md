@@ -607,7 +607,7 @@ SorterCommands.runMeStorageDump(CommandContext)
 | **Menu 继承** | `AEBaseMenu` | `AbstractContainerMenu` |
 | **存储模型** | 10 个物理 cell 槽 | `LinkedHashMap<AEItemKey, Long>` (内存存储) |
 | **Cell 处理** | Cell 插入槽中，AE2 管理 | Cell 被消耗 (吸收)，容量累加 |
-| **容量来源** | Cell 自身的存储容量 (AE2 管理) | `absorbedBytes` + `absorbedTypeCapacity` (累计) |
+| **容量来源** | Cell 自身的存储容量 (AE2 管理) | 内置 2048 bytes / 126 types + `absorbedBytes` + `absorbedTypeCapacity` (累计) |
 | **类型限制** | 受 Cell 类型限制 (如 63 种/cell) | 累计 `absorbedTypeCapacity` (可无限扩展) |
 | **状态管理** | 无 | 13 状态枚举 + 状态同步 |
 | **自动扩容** | 无 | 3 阶段系统: 检测→计算→提交→轮询 |

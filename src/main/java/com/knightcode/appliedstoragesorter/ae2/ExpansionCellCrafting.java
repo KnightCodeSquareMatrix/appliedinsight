@@ -3,10 +3,13 @@ package com.knightcode.appliedstoragesorter.ae2;
 import appeng.api.config.Actionable;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.crafting.ICraftingService;
+import appeng.api.networking.security.IActionSource;
 import appeng.api.networking.storage.IStorageService;
 import appeng.api.stacks.AEItemKey;
+import com.knightcode.appliedstoragesorter.ae2.CellCapacityInspector;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Resolves expansion-cell crafting patterns and network storage matches.
@@ -69,10 +72,16 @@ public final class ExpansionCellCrafting {
     }
 
     public static ItemStack extractOneStackFromNetwork(IGrid grid, Item item) {
+        return extractOneEmptyCellStackFromNetwork(grid, item, null);
+    }
+
+    public static ItemStack extractOneEmptyCellStackFromNetwork(IGrid grid, Item item,
+            @Nullable IActionSource source) {
         var storageService = grid.getStorageService();
         if (storageService == null) {
             return ItemStack.EMPTY;
         }
+        AEItemKey candidateKey = null;
         for (var entry : storageService.getCachedInventory()) {
             if (!(entry.getKey() instanceof AEItemKey itemKey)) {
                 continue;
@@ -80,12 +89,40 @@ public final class ExpansionCellCrafting {
             if (itemKey.getItem() != item || entry.getLongValue() <= 0) {
                 continue;
             }
-            long extracted = storageService.getInventory().extract(itemKey, 1, Actionable.MODULATE, null);
-            if (extracted <= 0) {
-                return ItemStack.EMPTY;
+            if (!isEmptyStorageCell(itemKey)) {
+                continue;
             }
-            return itemKey.toStack((int) extracted);
+            candidateKey = itemKey;
+            break;
         }
-        return ItemStack.EMPTY;
+        if (candidateKey == null) {
+            return ItemStack.EMPTY;
+        }
+        long extracted = storageService.getInventory().extract(candidateKey, 1, Actionable.MODULATE, source);
+        if (extracted <= 0) {
+            return ItemStack.EMPTY;
+        }
+        return candidateKey.toStack((int) extracted);
+    }
+
+    private static boolean isEmptyStorageCell(AEItemKey itemKey) {
+        var probe = itemKey.toStack(1);
+        if (!appeng.api.storage.StorageCells.isCellHandled(probe)) {
+            return false;
+        }
+        var cell = appeng.api.storage.StorageCells.getCellInventory(probe, null);
+        if (cell == null) {
+            return false;
+        }
+        var capacity = CellCapacityInspector.inspect(cell);
+        var itemId = itemKey.getId().toString();
+        if (CellCapacityInspector.isLikelyInfiniteCell(capacity, itemId)
+                || capacity == null
+                || capacity.totalBytes() <= 0
+                || capacity.totalItemTypes() == null
+                || capacity.totalItemTypes() <= 0) {
+            return false;
+        }
+        return capacity.usedBytes() <= 0 && cell.getAvailableStacks().isEmpty();
     }
 }

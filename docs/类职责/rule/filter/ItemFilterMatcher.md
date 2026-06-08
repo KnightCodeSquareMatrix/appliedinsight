@@ -18,3 +18,4 @@
 
 ## 维护备注
 - 数值解析异常会直接冒出 NumberFormatException，调用方需保证配置合法。
+- `NBT_PATH`：`value` 格式为 `path||comparison`（见 `docs/日志与JSON字段契约.md` §9.10）；耐久组件路径见 §9.10 表格。

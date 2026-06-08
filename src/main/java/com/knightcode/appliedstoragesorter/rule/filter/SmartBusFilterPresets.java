@@ -55,13 +55,17 @@ public final class SmartBusFilterPresets {
     private static FilterExpression durabilityItems() {
         return FilterGroup.or(List.of(
                 new FilterCondition(
-                        FilterField.NBT_PATH,
-                        FilterOperator.REGEX,
-                        "components.minecraft:damage||.*"),
+                        FilterField.TAG,
+                        FilterOperator.EQUALS,
+                        "minecraft:enchantable/durability"),
                 new FilterCondition(
                         FilterField.NBT_PATH,
                         FilterOperator.REGEX,
-                        "components.minecraft:max_damage||.*")));
+                        "components.minecraft:max_damage||.+"),
+                new FilterCondition(
+                        FilterField.NBT_PATH,
+                        FilterOperator.REGEX,
+                        "components.minecraft:damage||.+")));
     }
 
     private static FilterExpression ores() {

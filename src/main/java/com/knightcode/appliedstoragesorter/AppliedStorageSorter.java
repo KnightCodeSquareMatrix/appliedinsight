@@ -5,6 +5,10 @@ import org.slf4j.Logger;
 import com.knightcode.appliedstoragesorter.command.SorterCommands;
 import com.knightcode.appliedstoragesorter.network.FileChunkPayload;
 import com.knightcode.appliedstoragesorter.network.FileChunkPayloadHandler;
+import com.knightcode.appliedstoragesorter.network.NewDavExpandOncePayload;
+import com.knightcode.appliedstoragesorter.network.NewDavExpandOncePayloadHandler;
+import com.knightcode.appliedstoragesorter.network.NewDavMigrateToSqlPayload;
+import com.knightcode.appliedstoragesorter.network.NewDavMigrateToSqlPayloadHandler;
 import com.knightcode.appliedstoragesorter.network.NewDavSetExpansionCellPayload;
 import com.knightcode.appliedstoragesorter.network.NewDavSetExpansionCellPayloadHandler;
 import com.knightcode.appliedstoragesorter.network.NewDavTogglePayload;
@@ -69,6 +73,14 @@ public class AppliedStorageSorter {
                 NewDavSetExpansionCellPayload.TYPE,
                 NewDavSetExpansionCellPayload.CODEC,
                 NewDavSetExpansionCellPayloadHandler::handle);
+        registrar.playToServer(
+                NewDavExpandOncePayload.TYPE,
+                NewDavExpandOncePayload.CODEC,
+                NewDavExpandOncePayloadHandler::handle);
+        registrar.playToServer(
+                NewDavMigrateToSqlPayload.TYPE,
+                NewDavMigrateToSqlPayload.CODEC,
+                NewDavMigrateToSqlPayloadHandler::handle);
         registrar.playToServer(
                 SmartBusModePayload.TYPE,
                 SmartBusModePayload.CODEC,
