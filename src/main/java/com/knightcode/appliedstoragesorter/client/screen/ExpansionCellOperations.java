@@ -31,11 +31,13 @@ public final class ExpansionCellOperations {
         if (!accepts(stack)) {
             return;
         }
-        var itemId = BuiltInRegistries.ITEM.getKey(stack.getItem());
-        sendCellId(menu, itemId.toString());
+        var itemId = BuiltInRegistries.ITEM.getKey(stack.getItem()).toString();
+        menu.clientPreviewExpansionCell(itemId, true);
+        sendCellId(menu, itemId);
     }
 
     public static void clear(DigitalAssetVaultMenu menu) {
+        menu.clientPreviewExpansionCell("", false);
         sendCellId(menu, "");
     }
 

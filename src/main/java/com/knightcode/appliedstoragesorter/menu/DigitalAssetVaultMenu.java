@@ -51,6 +51,9 @@ public class DigitalAssetVaultMenu extends AEBaseMenu {
     private static final int PLAYER_INV_END = PLAYER_INV_START + 27;
     private static final int HOTBAR_START = PLAYER_INV_END;
     private static final int HOTBAR_END = HOTBAR_START + 9;
+    /** Max synced chars for expansion cell item id (e.g. ae2:item_storage_cell_64k). */
+    private static final int EXPANSION_CELL_ID_MAX_LENGTH = 64;
+    private static final int EXPANSION_CELL_ID_CHAR_SLOTS = 32;
 
     private final DigitalAssetVaultBlockEntity blockEntity;
     private final ContainerLevelAccess access;
@@ -66,6 +69,8 @@ public class DigitalAssetVaultMenu extends AEBaseMenu {
     private boolean expansionCellValid;
     private boolean expansionCellCraftable;
     private int statusOrdinal;
+    private int syncedExpansionCellIdLength;
+    private final int[] syncedExpansionCellIdChars = new int[EXPANSION_CELL_ID_CHAR_SLOTS];
 
     public DigitalAssetVaultMenu(int containerId, Inventory playerInventory,
             DigitalAssetVaultBlockEntity blockEntity) {
@@ -140,6 +145,16 @@ public class DigitalAssetVaultMenu extends AEBaseMenu {
 
     public boolean isExpansionCellCraftable() {
         return expansionCellCraftable;
+    }
+
+    /** Immediate client preview after JEI/EMI drop; server state follows via data slots. */
+    public void clientPreviewExpansionCell(String cellId, boolean valid) {
+        expansionCellId = cellId != null ? cellId : "";
+        expansionCellValid = valid;
+    }
+
+    public void refreshFromBlockEntity() {
+        updateLocalDataFromBlockEntity();
     }
 
     public DigitalAssetVaultBlockEntity.Status getStatus() {
@@ -274,6 +289,56 @@ public class DigitalAssetVaultMenu extends AEBaseMenu {
                 statusOrdinal = value;
             }
         });
+        addExpansionCellIdDataSlots();
+    }
+
+    private void addExpansionCellIdDataSlots() {
+        addDataSlot(new DataSlot() {
+            @Override
+            public int get() {
+                return Math.min(expansionCellId.length(), EXPANSION_CELL_ID_MAX_LENGTH);
+            }
+
+            @Override
+            public void set(int value) {
+                syncedExpansionCellIdLength = Math.max(0, Math.min(value, EXPANSION_CELL_ID_MAX_LENGTH));
+                applySyncedExpansionCellId();
+            }
+        });
+        for (int i = 0; i < EXPANSION_CELL_ID_CHAR_SLOTS; i++) {
+            final int index = i;
+            addDataSlot(new DataSlot() {
+                @Override
+                public int get() {
+                    if (index >= expansionCellId.length()) {
+                        return 0;
+                    }
+                    return expansionCellId.charAt(index);
+                }
+
+                @Override
+                public void set(int value) {
+                    syncedExpansionCellIdChars[index] = value & 0xFFFF;
+                    applySyncedExpansionCellId();
+                }
+            });
+        }
+    }
+
+    private void applySyncedExpansionCellId() {
+        if (syncedExpansionCellIdLength <= 0) {
+            expansionCellId = "";
+            return;
+        }
+        var builder = new StringBuilder(syncedExpansionCellIdLength);
+        for (int i = 0; i < syncedExpansionCellIdLength && i < EXPANSION_CELL_ID_CHAR_SLOTS; i++) {
+            char c = (char) syncedExpansionCellIdChars[i];
+            if (c == 0) {
+                break;
+            }
+            builder.append(c);
+        }
+        expansionCellId = builder.toString();
     }
 
     private void addLongDataSlots(LongGetter getter, LongSetter setter) {

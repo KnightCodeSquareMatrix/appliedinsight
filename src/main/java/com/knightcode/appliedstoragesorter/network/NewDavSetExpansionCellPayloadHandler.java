@@ -25,6 +25,10 @@ public final class NewDavSetExpansionCellPayloadHandler {
                 return;
             }
             blockEntity.setExpansionCellId(payload.cellId());
+            if (player.containerMenu instanceof DigitalAssetVaultMenu menu) {
+                menu.refreshFromBlockEntity();
+                menu.broadcastChanges();
+            }
         });
     }
 }
