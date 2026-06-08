@@ -58,14 +58,14 @@
 
 ### 安装
 
-1. 从 [Releases](https://github.com/your-repo/appliedinsight/releases) 下载最新 JAR
+1. 从 [Releases](https://github.com/KnightCodeSquareMatrix/appliedinsight/releases) 下载最新 JAR
 2. 放入 Minecraft 实例的 `mods/` 目录
 3. 启动游戏，确保 AE2 网络中有 **ME Controller**
 
 ### 从源码构建
 
 ```bash
-git clone https://github.com/your-repo/appliedinsight.git
+git clone https://github.com/KnightCodeSquareMatrix/appliedinsight.git
 cd appliedinsight
 ./gradlew build          # 编译（不运行测试）
 ./gradlew runClient      # 启动 Minecraft 客户端

@@ -57,7 +57,7 @@ java -version
 ## 2. 获取源码
 
 ```bash
-git clone https://github.com/your-repo/appliedinsight.git
+git clone https://github.com/KnightCodeSquareMatrix/appliedinsight.git
 cd appliedinsight
 ```
 
