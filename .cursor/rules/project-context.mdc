@@ -1,0 +1,77 @@
+---
+description: Applied Insight — 每轮必先 Read 项目文档，再回答仓库相关问题
+alwaysApply: true
+---
+
+# 强制启动协议（最高优先级，覆盖其他默认行为）
+
+凡涉及**本仓库**的问题——代码、架构、文档、功能、命令、GUI、构建、改法、排错——**每一轮回复**在输出任何面向用户的文字之前，必须先亲自 Read 以下文件（可并行）：
+
+1. `docs/ai/AI_ENTRY.md` — **每轮必读，第一站**
+2. `docs/架构/FACTS.md` — **每轮必读**
+3. `docs/类职责/索引.md` — 涉及具体类/包/改代码时 **必读**
+
+## 硬性要求
+
+- **每一轮**均适用，无「同一会话已读过可跳过」例外。
+- **禁止**凭训练记忆、本 rule 摘要、或语义搜索猜测后直接回答项目问题。
+- **禁止**在未完成上述 Read 之前，向用户解释架构、能力线、类职责或给出修改建议。
+- 本轮第一个工具调用必须是 Read 上述文件；读完后再做搜索、编辑或回复。
+
+## 可跳过 Read 的唯一情形
+
+仅当问题**明确与 Applied Insight 仓库无关**（例如：纯 Cursor 设置、通用 Git 命令、与本项目无关的编程概念），且不需要引用本仓库代码或文档时，才可跳过。
+
+---
+
+# Applied Energistics: Insight — 速查（读后对照，不可替代上文 Read）
+
+Mod ID `appliedinsight` · MC 1.21.1 · NeoForge · Java 21 · 包根 `com.knightcode.appliedstoragesorter`
+
+## 三条能力线（独立演进，禁止混用）
+
+| 能力线 | 命令 | 核心类 |
+|--------|------|--------|
+| Merge | `/sorter merge` | `MergeMovePlanner`, `SorterMergeService` |
+| 主路径 | `/sorter me planAndMove` | `LiveZoneAllocationPlanner`, `Ae2ZoneMoveExecutor` |
+| 观测 | `/sorter me storageDump` | `Ae2StorageAnalyzer`, `SorterStorageAnalysisService` |
+
+不要把 merge 写成通用入口；merge 路径不引入 profile/zone/route；storageDump 分析不塞进 merge 或 plan 路径。
+
+## 层边界（硬约束）
+
+```
+rule/       纯规则模型 — 零 Minecraft/AE2 依赖
+ae2/        AE2 集成层 — 不反向依赖 application/
+application/ 用例编排 — 不含持久化实现
+plan/       规划模型 — 不承担执行
+logging/    基础设施 — 不参与业务决策
+analysis/   离线分析 — 不污染在线命令链
+network/    只负责序列化/传输
+block/ + blockentity/  方块声明 + 生命周期
+```
+
+硬规则：
+1. `rule/**` 不得导入 `net.minecraft.*` 或 `appeng.*`
+2. 不把 `route`、`zone`、`cell`、`execute` 混在同一类
+3. DAV / Smart Bus 是玩家设备入口，不是 route 引擎；管理卡已移除，zone 由 Profile 文件表达
+4. 核心类不为日志需求扭曲职责
+5. `RuntimeCell` 已删除 → 用 `CellInfo` record；`Ae2StorageAnalyzer` 产出 `StorageDiagnosis`
+
+## 修改前检查
+
+1. **定性**：属于哪条能力线？是否涉及 network 包？
+2. **边界**：有无跨层依赖？有无不必要抽象？
+3. **文档同步**：类职责 → `docs/类职责/`；架构 → `docs/架构/FACTS.md`；JSON → `docs/日志与JSON字段契约.md`；命令 → `docs/参考/COMMANDS_REFERENCE.md`
+4. **验证**：`./gradlew compileJava` 通过；命令语义不变；JSON 向后兼容；新网络包注册 `CustomPacketPayload` + handler
+
+## 文档导航
+
+| 需要 | 路径 |
+|------|------|
+| ADR 详情 | `docs/ARCHITECTURE_DECISIONS.md` |
+| 命令参考 | `docs/参考/COMMANDS_REFERENCE.md` |
+| 前端契约 | `docs/参考/前端对接说明.md` |
+| GUI 验收 | `docs/ai/GUI_VISUAL_CHECKLIST.md` |
+
+原则：维护现有清晰边界；小步收口，少做幻想式重构。
