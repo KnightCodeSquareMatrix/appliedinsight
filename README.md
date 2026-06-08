@@ -3,9 +3,11 @@
 </p>
 
 <h1 align="center">Applied Energistics: Insight</h1>
+<h3 align="center">应用能源：洞察</h3>
 
 <p align="center">
-  <b>应用能源：洞察 · AE2 存储聚合、智能过滤与网络整理</b>
+  <b>AE2 storage aggregation · smart filtering · network maintenance</b><br/>
+  <b>AE2 存储聚合 · 智能过滤 · 网络整理</b>
 </p>
 
 <p align="center">
@@ -17,7 +19,13 @@
   <img src="https://img.shields.io/badge/version-0.9.1-yellow" alt="Version 0.9.1"/>
 </p>
 
+<p align="center">
+  <a href="#中文">中文</a> · <a href="#english">English</a>
+</p>
+
 ---
+
+## 中文
 
 > **30 秒速览**
 >
@@ -29,9 +37,7 @@
 
 Mod ID: `appliedinsight` · MC 1.21.1 · NeoForge 21.1.224 · AE2 19.2.17
 
----
-
-## 数字资产库 — 吸收 Cell，自动扩容
+### 数字资产库 — 吸收 Cell，自动扩容
 
 DAV 不是一格一格插 Cell 的驱动器，而是**放置即可用的集中存储池**（内置相当于两张空 1k Cell：**2048 字节 / 126 种**），并可将**空的 AE2 Storage Cell 吸收掉**，把 Cell 的字节上限和物品种类上限**叠加进同一池子**。
 
@@ -55,13 +61,11 @@ DAV 不是一格一格插 Cell 的驱动器，而是**放置即可用的集中�
 
 > 详细说明见 [`guidebook/digital-asset-vault.md`](guidebook/digital-asset-vault.md) · 游戏内 GuideMe 同名章节
 
----
-
-## 智能总线 — JSON 过滤器，想搬什么搬什么
+### 智能总线 — JSON 过滤器，想搬什么搬什么
 
 Smart Bus 是 AE2 线缆部件，在输入/输出总线基础上增加 **FilterExpression JSON 过滤器**。三种模式：**未配置** / **输入**（从背面库存拉货进网络）/ **输出**（从网络推货到背面）。Shift+右键或 GUI 切换。
 
-### 为什么比堆升级卡更灵活
+**为什么比堆升级卡更灵活**
 
 - **任意组合条件** — 按物品 ID、模组 ID、标签、耐久、数量等字段组合 `AND` / `OR`，支持嵌套分组
 - **游戏内快速预设** — 「所有物品」「有耐久」「矿石」一键写入
@@ -83,9 +87,7 @@ Smart Bus 是 AE2 线缆部件，在输入/输出总线基础上增加 **FilterE
 
 > 详细说明见 [`guidebook/smart-bus.md`](guidebook/smart-bus.md)
 
----
-
-## 命令执行块 — 分析 · 合并 · 整理
+### 命令执行块 — 分析 · 合并 · 整理
 
 右键打开终端 GUI，无需记命令：
 
@@ -99,17 +101,15 @@ Smart Bus 是 AE2 线缆部件，在输入/输出总线基础上增加 **FilterE
 
 > 详见 [`guidebook/sorter-command-block.md`](guidebook/sorter-command-block.md)
 
----
+### 快速开始
 
-## 快速开始
-
-### 安装
+**安装**
 
 1. 从 [Releases](https://github.com/KnightCodeSquareMatrix/appliedinsight/releases) 下载 `appliedinsight-0.9.1.jar`
 2. 放入实例 `mods/` 目录（需已安装 AE2）
 3. 进游戏合成 **数字资产库**、**智能总线**、**命令执行块**，接入 ME 网络即可
 
-### 从源码构建
+**从源码构建**
 
 ```bash
 git clone https://github.com/KnightCodeSquareMatrix/appliedinsight.git
@@ -120,7 +120,7 @@ cd appliedinsight
 
 产物位于 `build/libs/`。
 
-### 玩家指南
+**玩家指南**
 
 | 文档 | 内容 |
 |------|------|
@@ -130,9 +130,7 @@ cd appliedinsight
 | [`guidebook/sorter-command-block.md`](guidebook/sorter-command-block.md) | 终端 GUI 三栏布局 |
 | [`CHANGELOG.md`](CHANGELOG.md) | 版本变更与迁移说明 |
 
----
-
-## 开发者
+**开发者**
 
 | 文档 | 说明 |
 |------|------|
@@ -143,9 +141,7 @@ cd appliedinsight
 
 离线分析工具链（dump 分析、路由建议、profile 生成等）见 [`docs/参考/DEVELOPER_GUIDE.md`](docs/参考/DEVELOPER_GUIDE.md)。
 
----
-
-## 技术栈
+**技术栈**
 
 | 技术 | 版本 |
 |------|------|
@@ -155,14 +151,142 @@ cd appliedinsight
 
 可选客户端集成：JEI、EMI（DAV 扩容 Cell 拖拽、Smart Bus 过滤器编辑）。
 
+**许可证：** All Rights Reserved.
+
 ---
 
-## 许可证
+## English
 
-All Rights Reserved.
+> **30-second overview**
+>
+> **Applied Energistics: Insight** (Mod ID `appliedinsight`, often called **AE Insight**) is a storage extension for Applied Energistics 2.
+>
+> - **Digital Asset Vault (DAV)** — Ships with **2k bytes / 126 types** of built-in capacity and can **absorb Storage Cells into a single growing pool**; when space runs low it **pulls or autocrafts new cells and absorbs them** so the vault expands on its own
+> - **Smart Bus** — Import/export bus with **JSON filter expressions**; in-game presets plus an offline web editor for precise control over what moves in and out
+> - **Sorter Command Block** — One-click terminal for storage analysis, fragmentation merge, and optional profile-based routing
+
+Mod ID: `appliedinsight` · MC 1.21.1 · NeoForge 21.1.224 · AE2 19.2.17
+
+### Digital Asset Vault — absorb cells, auto-expand
+
+DAV is not a slot-by-slot drive. It is a **ready-to-use centralized storage pool** (built-in baseline equivalent to two empty 1k cells: **2048 bytes / 126 types**) that can **absorb empty AE2 Storage Cells** and **stack their byte and type limits into one pool**.
+
+| Capability | Description |
+|------------|-------------|
+| **Built-in baseline** | No cell required to start; every DAV provides 2048 bytes and 126 item types |
+| **Cell absorption** | Insert an empty Storage Cell → the cell is consumed and its limits are added on top of the baseline |
+| **Import existing stock** | When first connected, periodically pulls scattered network items into the DAV |
+| **Auto-accept new items** | When enabled, the DAV becomes a preferred storage target for incoming items |
+| **Auto-expand** | At the usage threshold (default 80%), pulls empty cells from the network **or** submits ME autocrafting jobs; finished cells are absorbed into the DAV |
+
+**Recommended workflow:** Connect to the ME network → enable auto-accept → (optional) import existing stock → (optional) absorb cells for more capacity → set expansion cell type and confirm patterns → enable auto-expand. After that, the DAV grows itself when space gets tight.
+
+```
+  [Empty Cell] ──absorb──▶ [ DAV pool ] ◀── items from network
+                                │
+                          80% threshold
+                                ▼
+                 pull empty cell / ME autocraft → absorb again
+```
+
+> See [`guidebook/digital-asset-vault.md`](guidebook/digital-asset-vault.md) · in-game GuideMe chapter with the same name
+
+### Smart Bus — JSON filters, move exactly what you want
+
+Smart Bus is an AE2 cable part that adds a **FilterExpression JSON filter** on top of import/export buses. Three modes: **unconfigured** / **import** (pull from the back-side inventory into the network) / **export** (push from the network to the back side). Toggle with Shift+right-click or the GUI.
+
+**Why it is more flexible than stacking upgrade cards**
+
+- **Composable conditions** — Combine item ID, mod ID, tags, durability, stack size, and more with `AND` / `OR` and nested groups
+- **In-game presets** — One-click templates for "all items", "has durability", "ores"
+- **Offline web editor** — Build rules visually, copy JSON back into the game (`tools/filter-editor/`, no internet required)
+- **High throughput** — Up to 12 full stacks per tick by default (configurable in `config/appliedinsight-server.toml`)
+
+**Minimal filter example** — import only items from the `ae2` mod:
+
+```json
+{
+  "combinator": "AND",
+  "rules": [
+    { "field": "MOD_ID", "operator": "EQUALS", "value": "ae2" }
+  ]
+}
+```
+
+**Recommended workflow:** Open Smart Bus GUI → **Web Editor** → build rules in the browser → **Copy for Game** → **Paste** in-game → **Save**.
+
+> See [`guidebook/smart-bus.md`](guidebook/smart-bus.md)
+
+### Sorter Command Block — analyze · merge · sort
+
+Right-click to open the terminal GUI — no commands to memorize:
+
+| Button | Action |
+|--------|--------|
+| **Storage Analysis** | Network health report: internal/external storage split, fragmentation, DAV capacity overview |
+| **Merge** | Consolidate duplicate item types to free type slots |
+| **Plan & Move** | (Server operators) Zone-based sorting driven by `config/appliedinsight/profiles/` routing profiles |
+
+Works well with DAV: merging reduces fragmentation → DAV regains type headroom; the analysis UI labels DAV separately and does not count it as a traditional drive cell.
+
+> See [`guidebook/sorter-command-block.md`](guidebook/sorter-command-block.md)
+
+### Quick start
+
+**Install**
+
+1. Download `appliedinsight-0.9.1.jar` from [Releases](https://github.com/KnightCodeSquareMatrix/appliedinsight/releases)
+2. Drop it into your instance `mods/` folder (AE2 required)
+3. Craft the **Digital Asset Vault**, **Smart Bus**, and **Sorter Command Block**, then connect them to your ME network
+
+**Build from source**
+
+```bash
+git clone https://github.com/KnightCodeSquareMatrix/appliedinsight.git
+cd appliedinsight
+./gradlew build
+./gradlew runClient
+```
+
+Output JARs are in `build/libs/`.
+
+**Player guides**
+
+| Document | Contents |
+|----------|----------|
+| [`guidebook/getting-started.md`](guidebook/getting-started.md) | Recommended analyze → merge → DAV workflow |
+| [`guidebook/digital-asset-vault.md`](guidebook/digital-asset-vault.md) | DAV absorption rules, toggles, auto-expand |
+| [`guidebook/smart-bus.md`](guidebook/smart-bus.md) | Filter syntax, web editor, presets |
+| [`guidebook/sorter-command-block.md`](guidebook/sorter-command-block.md) | Terminal GUI layout |
+| [`CHANGELOG.md`](CHANGELOG.md) | Version history and migration notes |
+
+**For developers**
+
+| Document | Description |
+|----------|-------------|
+| [`docs/参考/DEVELOPER_QUICKSTART.md`](docs/参考/DEVELOPER_QUICKSTART.md) | Environment setup and build |
+| [`docs/架构/FACTS.md`](docs/架构/FACTS.md) | Authoritative architecture fact sheet |
+| [`docs/参考/COMMANDS_REFERENCE.md`](docs/参考/COMMANDS_REFERENCE.md) | Full command and config reference |
+| [`docs/ai/AI_ENTRY.md`](docs/ai/AI_ENTRY.md) | Entry point for AI collaborators |
+
+Offline analysis tooling (dump analysis, routing suggestions, profile generation, etc.) is documented in [`docs/参考/DEVELOPER_GUIDE.md`](docs/参考/DEVELOPER_GUIDE.md).
+
+**Tech stack**
+
+| Component | Version |
+|-----------|---------|
+| Minecraft + NeoForge | 1.21.1 / 21.1.224 |
+| Applied Energistics 2 | 19.2.17 |
+| Java | 21 |
+
+Optional client integrations: JEI and EMI (DAV expansion cell drag-and-drop, Smart Bus filter editing).
+
+**License:** All Rights Reserved.
 
 ---
 
 <p align="center">
-  <i>Applied Energistics: Insight · 应用能源：洞察 — 聚合存储 · 精确过滤 · 可解释的 AE2 网络维护</i>
+  <i>Applied Energistics: Insight · 应用能源：洞察</i><br/>
+  <i>Aggregate storage · Precise filtering · Explainable AE2 network maintenance</i><br/>
+  <i>聚合存储 · 精确过滤 · 可解释的 AE2 网络维护</i>
 </p>
