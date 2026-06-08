@@ -16,4 +16,9 @@ public record DriveCellReference(
     public boolean hasAttachedStorage() {
         return attachedStoragePos != null;
     }
+
+    /** True when this reference points at an ME Storage Bus-backed external inventory. */
+    public boolean isExternalStorage() {
+        return attachedStoragePos != null;
+    }
 }

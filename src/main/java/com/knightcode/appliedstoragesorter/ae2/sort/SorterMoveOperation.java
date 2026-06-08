@@ -44,6 +44,12 @@ public final class SorterMoveOperation {
         List<SorterMoveExecutionResult.MoveResult> moveResults = new ArrayList<>(executableMoves.size());
 
         for (ExecutableMove executableMove : executableMoves) {
+            if (MergeEndpointPolicy.isExternalStorage(executableMove.plannedMove.source())) {
+                failedMoveCount++;
+                moveResults.add(new SorterMoveExecutionResult.MoveResult(executableMove.plannedMove, 0L, 0L));
+                continue;
+            }
+
             long extracted = executableMove.sourceStorage.extract(
                     executableMove.plannedMove.key(),
                     executableMove.plannedMove.amount(),

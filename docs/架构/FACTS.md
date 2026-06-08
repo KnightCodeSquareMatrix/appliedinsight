@@ -6,11 +6,11 @@
 
 ## 1. 项目定位
 
-- FACT-001: 应用能源：洞察（Applied Energistics: Insight）是一个 Minecraft NeoForge 模组，MC 1.21.1，当前版本 **0.9.1**。
+- FACT-001: 应用能源：洞察（Applied Energistics: Insight）是一个 Minecraft NeoForge 模组，MC 1.21.1，当前版本 **0.9.2**。
 - FACT-002: 模组为 AE2 提供存储观测、整理与扩展（merge / route / analyze / DAV / Smart Bus）。
 - FACT-003: 扫描与分析覆盖内部 drive 与 DAV；宏观分析含 external 统计，merge/plan 执行仍以 cell 为操作对象。
 - FACT-004: 支持的 drive 类方块：`ae2:drive`、`extendedae:ex_drive`、`appliedinsight:digital_asset_vault`。
-- FACT-005: merge/plan 路径不直接操作 drawer；storageDump 可报告 external bus 占比。
+- FACT-005: merge/plan 仅允许 **cell→cell** 与 **cell→external**（内部 drive/DAV → 内部 cell 或 Storage Bus）；external 永不为 merge 源；storageDump 可报告 external bus 占比。
 - FACT-006: 底层操作对象始终是 Cell（AE2 硬盘项）或 DAV 虚拟存储池。
 - FACT-007: Mod ID 为 `appliedinsight`。
 - FACT-008: Java 包路径根为 `com.knightcode.appliedstoragesorter`（历史命名；主类 `AppliedStorageSorter`）。
@@ -163,10 +163,10 @@
 
 - FACT-131: Minecraft 1.21.1, NeoForge 21.1.224, AE2 19.2.17。
 - FACT-132: Java 21, Parchment Mappings 2024.11.17。
-- FACT-133: Mod 版本 **0.9.1**（对外名：Applied Energistics: Insight / 应用能源：洞察）。
+- FACT-133: Mod 版本 **0.9.2**（对外名：Applied Energistics: Insight / 应用能源：洞察）。
 - FACT-134: 所有命令使用 Brigadier 框架注册；根命令仍为 `/sorter`。
 - FACT-135: Config.java 含 ENABLE_SORTER、DEVELOPER_MODE、SMART_BUS_STACK_TRANSFERS_PER_TICK、DAV 自动扩容、Filter Editor URL 等。
 - FACT-136: 客户端分析翻译层 (`client/analysis/`) — `AnalysisPresenter` 将服务端 `StorageDiagnosis` 转为 `PlayerFacingAnalysis`。
 - FACT-137: `dark_matter_controller` 方块类仍保留于源码，**未注册**到游戏（材质测试用，beta 对玩家不可见）。
 
-> **最后更新**: 2026-06-09（0.9.1 发布）
+> **最后更新**: 2026-06-09（0.9.2 merge 路线收紧）

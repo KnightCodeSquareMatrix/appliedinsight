@@ -82,8 +82,9 @@
 
 ### 2.6 注意事项
 
-- merge 只处理内部 drive（`ae2:drive`、`extendedae:ex_drive`）
-- 不处理 external storage、storage bus、drawer
+- merge **源**只能是内部 cell（`ae2:drive`、`extendedae:ex_drive`、`appliedinsight:digital_asset_vault`）
+- merge **目标**允许：内部 cell（cell→cell 归并），或已持有同种物品的 Storage Bus（cell→external 压入外置仓）
+- **禁止** external→cell、external→external（不从抽屉/箱子往外抽货做整理）
 - merge 不改变物品的"归属 zone"，只做物理位置优化
 
 ---

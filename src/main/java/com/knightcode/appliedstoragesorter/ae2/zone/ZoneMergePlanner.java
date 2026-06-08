@@ -9,6 +9,7 @@ import java.util.Objects;
 
 import com.knightcode.appliedstoragesorter.ae2.scan.DriveCellReference;
 import com.knightcode.appliedstoragesorter.ae2.scan.DriveMachineAccessor;
+import com.knightcode.appliedstoragesorter.ae2.sort.MergeEndpointPolicy;
 import com.knightcode.appliedstoragesorter.ae2.sort.PlannedMove;
 import com.knightcode.appliedstoragesorter.ae2.sort.SorterMoveOperation;
 import com.knightcode.appliedstoragesorter.plan.ItemZoneAssignment;
@@ -76,6 +77,10 @@ public final class ZoneMergePlanner {
 
         outer:
         for (var sourceDrive : drives) {
+            if (!MergeEndpointPolicy.isMergeSource(sourceDrive)) {
+                continue;
+            }
+
             String sourceZoneId = sourceDrive.getDeclaredZoneId().orElse(null);
 
             for (int slot = 0; slot < sourceDrive.cellCount(); slot++) {

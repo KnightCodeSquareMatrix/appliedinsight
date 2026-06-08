@@ -2,6 +2,16 @@
 
 All notable changes to **应用能源：洞察** (Applied Energistics: Insight) are documented here.
 
+## [0.9.2] — 2026-06-09
+
+### Changed
+- **Merge route (AE2-aligned)** — only **cell→cell** and **cell→external** moves; external storage buses are never merge sources (no pulling from drawers/chests)
+- Cell→cell consolidates scattered items across internal drives/DAV; cell→external pushes into a Storage Bus that already holds the same item
+- Zone move (`planAndMove`) uses the same source restriction; execution layer rejects external sources defensively
+
+### Migration from 0.9.1
+直接替换 JAR 即可。
+
 ## [0.9.1] — 2026-06-09
 
 ### Fixed
