@@ -495,9 +495,9 @@ blockentity/
 
 ---
 
-## 五、与本项目 (Applied Storage Sorter) 的关联
+## 五、与本项目 (Applied Energistics: Insight) 的关联
 
-本项目 (`appliedstoragesorter`) 作为 AE2 的 Addon，主要使用以下 AE2 API：
+本项目 (`appliedinsight`) 作为 AE2 的 Addon，主要使用以下 AE2 API：
 
 | 本项目类 | 使用的 AE2 API | 用途 |
 |----------|---------------|------|

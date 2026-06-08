@@ -1,5 +1,5 @@
 # NetworkBindingKey
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/application/NetworkBindingKey.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/application/NetworkBindingKey.java`
 - **包**: `com.knightcode.appliedstoragesorter.application`
 - **类型**: `record`
 - **所属层**: 应用服务层

@@ -4,8 +4,8 @@ This document is for AI assistants collaborating on this Minecraft mod project.
 
 ## Project Snapshot
 
-- Project: `appliedstoragesorter-template-1.21.1`
-- Mod ID: `appliedstoragesorter`
+- Project: `appliedinsight-template-1.21.1`
+- Mod ID: `appliedinsight`
 - Group: `com.knightcode.appliedstoragesorter`
 - Minecraft: `1.21.1`
 - NeoForge: `21.1.224`
@@ -27,7 +27,7 @@ This document is for AI assistants collaborating on this Minecraft mod project.
 
 - Main mod entry: `src/main/java/com/knightcode/appliedstoragesorter/AppliedStorageSorter.java`
 - Client-only entry: `src/main/java/com/knightcode/appliedstoragesorter/AppliedStorageSorterClient.java`
-- Config example: `src/main/java/com/knightcode/appliedstoragesorter/Config.java`
+- Config example: `src/main/java/com/knightcode/appliedinsight/Config.java`
 - Resources: `src/main/resources/`
 - JSON schema resources: `src/main/resources/schema/`
 - Generated mod metadata template: `src/main/templates/META-INF/neoforge.mods.toml`
@@ -37,7 +37,7 @@ This document is for AI assistants collaborating on this Minecraft mod project.
 
 Current code already demonstrates these preferred patterns:
 
-- `@Mod(AppliedStorageSorter.MODID)` for the main mod class
+- `@Mod(appliedinsight.MODID)` for the main mod class
 - Constructor injection with `IEventBus` and `ModContainer`
 - Mod event bus listeners via `modEventBus.addListener(...)`
 - Command registration via `NeoForge.EVENT_BUS.addListener(...)`

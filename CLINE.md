@@ -1,4 +1,6 @@
-# Applied Storage Sorter — Roo 项目规则
+# 应用能源：洞察 — Roo 项目规则
+
+> 英文：**Applied Energistics: Insight** · Mod ID: `appliedinsight` · 社区简称 **AE 洞察**
 
 > 本文档定义 Roo AI 助手在本项目中的行为规则。
 > 首次接入时，Roo 会自动读取此文件。
@@ -7,8 +9,8 @@
 
 ## 项目概述
 
-Applied Storage Sorter 是一个 Minecraft NeoForge 模组，为 AE2 网络提供智能存储管理功能。
-- **Mod ID**: `appliedstoragesorter`
+Applied Energistics: Insight 是一个 Minecraft NeoForge 模组，为 AE2 网络提供智能存储管理功能。
+- **Mod ID**: `appliedinsight`
 - **Minecraft**: 1.21.1
 - **NeoForge**: 21.1.224
 - **AE2**: 19.2.17
@@ -21,12 +23,9 @@ Applied Storage Sorter 是一个 Minecraft NeoForge 模组，为 AE2 网络提�
 
 当 Roo 首次接入此项目时，按以下顺序阅读文档：
 
-1. `docs/GLOSSARY.md` — 对齐术语
-2. `docs/ARCHITECTURE_REFERENCE.md` — 理解架构全景
-3. `docs/整体逻辑.md` — 深入理解主骨架与边界
-4. `docs/类职责总览.md` — 审查结论与技术债
-5. `docs/ai/AI_ENTRY.md` — AI 协作者完整入口
-6. `docs/AI_DEVELOPMENT_GUIDE.md` — 最小协作规则
+1. `docs/架构/FACTS.md` — 原子事实库（架构、边界、术语、ADR）
+2. `docs/ai/AI_ENTRY.md` — AI 协作者完整入口
+3. `docs/类职责/索引.md` — 类职责索引，按包定位
 
 ---
 
@@ -80,8 +79,8 @@ block/ + blockentity/  ← 方块声明 + 生命周期
 - 类职责文档使用统一表格格式
 - 新增/删除类后同步更新 `docs/类职责/索引.md`
 - JSON 契约变化同步更新 `docs/日志与JSON字段契约.md`
-- 命令接口变化同步更新 `docs/COMMANDS_REFERENCE.md`
-- 架构边界变化同步更新 `docs/整体逻辑.md`
+- 命令接口变化同步更新 `docs/参考/COMMANDS_REFERENCE.md`
+- 架构边界变化同步更新 `docs/架构/FACTS.md`
 
 ---
 
@@ -89,25 +88,16 @@ block/ + blockentity/  ← 方块声明 + 生命周期
 
 | 文档 | 用途 |
 |------|------|
-| `docs/ARCHITECTURE_REFERENCE.md` | 架构全景 |
-| `docs/ARCHITECTURE_DECISIONS.md` | 架构决策记录 (ADR) |
-| `docs/整体逻辑.md` | 项目主骨架 |
-| `docs/GLOSSARY.md` | 术语表 |
-| `docs/类职责总览.md` | 类审查结论 |
-| `docs/类职责/索引.md` | 129 个类职责索引 |
-| `docs/API_REFERENCE.md` | 后端 API 参考 |
-| `docs/COMMANDS_REFERENCE.md` | 命令完整参考 |
-| `docs/EXTENSION_GUIDE.md` | 扩展开发指南 |
-| `docs/TESTING_GUIDE.md` | 测试指南 |
-| `docs/DEVELOPER_QUICKSTART.md` | 开发者快速入门 |
-| `docs/DEVELOPER_GUIDE.md` | 完整开发者指南 |
-| `docs/前端对接说明.md` | 前端契约 |
+| `docs/架构/FACTS.md` | 原子事实库（架构、边界、术语、ADR） |
+| `docs/ARCHITECTURE_DECISIONS.md` | 架构决策记录 (ADR) 完整版 |
+| `docs/ai/AI_ENTRY.md` | AI 协作者入口 |
+| `docs/类职责/索引.md` | 类职责索引（按包） |
+| `docs/类职责总览.md` | 类审查结论与技术债 |
+| `docs/参考/COMMANDS_REFERENCE.md` | 命令完整参考 |
+| `docs/参考/API_REFERENCE.md` | 后端 API 参考 |
+| `docs/参考/DEVELOPER_QUICKSTART.md` | 开发者快速入门 |
+| `docs/参考/EXTENSION_GUIDE.md` | 扩展开发指南 |
+| `docs/参考/TESTING_GUIDE.md` | 测试指南 |
+| `docs/参考/前端对接说明.md` | 前端契约 |
 | `docs/日志与JSON字段契约.md` | JSON 字段说明 |
-| `docs/dashboard的设计哲学.md` | Dashboard 设计哲学 |
-| `docs/下一步计划.md` | 当前阶段计划 |
-| `docs/ai/AI_ENTRY.md` | AI 协作者完整入口 |
-| `docs/ai/AI_DEVELOPMENT_GUIDE.md` | 最小协作规则 |
-| `docs/ai/CODE_REVIEW_CHECKLIST.md` | 代码审查清单 |
-| `docs/ai/REFACTORING_GUIDE.md` | 重构指南 |
-| `docs/ai/FRONTEND_PROMPT.md` | 前端开发 prompt（精简） |
-| `docs/ai/frontend-vibe-coding-prompt.md` | 前端开发 prompt（完整） |
+| `docs/发布前最后任务.md` | 发布前任务清单 |

@@ -77,7 +77,7 @@ public final class ReportFileSupport {
     }
 
     /**
-     * 追加写入到单一日志文件（如 appliedstoragesorter.log）。
+     * 追加写入到单一日志文件（如 AppliedStorageSorter.log）。
      * 与 writeTextFile 不同，此方法始终追加而非覆盖。
      */
     public static void appendToLogFile(Path logPath, String content, Logger logger, String failureMessage) {

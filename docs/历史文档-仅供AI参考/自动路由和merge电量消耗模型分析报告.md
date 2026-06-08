@@ -381,7 +381,7 @@ merge 执行后新增一行：
 energyCost=185               （新行）
 plannedMergeCount=12
 mergedAmount=896/1024
-mergeReport=logs/appliedstoragesorter/merge-xxx.log
+mergeReport=logs/appliedinsight/merge-xxx.log
 ```
 
 planAndMove 执行后新增一行：

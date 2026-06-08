@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "ae2:import_bus"
+    },
+    {
+      "item": "ae2:export_bus"
+    }
+  ],
+  "result": {
+    "id": "appliedinsight:smart_bus",
+    "count": 2
+  }
+}

@@ -29,7 +29,7 @@ public final class NetworkProfileBindingStore {
         Objects.requireNonNull(server, "server");
         this.filePath = server.getWorldPath(LevelResource.ROOT)
                 .resolve("data")
-                .resolve("appliedstoragesorter")
+                .resolve("AppliedStorageSorter")
                 .resolve(FILE_NAME);
     }
 

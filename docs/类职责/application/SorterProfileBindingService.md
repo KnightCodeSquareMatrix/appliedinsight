@@ -1,5 +1,5 @@
 # SorterProfileBindingService
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/application/SorterProfileBindingService.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/application/SorterProfileBindingService.java`
 - **包**: `com.knightcode.appliedstoragesorter.application`
 - **类型**: `class`
 - **所属层**: 应用服务层

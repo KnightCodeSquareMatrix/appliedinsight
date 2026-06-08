@@ -1,11 +1,9 @@
 package com.knightcode.appliedstoragesorter.registry;
 
 import appeng.blockentity.AEBaseBlockEntity;
-
 import com.knightcode.appliedstoragesorter.AppliedStorageSorter;
 import com.knightcode.appliedstoragesorter.blockentity.DigitalAssetVaultBlockEntity;
 import com.knightcode.appliedstoragesorter.blockentity.SorterCommandBlockEntity;
-
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.bus.api.IEventBus;
@@ -21,18 +19,17 @@ public final class SorterBlockEntities {
                 var block = SorterBlocks.DIGITAL_ASSET_VAULT.get();
                 BlockEntityType.BlockEntitySupplier<DigitalAssetVaultBlockEntity> supplier = DigitalAssetVaultBlockEntity::new;
                 var type = BlockEntityType.Builder.of(supplier, block).build(null);
-
-                // Wire up AE2's internal block↔blockEntity↔item linkages
-                block.setBlockEntity(DigitalAssetVaultBlockEntity.class, type, null, null);
                 AEBaseBlockEntity.registerBlockEntityItem(type, SorterItems.DIGITAL_ASSET_VAULT.get());
-
                 return type;
             });
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SorterCommandBlockEntity>> SORTER_COMMAND_BLOCK = BLOCK_ENTITY_TYPES
             .register("sorter_command_block", () -> {
+                var block = SorterBlocks.SORTER_COMMAND_BLOCK.get();
                 BlockEntityType.BlockEntitySupplier<SorterCommandBlockEntity> supplier = SorterCommandBlockEntity::new;
-                return BlockEntityType.Builder.of(supplier, SorterBlocks.SORTER_COMMAND_BLOCK.get()).build(null);
+                var type = BlockEntityType.Builder.of(supplier, block).build(null);
+                AEBaseBlockEntity.registerBlockEntityItem(type, SorterItems.SORTER_COMMAND_BLOCK.get());
+                return type;
             });
 
     private SorterBlockEntities() {

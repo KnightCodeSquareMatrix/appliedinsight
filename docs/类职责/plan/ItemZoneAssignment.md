@@ -1,5 +1,5 @@
 # ItemZoneAssignment
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/plan/ItemZoneAssignment.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/plan/ItemZoneAssignment.java`
 - **包**: `com.knightcode.appliedstoragesorter.plan`
 - **类型**: `record`
 - **所属层**: 规划模型层

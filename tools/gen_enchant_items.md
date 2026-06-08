@@ -4,7 +4,7 @@
 
 ## 用途
 
-为性能测试生成海量随机附魔物品的 Minecraft 1.21.1 [`give`](https://minecraft.wiki/w/Commands/give) 命令。生成的命令可直接在游戏内执行，用于填充测试用箱子/容器，配合 ME 存储总线接入 AE2 网络后，通过 [`/sorter me planAndMove`](../docs/COMMANDS_REFERENCE.md) 命令测试 Applied Storage Sorter 的排序性能。
+为性能测试生成海量随机附魔物品的 Minecraft 1.21.1 [`give`](https://minecraft.wiki/w/Commands/give) 命令。生成的命令可直接在游戏内执行，用于填充测试用箱子/容器，配合 ME 存储总线接入 AE2 网络后，通过 [`/sorter me planAndMove`](../docs/COMMANDS_REFERENCE.md) 命令测试 Applied Energistics: Insight 的排序性能。
 
 ## 用法
 
@@ -143,7 +143,7 @@ give @p minecraft:netherite_sword[minecraft:enchantments={levels:{"minecraft:smi
 3. **执行命令**：将命令逐条输入命令方块执行，或写入 `.mcfunction` 数据包批量执行
 4. **填充容器**：执行后物品出现在背包，手动放入箱子
 5. **接入 AE2**：用 ME 存储总线连接箱子到 AE2 网络
-6. **测试排序**：执行 [`/sorter me planAndMove`](../docs/COMMANDS_REFERENCE.md) 测试 Applied Storage Sorter 的排序性能
+6. **测试排序**：执行 [`/sorter me planAndMove`](../docs/COMMANDS_REFERENCE.md) 测试 Applied Energistics: Insight 的排序性能
 
 ## 相关文档
 

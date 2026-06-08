@@ -1,5 +1,5 @@
 # GenTestItemsCommand
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/command/GenTestItemsCommand.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/command/GenTestItemsCommand.java`
 - **包**: `com.knightcode.appliedstoragesorter.command`
 - **类型**: `class`
 - **所属层**: 命令入口层

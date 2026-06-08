@@ -8,7 +8,7 @@
 |--------|--------|
 | 全部架构信息（六层架构、架构边界等） | [`docs/架构/FACTS.md` §1–§3（FACT-001 到 FACT-057）](docs/架构/FACTS.md#1-项目定位) |
 | 三条能力路径 | [`docs/架构/FACTS.md` §4（FACT-059 到 FACT-079）](docs/架构/FACTS.md#4-三条能力路径) |
-| ADR 摘要 | [`docs/架构/FACTS.md` §5（FACT-080 到 FACT-090）](docs/架构/FACTS.md#5-关键设计决策adr-摘要) |
+| ADR 摘要 | [`docs/架构/FACTS.md` §5（FACT-080 到 FACT-094）](docs/架构/FACTS.md#5-关键设计决策adr-摘要) |
 
 ## 快速导航
 
@@ -19,4 +19,4 @@
 - [FACTS.md — 关键设计决策](docs/架构/FACTS.md#5-关键设计决策adr-摘要)
 - [FACTS.md — 术语表](docs/架构/FACTS.md#6-术语表精简版仅核心术语中英文对照--一句话定义)
 
-> **最后更新**: 2026-05-28
+> **最后更新**: 2026-06-08

@@ -2,12 +2,16 @@
 
 > **最后更新**: 2026-05-28
 > **相关文档**: [`FACTS.md`](../架构/FACTS.md) | [`dashboard的设计哲学.md`](dashboard的设计哲学.md) | [`前端对接契约-需求-约束.md`](前端对接契约-需求-约束.md) | [`下一步计划.md`](../下一步计划.md)
+>
+> **状态说明（2026-05-30）**：本文档中 `SorterCommandBlockScreen` 的大量布局草案属于历史设计阶段。
+> 当前代码实现已经切换为代码绘制的 `440×224` 宽屏终端，左列为 3 个操作按钮，中列为存储概览，右列为诊断列表。
+> 阅读现状时请优先以 [`SorterCommandBlockScreen`](../类职责/client/screen/SorterCommandBlockScreen.md) 和 [`GUI_VISUAL_CHECKLIST.md`](../ai/GUI_VISUAL_CHECKLIST.md) 为准。
 
 ---
 
 ## 1. 设计目标
 
-游戏内 GUI 是玩家与 Applied Storage Sorter 交互的主场景之一，另一主场景是外部 Web Dashboard。二者的分工遵循以下原则：
+游戏内 GUI 是玩家与 Applied Energistics: Insight 交互的主场景之一，另一主场景是外部 Web Dashboard。二者的分工遵循以下原则：
 
 | 场景 | 定位 | 典型用户 |
 |------|------|---------|
@@ -26,30 +30,28 @@
 
 | GUI | 文件 | 状态 | 描述 |
 |-----|------|------|------|
-| [`SorterCommandBlockScreen`](../类职责/client/screen/SorterCommandBlockScreen.md) | `client/screen/SorterCommandBlockScreen.java` | ✅ 基础 | 5 个按钮触发命令，使用 hopper 纹理占位 |
+| [`SorterCommandBlockScreen`](../类职责/client/screen/SorterCommandBlockScreen.md) | `client/screen/SorterCommandBlockScreen.java` | ✅ 已重做 | 440×224 宽屏终端，3 个操作按钮 + 中列存储概览 + 右列诊断列表 |
 | [`DigitalAssetVaultScreen`](../类职责/client/screen/DigitalAssetVaultScreen.md) | `client/screen/DigitalAssetVaultScreen.java` | ✅ 基础 | 2×5 cell 槽 + 管理卡槽，自定义纹理 |
 
 ### 2.1 SorterCommandBlockScreen 现状
 
 ```
-┌──────────────────────────┐
-│  命令执行方块             │
-│                          │
-│  [ME] 扫描网络            │  ← CMD_ME_DUMP
-│  [ME] 存储分析            │  ← CMD_ME_STORAGE_DUMP
-│  [规划] 生成计划           │  ← CMD_ME_PLAN
-│  [执行] 规划并搬运         │  ← CMD_ME_PLAN_AND_MOVE
-│  [Merge] 整理合并         │  ← CMD_MERGE
-│                          │
-│  （无槽位、无状态面板）    │
-└──────────────────────────┘
+┌──────────────────────────────────────────┐
+│ 整理命令方块                      ME 在线 │
+│ ┌──────────┐ ┌──────────────┐ ┌────────┐ │
+│ │ 分析当前网络 │ │ 存储节点 / 内部 / 外部 │ │ 健康标志 │ │
+│ │ 以绑定配置整理 │ │ 已用字节 / 可用字节   │ │ 语义候选 │ │
+│ │ 碎片物品合并 │ │ 外部存量 / 外部种类   │ │ Top 列表 │ │
+│ └──────────┘ └──────────────┘ └────────┘ │
+│ 系统反馈 / GuideME                                   │
+└──────────────────────────────────────────┘
 ```
 
 **问题**：
-1. 使用 hopper 纹理（占位），缺乏品牌视觉
-2. 无反馈面板 — 所有输出通过 chat 消息，操作后玩家不知道进度
-3. 无状态指示 — 无法显示网络连接状态、上次操作结果
-4. 无配置入口 — profile 绑定、zone 查看等仍需用命令
+1. 仍以代码绘制面板为主，缺少稳定纹理资产
+2. 中列当前是摘要概览，尚未支持切换更多分析视图
+3. 右列诊断列表仍偏开发者语义，后续可继续转为更用户化文案
+4. profile 绑定、zone 查看等配置入口仍需用命令或后续 GUI
 
 ### 2.2 DigitalAssetVaultScreen 现状
 

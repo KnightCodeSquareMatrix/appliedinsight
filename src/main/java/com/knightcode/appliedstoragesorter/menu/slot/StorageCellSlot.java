@@ -11,6 +11,16 @@ public class StorageCellSlot extends SlotItemHandler {
     }
 
     @Override
+    public int getMaxStackSize() {
+        return 1;
+    }
+
+    @Override
+    public int getMaxStackSize(ItemStack stack) {
+        return 1;
+    }
+
+    @Override
     public boolean mayPlace(ItemStack stack) {
         return StorageCells.isCellHandled(stack) && super.mayPlace(stack);
     }

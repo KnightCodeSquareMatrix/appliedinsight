@@ -1,6 +1,6 @@
 # 命令参考手册 (Commands Reference)
 
-> 本文档列出 **Applied Storage Sorter** 的所有游戏内命令、参数、输出示例和常见问题。
+> 本文档列出 **Applied Energistics: Insight** 的所有游戏内命令、参数、输出示例和常见问题。
 > 面向玩家和模组管理员。
 >
 > **💡 普通玩家推荐使用 [`SorterCommandBlock`](类职责/block/SorterCommandBlock.md)（命令方块）**：放置于世界中，右键打开 GUI 点击按钮即可操作，无需记忆命令。
@@ -60,17 +60,17 @@
 ### 2.3 输出示例
 
 ```
-[Applied Storage Sorter] plannedMergeCount=12
-[Applied Storage Sorter] mergedAmount=448/512
-[Applied Storage Sorter] mergeReport=logs/appliedstoragesorter/merge-20260525-103022.log
+[Applied Energistics: Insight] plannedMergeCount=12
+[Applied Energistics: Insight] mergedAmount=448/512
+[Applied Energistics: Insight] mergeReport=logs/appliedinsight/merge-20260525-103022.log
 ```
 
 ### 2.4 输出文件
 
 | 文件 | 内容 |
 |------|------|
-| `logs/appliedstoragesorter.log` | 命令摘要（plannedMergeCount、mergedAmount、report 路径） |
-| `logs/appliedstoragesorter/merge-*.log` | 详细 merge report（前后对比、收益排行、单物品变更明细） |
+| `logs/appliedinsight.log` | 命令摘要（plannedMergeCount、mergedAmount、report 路径） |
+| `logs/appliedinsight/merge-*.log` | 详细 merge report（前后对比、收益排行、单物品变更明细） |
 
 ### 2.5 前置条件
 
@@ -78,7 +78,7 @@
 - 必须由玩家执行（非控制台）
 - 玩家必须在 AE2 网络范围内（ME Controller 附近）
 
-> **💡 普通玩家推荐使用 [`SorterCommandBlock`](类职责/block/SorterCommandBlock.md)**：放置命令方块于世界中，右键打开 GUI 点击"整理合并"按钮即可，无需记忆命令。
+> **💡 普通玩家推荐使用 [`SorterCommandBlock`](类职责/block/SorterCommandBlock.md)**：放置命令方块于世界中，右键打开 GUI 点击"碎片物品合并"按钮即可，无需记忆命令。
 
 ### 2.6 注意事项
 
@@ -97,13 +97,13 @@
 ### 3.2 输出示例
 
 ```
-[Applied Storage Sorter] Dumped 1234 unique item keys from 24 mounted cells to:
-[Applied Storage Sorter] dumpFile=dumps/appliedstoragesorter/me-dump-20260525-103022.json
+[Applied Energistics: Insight] Dumped 1234 unique item keys from 24 mounted cells to:
+[Applied Energistics: Insight] dumpFile=dumps/appliedinsight/me-dump-20260525-103022.json
 ```
 
 ### 3.3 输出文件
 
-`dumps/appliedstoragesorter/me-dump-<timestamp>.json`
+`dumps/appliedinsight/me-dump-<timestamp>.json`
 
 包含：
 - `command` — 触发命令
@@ -134,16 +134,16 @@
 ### 4.2 输出示例
 
 ```
-[Applied Storage Sorter] dumpFile=dumps/appliedstoragesorter/storage-analysis-20260525-103022.json
-[Applied Storage Sorter] storageLocations=36 (nonEmpty=30, internal=28, external=8)
-[Applied Storage Sorter] uniqueKeys=1234, duplicatedKeys=156, totalAmount=1048576
-[Applied Storage Sorter] fragmentation=MODERATE, externalAmountRatio=12.50%
-[Applied Storage Sorter] health=HIGH_EXTERNAL_RATIO, SUSPECTED_INFINITE_CELL
+[Applied Energistics: Insight] dumpFile=dumps/appliedinsight/storage-analysis-20260525-103022.json
+[Applied Energistics: Insight] storageLocations=36 (nonEmpty=30, internal=28, external=8)
+[Applied Energistics: Insight] uniqueKeys=1234, duplicatedKeys=156, totalAmount=1048576
+[Applied Energistics: Insight] fragmentation=MODERATE, externalAmountRatio=12.50%
+[Applied Energistics: Insight] health=HIGH_EXTERNAL_RATIO, SUSPECTED_INFINITE_CELL
 ```
 
 ### 4.3 输出文件
 
-`dumps/appliedstoragesorter/storage-analysis-<timestamp>.json`
+`dumps/appliedinsight/storage-analysis-<timestamp>.json`
 
 包含：
 - `report.summary` — 摘要
@@ -172,12 +172,12 @@
 
 ### 5.1 `/sorter me listProfiles`
 
-列出 `config/appliedstoragesorter/profiles/` 下所有可用的全局路由配置。
+列出 `config/appliedinsight/profiles/` 下所有可用的全局路由配置。
 
 ```
-[Applied Storage Sorter] Available global profiles:
-[Applied Storage Sorter] 1. My Storage Profile [id=profile_abc123, version=1]
-[Applied Storage Sorter] 2. Default Profile [id=profile_def456, version=2]
+[Applied Energistics: Insight] Available global profiles:
+[Applied Energistics: Insight] 1. My Storage Profile [id=profile_abc123, version=1]
+[Applied Energistics: Insight] 2. Default Profile [id=profile_def456, version=2]
 ```
 
 ### 5.2 `/sorter me bindProfile <number>`
@@ -188,10 +188,10 @@
 - `number` — `listProfiles` 输出中的序号（从 1 开始）
 
 ```
-[Applied Storage Sorter] Bound current ME network to global profile: My Storage Profile
-[Applied Storage Sorter] profileId=profile_abc123
-[Applied Storage Sorter] controller=12, 64, -128
-[Applied Storage Sorter] dimension=minecraft:overworld
+[Applied Energistics: Insight] Bound current ME network to global profile: My Storage Profile
+[Applied Energistics: Insight] profileId=profile_abc123
+[Applied Energistics: Insight] controller=12, 64, -128
+[Applied Energistics: Insight] dimension=minecraft:overworld
 ```
 
 绑定信息通过 `NetworkProfileBindingStore` 持久化到 world save。
@@ -201,15 +201,15 @@
 查看当前 ME 网络绑定的 profile 信息。
 
 ```
-[Applied Storage Sorter] Current ME network profile:
-[Applied Storage Sorter] name=My Storage Profile
-[Applied Storage Sorter] id=profile_abc123
-[Applied Storage Sorter] version=1
+[Applied Energistics: Insight] Current ME network profile:
+[Applied Energistics: Insight] name=My Storage Profile
+[Applied Energistics: Insight] id=profile_abc123
+[Applied Energistics: Insight] version=1
 ```
 
 如果未绑定，返回：
 ```
-[Applied Storage Sorter] Current ME network is not bound to any global profile.
+[Applied Energistics: Insight] Current ME network is not bound to any global profile.
 ```
 
 ---
@@ -221,12 +221,12 @@
 预览规则路由规划：读取绑定的 profile → 构建 RuntimeTopology → 生成 ZoneAllocationPlan。
 
 ```
-[Applied Storage Sorter] profile=My Storage Profile [id=profile_abc123]
-[Applied Storage Sorter] assignmentCount=630
-[Applied Storage Sorter] movableAssignmentCount=580
-[Applied Storage Sorter] zone=bulk | movableItems=15 | totalAmount=2147483647
-[Applied Storage Sorter] zone=misc | movableItems=565 | totalAmount=876543
-[Applied Storage Sorter] detailedLog=logs/appliedstoragesorter/plan-20260525-103022.log
+[Applied Energistics: Insight] profile=My Storage Profile [id=profile_abc123]
+[Applied Energistics: Insight] assignmentCount=630
+[Applied Energistics: Insight] movableAssignmentCount=580
+[Applied Energistics: Insight] zone=bulk | movableItems=15 | totalAmount=2147483647
+[Applied Energistics: Insight] zone=misc | movableItems=565 | totalAmount=876543
+[Applied Energistics: Insight] detailedLog=logs/appliedinsight/plan-20260525-103022.log
 ```
 
 ### 6.2 `/sorter me planAndMove`
@@ -234,17 +234,17 @@
 执行规则路由规划：plan + 实际搬运。
 
 ```
-[Applied Storage Sorter] profile=My Storage Profile [id=profile_abc123]
-[Applied Storage Sorter] assignmentCount=630
-[Applied Storage Sorter] movableAssignmentCount=580
-[Applied Storage Sorter] zone=bulk | movableItems=15 | totalAmount=2147483647
-[Applied Storage Sorter] zone=misc | movableItems=565 | totalAmount=876543
-[Applied Storage Sorter] move.attempted=120
-[Applied Storage Sorter] move.completed=115
-[Applied Storage Sorter] move.failed=5
-[Applied Storage Sorter] move.requestedAmount=10240
-[Applied Storage Sorter] move.movedAmount=9984
-[Applied Storage Sorter] detailedLog=logs/appliedstoragesorter/plan-and-move-20260525-103022.log
+[Applied Energistics: Insight] profile=My Storage Profile [id=profile_abc123]
+[Applied Energistics: Insight] assignmentCount=630
+[Applied Energistics: Insight] movableAssignmentCount=580
+[Applied Energistics: Insight] zone=bulk | movableItems=15 | totalAmount=2147483647
+[Applied Energistics: Insight] zone=misc | movableItems=565 | totalAmount=876543
+[Applied Energistics: Insight] move.attempted=120
+[Applied Energistics: Insight] move.completed=115
+[Applied Energistics: Insight] move.failed=5
+[Applied Energistics: Insight] move.requestedAmount=10240
+[Applied Energistics: Insight] move.movedAmount=9984
+[Applied Energistics: Insight] detailedLog=logs/appliedinsight/plan-and-move-20260525-103022.log
 ```
 
 ### 6.3 前置条件
@@ -257,14 +257,14 @@
 
 | 命令 | 日志文件 |
 |------|---------|
-| `plan` | `logs/appliedstoragesorter/plan-*.log` |
-| `planAndMove` | `logs/appliedstoragesorter/plan-and-move-*.log` |
+| `plan` | `logs/appliedinsight/plan-*.log` |
+| `planAndMove` | `logs/appliedinsight/plan-and-move-*.log` |
 
 ---
 
 ## 7. 配置项
 
-配置文件：`config/appliedstoragesorter/server.toml`
+配置文件：`config/appliedinsight/server.toml`
 
 | 配置项 | 类型 | 默认值 | 说明 |
 |--------|------|--------|------|
@@ -280,24 +280,24 @@
 
 | 路径 | 说明 |
 |------|------|
-| `logs/appliedstoragesorter.log` | 命令级摘要日志 |
-| `logs/appliedstoragesorter/plan-*.log` | Plan 详细日志 |
-| `logs/appliedstoragesorter/plan-and-move-*.log` | PlanAndMove 详细日志 |
-| `logs/appliedstoragesorter/merge-*.log` | Merge 详细报告 |
+| `logs/appliedinsight.log` | 命令级摘要日志 |
+| `logs/appliedinsight/plan-*.log` | Plan 详细日志 |
+| `logs/appliedinsight/plan-and-move-*.log` | PlanAndMove 详细日志 |
+| `logs/appliedinsight/merge-*.log` | Merge 详细报告 |
 
 ### 8.2 JSON 产物
 
 | 路径 | 说明 |
 |------|------|
-| `dumps/appliedstoragesorter/me-dump-*.json` | 网络快照 |
-| `dumps/appliedstoragesorter/storage-analysis-*.json` | 存储分析报告 |
+| `dumps/appliedinsight/me-dump-*.json` | 网络快照 |
+| `dumps/appliedinsight/storage-analysis-*.json` | 存储分析报告 |
 
 ### 8.3 配置文件
 
 | 路径 | 说明 |
 |------|------|
-| `config/appliedstoragesorter/server.toml` | 服务端配置 |
-| `config/appliedstoragesorter/profiles/*.json` | 全局路由配置 |
+| `config/appliedinsight/server.toml` | 服务端配置 |
+| `config/appliedinsight/profiles/*.json` | 全局路由配置 |
 
 ---
 
@@ -318,14 +318,14 @@
 | **使用方式** | 聊天框输入 Brigadier 命令 | 放置方块，右键打开 GUI 点击按钮 |
 | **是否需要记忆命令** | ✅ 需要 | ❌ 不需要 |
 | **是否需要开发者模式** | 部分命令需要 | 不需要 |
-| **功能覆盖** | 全部功能 | 5 个核心功能按钮（扫描、分析、计划、搬运、合并） |
+| **功能覆盖** | 全部功能 | 3 个核心功能按钮（分析、按配置整理、碎片物品合并） |
 | **适用场景** | 调试、自动化脚本、批量操作 | 日常使用、快速操作 |
 
 **推荐**：普通玩家直接使用 [`SorterCommandBlock`](类职责/block/SorterCommandBlock.md)，开发者/管理员使用 `/sorter` 命令。
 
 ### Q: `dump` 和 `storageDump` 提示"仅在开发者模式下可用"？
 
-在 `config/appliedstoragesorter/server.toml` 中设置：
+在 `config/appliedinsight/server.toml` 中设置：
 ```toml
 [general]
 DEVELOPER_MODE = true
@@ -341,7 +341,7 @@ DEVELOPER_MODE = true
 
 ### Q: 如何查看详细的搬运报告？
 
-执行命令后，控制台会输出 `detailedLog=logs/appliedstoragesorter/plan-and-move-*.log`，打开该文件查看详细内容。
+执行命令后，控制台会输出 `detailedLog=logs/appliedinsight/plan-and-move-*.log`，打开该文件查看详细内容。
 
 ### Q: merge 和 planAndMove 有什么区别？
 

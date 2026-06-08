@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "appliedinsight:block/dark_matter_controller"
+    }
+  }
+}

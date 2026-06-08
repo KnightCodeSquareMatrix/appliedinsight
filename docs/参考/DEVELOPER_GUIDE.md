@@ -1,6 +1,6 @@
 # 开发者指南 (Developer Guide)
 
-> 本文档帮助新开发者快速上手 Applied Storage Sorter 的本地开发和贡献流程。
+> 本文档帮助新开发者快速上手 Applied Energistics: Insight 的本地开发和贡献流程。
 
 ---
 
@@ -22,10 +22,10 @@
 ## 2. 项目结构
 
 ```
-appliedstoragesorter-template-1.21.1/
+appliedinsight-template-1.21.1/
 ├── src/
 │   ├── main/
-│   │   ├── java/com/knightcode/appliedstoragesorter/     # 主源码
+│   │   ├── java/com/knightcode/appliedinsight/     # 主源码
 │   │   │   ├── ae2/              # AE2 集成层 (扫描、执行、runtime)
 │   │   │   ├── analysis/         # 离线分析
 │   │   │   ├── application/      # 应用服务编排
@@ -108,14 +108,14 @@ python tools/sync_jar.py
         "port": 22,
         "user": "root",
         "key": null,
-        "remote_jar_path": "/data/appliedstoragesorter/tools/serve/appliedstoragesorter.jar"
+        "remote_jar_path": "/data/appliedinsight/tools/serve/appliedinsight.jar"
     },
     "watch_interval": 5,
     "destinations": [
         "C:/Users/KnightCode/AppData/Roaming/PrismLauncher/instances/1.21.1/minecraft/mods",
         "C:/Users/KnightCode/AppData/Roaming/MultiMC/instances/1.21.1/.minecraft/mods"
     ],
-    "rename_to": "appliedstoragesorter.jar"
+    "rename_to": "appliedinsight.jar"
 }
 ```
 
@@ -292,9 +292,9 @@ public class MyClass {
 ### 7.2 日志查看
 
 ```
-logs/appliedstoragesorter.log       # 主日志（命令摘要/错误）
-logs/appliedstoragesorter/plan-*.log # plan 明细
-dumps/appliedstoragesorter/me-dump-*.json  # 网络快照
+logs/appliedinsight.log       # 主日志（命令摘要/错误）
+logs/appliedinsight/plan-*.log # plan 明细
+dumps/appliedinsight/me-dump-*.json  # 网络快照
 ```
 
 ### 7.3 常见问题

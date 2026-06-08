@@ -1,5 +1,5 @@
 # DigitalAssetVaultBlock
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/block/DigitalAssetVaultBlock.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/block/DigitalAssetVaultBlock.java`
 - **包**: `com.knightcode.appliedstoragesorter.block`
 - **类型**: `class`
 - **所属层**: 方块声明层

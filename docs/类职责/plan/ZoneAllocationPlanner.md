@@ -1,5 +1,5 @@
 # ZoneAllocationPlanner
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/plan/ZoneAllocationPlanner.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/plan/ZoneAllocationPlanner.java`
 - **包**: `com.knightcode.appliedstoragesorter.plan`
 - **类型**: `class`
 - **所属层**: 规划模型层

@@ -1,5 +1,5 @@
 # SorterDumpCommandResult
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/application/result/SorterDumpCommandResult.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/application/result/SorterDumpCommandResult.java`
 - **包**: `com.knightcode.appliedstoragesorter.application.result`
 - **类型**: `record`
 - **所属层**: 应用服务层

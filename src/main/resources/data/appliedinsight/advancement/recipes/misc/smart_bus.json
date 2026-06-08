@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_import_bus": {
+      "conditions": {
+        "items": [
+          {
+            "items": "ae2:import_bus"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_recipe": {
+      "conditions": {
+        "recipe": "appliedinsight:smart_bus"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_import_bus",
+      "has_recipe"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "appliedinsight:smart_bus"
+    ]
+  }
+}

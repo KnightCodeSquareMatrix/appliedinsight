@@ -1,5 +1,5 @@
 # DigitalAssetVaultMenu
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/menu/DigitalAssetVaultMenu.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/menu/DigitalAssetVaultMenu.java`
 - **包**: `com.knightcode.appliedstoragesorter.menu`
 - **类型**: `class`
 - **所属层**: 容器交互层
@@ -17,7 +17,7 @@ DAV 容器菜单，组织 10 个 cell 槽（2 列 x 5 行垂直布局）、1 个
 - **Cell 槽布局**: 2 列 x 5 行垂直布局，从 (71, 8) 开始，适配 DAV 的垂直紧凑设计
 - **管理卡槽（ZoneCard 插卡槽）**: 位于独立的卡槽面板内（纹理 y=201..222），坐标 (152, 203)，与 Drive 主体分离
 - **玩家背包**: 从 (8, 84) 开始，与 Drive 的 `common/player_inventory.json` 布局一致
-- **SlotSemantic**: 注册了 `APPLIEDSTORAGESORTER_MANAGEMENT_CARD` 语义（`playerSide=true`），与管理卡槽绑定；`playerSide=true` 使得管理卡槽被视为玩家侧槽位，允许直接点击插入和 shift-click 快速放入
+- **SlotSemantic**: 注册了 `appliedinsight_MANAGEMENT_CARD` 语义（`playerSide=true`），与管理卡槽绑定；`playerSide=true` 使得管理卡槽被视为玩家侧槽位，允许直接点击插入和 shift-click 快速放入
 
 ## 主要协作者
 - `appeng.menu.AEBaseMenu`

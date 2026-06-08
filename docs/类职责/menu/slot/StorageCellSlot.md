@@ -1,5 +1,5 @@
 # StorageCellSlot
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/menu/slot/StorageCellSlot.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/menu/slot/StorageCellSlot.java`
 - **包**: `com.knightcode.appliedstoragesorter.menu.slot`
 - **类型**: `class`
 - **所属层**: 容器交互层

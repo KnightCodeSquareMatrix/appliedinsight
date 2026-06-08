@@ -54,7 +54,7 @@ public final class SorterCommands {
 
     private static int runMeDump(CommandContext<CommandSourceStack> context) {
         if (!Config.DEVELOPER_MODE.get()) {
-            context.getSource().sendFailure(Component.literal("§c该命令仅在开发者模式下可用（在配置中启用 developerMode）"));
+            context.getSource().sendFailure(Component.translatable("sorter.command.error.developer_mode").withStyle(net.minecraft.ChatFormatting.RED));
             return 0;
         }
         return sendFeedback(context.getSource(), SorterDumpService.execute(context.getSource()));
@@ -62,7 +62,7 @@ public final class SorterCommands {
 
     private static int runMeStorageDump(CommandContext<CommandSourceStack> context) {
         if (!Config.DEVELOPER_MODE.get()) {
-            context.getSource().sendFailure(Component.literal("§c该命令仅在开发者模式下可用（在配置中启用 developerMode）"));
+            context.getSource().sendFailure(Component.translatable("sorter.command.error.developer_mode").withStyle(net.minecraft.ChatFormatting.RED));
             return 0;
         }
         var source = context.getSource();

@@ -1,0 +1,14 @@
+{
+  "combinator": "AND",
+  "rules": [
+    {
+      "field": "ITEM_ID",
+      "operator": "EQUALS",
+      "value": "minecraft:netherite_sword"
+    },
+    {
+      "field": "HAS_COMPONENTS",
+      "operator": "IS_TRUE"
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 # FilterOperator
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/rule/filter/FilterOperator.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/rule/filter/FilterOperator.java`
 - **包**: `com.knightcode.appliedstoragesorter.rule.filter`
 - **类型**: `enum`
 - **所属层**: 纯规则模型层

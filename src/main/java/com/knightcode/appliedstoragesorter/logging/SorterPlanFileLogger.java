@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import com.knightcode.appliedstoragesorter.ae2.Ae2GridTargetResult;
 import com.knightcode.appliedstoragesorter.ae2.scan.Ae2DriveScanSummary;
 import com.knightcode.appliedstoragesorter.ae2.scan.DriveMachineAccessor;
-import com.knightcode.appliedstoragesorter.ae2.zone.RuntimeCell;
+import com.knightcode.appliedstoragesorter.ae2.scan.CellInfo;
 import com.knightcode.appliedstoragesorter.ae2.zone.RuntimeTopology;
 import com.knightcode.appliedstoragesorter.ae2.zone.RuntimeZone;
 import com.knightcode.appliedstoragesorter.ae2.zone.ZoneMoveExecutionDetailedResult;
@@ -26,7 +26,7 @@ import net.minecraft.commands.CommandSourceStack;
 
 public final class SorterPlanFileLogger {
     private static final Logger log = LoggerFactory.getLogger(SorterPlanFileLogger.class);
-    private static final Path LOG_DIR = ReportFileSupport.resolveLogDir("appliedstoragesorter");
+    private static final Path LOG_DIR = ReportFileSupport.resolveLogDir("AppliedStorageSorter");
 
     private SorterPlanFileLogger() {
     }
@@ -197,7 +197,7 @@ public final class SorterPlanFileLogger {
                     .append(zone.cellCount())
                     .append('\n');
 
-            for (RuntimeCell cell : zone.cells()) {
+            for (CellInfo cell : zone.cells()) {
                 content.append("  cell=")
                         .append(formatBlockPos(cell.reference().drivePos()))
                         .append("#slot=")
@@ -209,7 +209,7 @@ public final class SorterPlanFileLogger {
                         .append(" | sourceBlockId=")
                         .append(cell.sourceBlockId())
                         .append(" | distinctItemKeyCount=")
-                        .append(cell.distinctItemKeyCount())
+                        .append(countDistinctKeys(cell))
                         .append('\n');
             }
         }
@@ -371,6 +371,14 @@ public final class SorterPlanFileLogger {
 
     private static String formatBlockPos(net.minecraft.core.BlockPos pos) {
         return ReportFileSupport.formatBlockPos(pos);
+    }
+
+    private static int countDistinctKeys(CellInfo cell) {
+        int count = 0;
+        for (var entry : cell.storage().getAvailableStacks()) {
+            if (entry.getLongValue() > 0) count++;
+        }
+        return count;
     }
 
     private static String valueOrPlaceholder(String value) {

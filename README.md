@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="docs/assets/logo.png" alt="Applied Storage Sorter" width="128" height="128"/>
+  <img src="docs/assets/logo.png" alt="Applied Energistics: Insight" width="128" height="128"/>
 </p>
 
-<h1 align="center">Applied Storage Sorter</h1>
+<h1 align="center">Applied Energistics: Insight</h1>
 
 <p align="center">
-  <b>AE2 存储治理模组 — 自动整理 · 规则路由 · 存储观测</b>
+  <b>应用能源：洞察 · AE2 存储观测与整理</b>
 </p>
 
 <p align="center">
@@ -15,12 +15,12 @@
   <img src="https://img.shields.io/badge/Java-21-red?logo=openjdk" alt="Java 21"/>
   <img src="https://img.shields.io/badge/Gradle-9.2.1-blue?logo=gradle" alt="Gradle 9.2.1"/>
   <img src="https://img.shields.io/badge/license-ARR-lightgrey" alt="License: ARR"/>
-  <img src="https://img.shields.io/badge/status-active--development-yellow" alt="Status: Active Development"/>
+  <img src="https://img.shields.io/badge/version-0.9.0--beta-yellow" alt="Version 0.9.0-beta"/>
 </p>
 
 ---
 
-> **30 秒速览**：Applied Storage Sorter 是一个 AE2 存储治理模组。
+> **30 秒速览**：**应用能源：洞察**（Applied Energistics: Insight，社区常称 AE 洞察）是一个 AE2 存储观测与整理模组。
 > - **自动整理**：放置 [`SorterCommandBlock`](docs/类职责/block/SorterCommandBlock.md) 点击"整理合并"按钮即可 — 同类物品归并压实，无需配置
 > - **规则路由**：放置 [`SorterCommandBlock`](docs/类职责/block/SorterCommandBlock.md) 点击"规划并搬运"按钮 — 玩家定义存储区+过滤器，规则化整理
 > - **宏观观测**：点击"存储分析"按钮 — 存储健康诊断，dashboard 快照
@@ -29,7 +29,7 @@
 
 ---
 
-> **Applied Storage Sorter** 是一个 Minecraft NeoForge 模组，专注于 AE2 内部存储治理。
+> **应用能源：洞察** 是一个 Minecraft NeoForge 模组，专注于 AE2 内部存储的可视化、整理与扩展。
 > 提供自动整理（同类物品归并压实）和规则路由（玩家自定义存储区与过滤器）两条能力线，附带完整的离线分析工具链和可扩展的规则引擎。
 
 ---
@@ -40,6 +40,7 @@
 - [命令速查](#-命令速查)
 - [架构概览](#-架构概览)
 - [当前实现状态](#-当前实现状态)
+- [更新日志](CHANGELOG.md)
 - [离线分析工具链](#-离线分析工具链)
 - [下一步阅读（按角色）](#-下一步阅读按角色)
 - [技术栈](#-技术栈)
@@ -57,15 +58,15 @@
 
 ### 安装
 
-1. 从 [Releases](https://github.com/your-repo/appliedstoragesorter/releases) 下载最新 JAR
+1. 从 [Releases](https://github.com/your-repo/appliedinsight/releases) 下载最新 JAR
 2. 放入 Minecraft 实例的 `mods/` 目录
 3. 启动游戏，确保 AE2 网络中有 **ME Controller**
 
 ### 从源码构建
 
 ```bash
-git clone https://github.com/your-repo/appliedstoragesorter.git
-cd appliedstoragesorter
+git clone https://github.com/your-repo/appliedinsight.git
+cd appliedinsight
 ./gradlew build          # 编译（不运行测试）
 ./gradlew runClient      # 启动 Minecraft 客户端
 ```
@@ -83,8 +84,8 @@ cd appliedstoragesorter
 |------|------|------|
 | `/sorter merge preview` | 预览自动整理效果 | 控制台 + merge report 日志 |
 | `/sorter merge execute` | 执行自动整理 | 控制台 + merge report 日志 |
-| `/sorter me dump` | 导出当前 AE2 网络快照 | `dumps/appliedstoragesorter/` JSON |
-| `/sorter me storageDump` | 导出存储分析报告 | `dumps/appliedstoragesorter/` JSON |
+| `/sorter me dump` | 导出当前 AE2 网络快照 | `dumps/appliedinsight/` JSON |
+| `/sorter me storageDump` | 导出存储分析报告 | `dumps/appliedinsight/` JSON |
 | `/sorter me bindProfile <profile>` | 绑定路由配置到当前网络 | 控制台反馈 |
 | `/sorter me showProfile` | 查看当前绑定的路由配置 | 控制台输出 |
 | `/sorter me plan` | 预览规则路由规划 | 控制台 + plan 日志 |
@@ -215,5 +216,5 @@ All Rights Reserved.
 ---
 
 <p align="center">
-  <i>Applied Storage Sorter — 更可控 · 更可解释 · 更适合大型 AE2 网络长期维护</i>
+  <i>Applied Energistics: Insight · 应用能源：洞察 — 更可控 · 更可解释 · 更适合大型 AE2 网络长期维护</i>
 </p>

@@ -1,5 +1,5 @@
 # SorterItems
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/registry/SorterItems.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/registry/SorterItems.java`
 - **包**: `com.knightcode.appliedstoragesorter.registry`
 - **类型**: `class`
 - **所属层**: 注册装配层
@@ -14,7 +14,7 @@
 整体没有过度抽象，职责保持在可理解范围内。
 
 ## 主要协作者
-- `com.knightcode.appliedstoragesorter.AppliedStorageSorter`
+- `com.knightcode.appliedstoragesorter.appliedinsight`
 - `com.knightcode.appliedstoragesorter.item.DigitalAssetManagementCardItem`
 - `net.minecraft.core.registries.Registries`
 - `net.minecraft.world.item.BlockItem`

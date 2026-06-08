@@ -1,5 +1,5 @@
 # SorterMoveOperation
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/ae2/sort/SorterMoveOperation.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/ae2/sort/SorterMoveOperation.java`
 - **包**: `com.knightcode.appliedstoragesorter.ae2.sort`
 - **类型**: `class`
 - **所属层**: AE2 集成层

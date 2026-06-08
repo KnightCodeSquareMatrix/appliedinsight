@@ -1,20 +1,20 @@
 # 运行产物字段契约说明
 
-本文档描述 **Applied Storage Sorter 当前运行时会写出的主要日志与 JSON 文件** 的字段契约。
+本文档描述 **Applied Energistics: Insight 当前运行时会写出的主要日志与 JSON 文件** 的字段契约。
 
 ## 1. 适用范围
 
 当前覆盖以下产物：
 
 ### 日志文件
-- `logs/appliedstoragesorter.log`
-- `logs/appliedstoragesorter/plan-*.log`
-- `logs/appliedstoragesorter/plan-and-move-*.log`
-- `logs/appliedstoragesorter/merge-*.log`
+- `logs/appliedinsight.log`
+- `logs/appliedinsight/plan-*.log`
+- `logs/appliedinsight/plan-and-move-*.log`
+- `logs/appliedinsight/merge-*.log`
 
 ### JSON 文件
-- `dumps/appliedstoragesorter/me-dump-*.json`
-- `dumps/appliedstoragesorter/storage-analysis-*.json`
+- `dumps/appliedinsight/me-dump-*.json`
+- `dumps/appliedinsight/storage-analysis-*.json`
 
 ## 2. 总体约定
 
@@ -46,7 +46,7 @@
 
 ---
 
-## 3. `logs/appliedstoragesorter.log`
+## 3. `logs/appliedinsight.log`
 
 ### 3.1 定位
 总日志文件，记录命令级摘要，不承载完整复盘明细。
@@ -178,7 +178,7 @@
 
 ---
 
-## 4. `logs/appliedstoragesorter/plan-*.log`
+## 4. `logs/appliedinsight/plan-*.log`
 
 ### 4.1 定位
 `/sorter me plan` 的详细文本日志。
@@ -273,7 +273,7 @@ cell 字段：
 
 ---
 
-## 5. `logs/appliedstoragesorter/plan-and-move-*.log`
+## 5. `logs/appliedinsight/plan-and-move-*.log`
 
 ### 5.1 定位
 `/sorter me planAndMove` 的详细文本日志。
@@ -324,7 +324,7 @@ cell 字段：
 
 ---
 
-## 6. `logs/appliedstoragesorter/merge-*.log`
+## 6. `logs/appliedinsight/merge-*.log`
 
 ### 6.1 定位
 `/sorter merge` 的详细复盘日志，是当前最适合做“价值展示”的 merge 输出。
@@ -485,7 +485,7 @@ cell 字段：
 
 ---
 
-## 7. `dumps/appliedstoragesorter/me-dump-*.json`
+## 7. `dumps/appliedinsight/me-dump-*.json`
 
 ### 7.1 定位
 网络原始事实导出，适合细粒度 drill-down 和离线分析。
@@ -591,7 +591,7 @@ cell 字段：
 
 ---
 
-## 8. `dumps/appliedstoragesorter/storage-analysis-*.json`
+## 8. `dumps/appliedinsight/storage-analysis-*.json`
 
 ### 8.1 定位
 面向 dashboard / overview / 节点语义分析的宏观 snapshot。
@@ -857,7 +857,7 @@ cell 字段：
 ### 9.2 偏向人类阅读，解析时要保守
 以下内容更适合人类阅读，程序若要解析需容错：
 
-- `appliedstoragesorter.log` 的自由组合段落
+- `appliedinsight.log` 的自由组合段落
 - `planned_merge[n]` 的整行文本
 - `move_samples` 中的样本文本
 - `item_merge_details` 下的缩进列表文本

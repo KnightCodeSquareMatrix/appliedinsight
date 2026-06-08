@@ -46,12 +46,12 @@ authors="KnightCode"
 
 # The description text for the mod (multi line!) (#mandatory)
 description='''
-AE2 addon focused on consolidating identical items across internal ME storage cells.
+Applied Energistics: Insight — AE2 storage insight: merge, route, analyze, Digital Asset Vault, and Smart Bus filtering.
 '''
 
 # The [[mixins]] block allows you to declare your mixin config to FML so that it gets loaded.
-#[[mixins]]
-#config="${mod_id}.mixins.json"
+[[mixins]]
+config="${mod_id}.mixins.json"
 
 # The [[accessTransformers]] block allows you to declare where your AT file is.
 # If this block is omitted, a fallback attempt will be made to load an AT from META-INF/accesstransformer.cfg
@@ -94,6 +94,23 @@ AE2 addon focused on consolidating identical items across internal ME storage ce
     versionRange="${ae2_version_range}"
     ordering="AFTER"
     side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="jei"
+    type="optional"
+    ordering="AFTER"
+    side="CLIENT"
+
+[[dependencies.${mod_id}]]
+    modId="emi"
+    type="optional"
+    ordering="AFTER"
+    side="CLIENT"
+
+# Declare all mod packages so NeoForge ModuleClassLoader can find them at runtime
+[[packages]]
+    modId = "${mod_id}"
+    packages = ["com.knightcode.appliedinsight"]
 
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares
 # that your mod requires GL version 3.2 or higher. Other features will be added. They are side aware so declaring this won't

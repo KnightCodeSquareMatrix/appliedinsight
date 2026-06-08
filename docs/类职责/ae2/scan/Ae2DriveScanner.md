@@ -1,5 +1,5 @@
 # Ae2DriveScanner
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/ae2/scan/Ae2DriveScanner.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/ae2/scan/Ae2DriveScanner.java`
 - **包**: `com.knightcode.appliedstoragesorter.ae2.scan`
 - **类型**: `class`
 - **所属层**: AE2 集成层

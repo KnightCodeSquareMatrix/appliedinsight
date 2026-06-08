@@ -1,100 +1,323 @@
 package com.knightcode.appliedstoragesorter.menu;
 
+import appeng.api.storage.StorageCells;
 import appeng.menu.AEBaseMenu;
 import appeng.menu.SlotSemantic;
 import appeng.menu.SlotSemantics;
 import com.knightcode.appliedstoragesorter.blockentity.DigitalAssetVaultBlockEntity;
-import com.knightcode.appliedstoragesorter.menu.slot.DigitalAssetManagementCardSlot;
 import com.knightcode.appliedstoragesorter.menu.slot.StorageCellSlot;
+import com.knightcode.appliedstoragesorter.registry.SorterBlocks;
 import com.knightcode.appliedstoragesorter.registry.SorterMenus;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.DataSlot;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
 
 public class DigitalAssetVaultMenu extends AEBaseMenu {
-    // --- Slot semantic for the management card (registered at class load) ---
-    public static final SlotSemantic MANAGEMENT_CARD = SlotSemantics.register(
-            "APPLIEDSTORAGESORTER_MANAGEMENT_CARD", true, 500);
+    public static final SlotSemantic INPUT_CELL = SlotSemantics.register(
+            "AppliedStorageSorter_INPUT_CELL", true, 501);
 
-    // --- GUI layout constants ---
-    private static final int SLOT_SIZE = 18;
-    private static final int CELL_COLS = 2;
-    private static final int CELL_ROWS = 5;
+    public static final int RIGHT_SECTION_X = 134;
+    public static final int RIGHT_COL_X = RIGHT_SECTION_X + 6;
+    public static final int GUI_WIDTH = 226;
+    public static final int RIGHT_COL_WIDTH = GUI_WIDTH - RIGHT_COL_X - 8;
 
-    /**
-     * Cell 槽位布局：垂直排列，从 (71, 8) 开始，2 列 x 5 行。
-     * DAV 使用垂直布局（5行2列），与 AE2 Drive 的水平布局（2行5列）不同。
-     */
-    private static final int CELL_AREA_X = 71;
-    private static final int CELL_AREA_Y = 8;
+    public static final int SLOT_LABEL_X = RIGHT_SECTION_X + 8;
+    public static final int SLOT_LABEL_Y = 28;
+    public static final int INPUT_SLOT_X = 167;
+    public static final int INPUT_SLOT_Y = 44;
 
-    /**
-     * 管理卡槽位：位于卡槽面板内（纹理 y=201..222），与 Drive 主体分离。
-     * x=152 在卡槽面板内的管理卡槽专属位置，y=203 对应纹理中槽位边框顶部。
-     */
-    private static final int CARD_SLOT_X = 152;
-    private static final int CARD_SLOT_Y = 203;
+    public static final int ABSORPTION_TEXT_X = RIGHT_COL_X;
+    public static final int STAT_TEXT_MAX_WIDTH = RIGHT_COL_WIDTH;
+    public static final int ABSORPTION_STAT_1_Y = 66;
+    public static final int ABSORPTION_BYTES_VALUE_Y = 76;
+    public static final int ABSORPTION_TYPES_TOTAL_Y = 86;
+    public static final int ABSORPTION_TYPES_USED_Y = 96;
 
-    /**
-     * 玩家背包：与 AE2 Drive 的 common/player_inventory.json 布局一致。
-     * 从 (8, 84) 开始，3 行 x 9 列，快捷栏在 (8, 142)。
-     */
-    private static final int PLAYER_INV_X = 8;
-    private static final int PLAYER_INV_Y = 84;
-    private static final int PLAYER_HOTBAR_Y = 142;
+    public static final int EXPANSION_LABEL_Y = 110;
+    public static final int EXPANSION_SLOT_X = INPUT_SLOT_X;
+    public static final int EXPANSION_SLOT_Y = 120;
+    public static final int EXPANSION_SLOT_SIZE = 18;
 
-    public DigitalAssetVaultMenu(int id, Inventory playerInventory, DigitalAssetVaultBlockEntity blockEntity) {
-        super(SorterMenus.DIGITAL_ASSET_VAULT_MENU.get(), id, playerInventory, blockEntity);
+    public static final int INDICATOR_Y = 140;
+    public static final int STATUS_Y = 150;
+    public static final int PLAYER_INV_Y = 162;
 
-        addCellSlots(blockEntity);
-        addManagementCardSlot(blockEntity);
-        addPlayerInventorySlots(playerInventory);
+    private static final int PLAYER_INV_START = 1;
+    private static final int PLAYER_INV_END = PLAYER_INV_START + 27;
+    private static final int HOTBAR_START = PLAYER_INV_END;
+    private static final int HOTBAR_END = HOTBAR_START + 9;
+
+    private final DigitalAssetVaultBlockEntity blockEntity;
+    private final ContainerLevelAccess access;
+    private long absorbedCellCount;
+    private long absorbedBytes;
+    private long absorbedTypeCapacity;
+    private long usedBytes;
+    private long usedTypeCapacity;
+    private boolean migrateExistingItems;
+    private boolean autoAcceptIncoming;
+    private boolean autoExpandEnabled;
+    private String expansionCellId = "";
+    private boolean expansionCellValid;
+    private boolean expansionCellCraftable;
+    private int statusOrdinal;
+
+    public DigitalAssetVaultMenu(int containerId, Inventory playerInventory,
+            DigitalAssetVaultBlockEntity blockEntity) {
+        super(SorterMenus.DIGITAL_ASSET_VAULT_MENU.get(), containerId, playerInventory, blockEntity);
+        this.blockEntity = blockEntity;
+        this.access = ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos());
+
+        addSlot(new StorageCellSlot(blockEntity.getInputInventory().toItemHandler(), 0, 0, 0), INPUT_CELL);
+        createPlayerInventorySlots(playerInventory);
+        addCounterDataSlots();
+        updateLocalDataFromBlockEntity();
     }
 
-    public static DigitalAssetVaultMenu fromNetwork(int id, Inventory playerInventory, BlockPos pos) {
-        var level = playerInventory.player.level();
+    public static DigitalAssetVaultMenu fromNetwork(int containerId, Inventory playerInventory, BlockPos pos,
+            boolean autoExpandEnabled, String expansionCellId,
+            boolean expansionCellValid, boolean expansionCellCraftable) {
+        Level level = playerInventory.player.level();
         if (!(level.getBlockEntity(pos) instanceof DigitalAssetVaultBlockEntity blockEntity)) {
-            throw new IllegalStateException("Expected Digital Asset Vault block entity at " + pos);
+            throw new IllegalStateException("Expected DigitalAssetVaultBlockEntity at " + pos);
         }
-        return new DigitalAssetVaultMenu(id, playerInventory, blockEntity);
+        var menu = new DigitalAssetVaultMenu(containerId, playerInventory, blockEntity);
+        menu.autoExpandEnabled = autoExpandEnabled;
+        menu.expansionCellId = expansionCellId;
+        menu.expansionCellValid = expansionCellValid;
+        menu.expansionCellCraftable = expansionCellCraftable;
+        return menu;
     }
 
-    private void addCellSlots(DigitalAssetVaultBlockEntity blockEntity) {
-        var cellHandler = blockEntity.getInternalInventory().toItemHandler();
-        for (int row = 0; row < CELL_ROWS; row++) {
-            for (int col = 0; col < CELL_COLS; col++) {
-                int slotIndex = row * CELL_COLS + col;
-                addSlot(new StorageCellSlot(cellHandler, slotIndex,
-                        CELL_AREA_X + col * SLOT_SIZE,
-                        CELL_AREA_Y + row * SLOT_SIZE),
-                        SlotSemantics.STORAGE_CELL);
+    public DigitalAssetVaultBlockEntity getBlockEntity() {
+        return blockEntity;
+    }
+
+    public long getAbsorbedCellCount() {
+        return absorbedCellCount;
+    }
+
+    public long getAbsorbedBytes() {
+        return absorbedBytes;
+    }
+
+    public long getAbsorbedTypeCapacity() {
+        return absorbedTypeCapacity;
+    }
+
+    public long getUsedBytes() {
+        return usedBytes;
+    }
+
+    public long getUsedTypeCapacity() {
+        return usedTypeCapacity;
+    }
+
+    public boolean isMigrateExistingItems() {
+        return migrateExistingItems;
+    }
+
+    public boolean isAutoAcceptIncoming() {
+        return autoAcceptIncoming;
+    }
+
+    public boolean isAutoExpandEnabled() {
+        return autoExpandEnabled;
+    }
+
+    public String getExpansionCellId() {
+        return expansionCellId;
+    }
+
+    public boolean isExpansionCellValid() {
+        return expansionCellValid;
+    }
+
+    public boolean isExpansionCellCraftable() {
+        return expansionCellCraftable;
+    }
+
+    public DigitalAssetVaultBlockEntity.Status getStatus() {
+        return DigitalAssetVaultBlockEntity.Status.fromOrdinal(statusOrdinal);
+    }
+
+    @Override
+    public void broadcastChanges() {
+        updateLocalDataFromBlockEntity();
+        super.broadcastChanges();
+    }
+
+    @Override
+    public ItemStack quickMoveStack(Player player, int index) {
+        ItemStack moved = ItemStack.EMPTY;
+        Slot slot = slots.get(index);
+        if (slot == null || !slot.hasItem()) {
+            return ItemStack.EMPTY;
+        }
+
+        ItemStack stack = slot.getItem();
+        moved = stack.copy();
+
+        if (index == 0) {
+            if (!moveItemStackTo(stack, PLAYER_INV_START, HOTBAR_END, true)) {
+                return ItemStack.EMPTY;
             }
-        }
-    }
-
-    private void addManagementCardSlot(DigitalAssetVaultBlockEntity blockEntity) {
-        addSlot(new DigitalAssetManagementCardSlot(blockEntity.getCardInventory().toItemHandler(), 0,
-                CARD_SLOT_X, CARD_SLOT_Y),
-                MANAGEMENT_CARD);
-    }
-
-    private void addPlayerInventorySlots(Inventory playerInventory) {
-        // Main inventory: 3 rows x 9 cols (player inventory slots 9-35)
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 9; col++) {
-                int index = col + row * 9 + 9;
-                addSlot(new Slot(playerInventory, index,
-                        PLAYER_INV_X + col * SLOT_SIZE,
-                        PLAYER_INV_Y + row * SLOT_SIZE),
-                        SlotSemantics.PLAYER_INVENTORY);
+        } else if (StorageCells.isCellHandled(stack)) {
+            if (!moveItemStackTo(stack, 0, 1, false)) {
+                return ItemStack.EMPTY;
             }
+        } else if (index >= PLAYER_INV_START && index < PLAYER_INV_END) {
+            if (!moveItemStackTo(stack, HOTBAR_START, HOTBAR_END, false)) {
+                return ItemStack.EMPTY;
+            }
+        } else if (index >= HOTBAR_START && index < HOTBAR_END) {
+            if (!moveItemStackTo(stack, PLAYER_INV_START, PLAYER_INV_END, false)) {
+                return ItemStack.EMPTY;
+            }
+        } else {
+            return ItemStack.EMPTY;
         }
-        // Hotbar: 1 row x 9 cols (player inventory slots 0-8)
-        for (int col = 0; col < 9; col++) {
-            addSlot(new Slot(playerInventory, col,
-                    PLAYER_INV_X + col * SLOT_SIZE,
-                    PLAYER_HOTBAR_Y),
-                    SlotSemantics.PLAYER_HOTBAR);
+
+        if (stack.isEmpty()) {
+            slot.setByPlayer(ItemStack.EMPTY);
+        } else {
+            slot.setChanged();
         }
+
+        if (stack.getCount() == moved.getCount()) {
+            return ItemStack.EMPTY;
+        }
+
+        slot.onTake(player, stack);
+        return moved;
+    }
+
+    @Override
+    public boolean stillValid(Player player) {
+        return stillValid(access, player, SorterBlocks.DIGITAL_ASSET_VAULT.get());
+    }
+
+    private void addCounterDataSlots() {
+        addLongDataSlots(() -> absorbedCellCount, value -> absorbedCellCount = value);
+        addLongDataSlots(() -> absorbedBytes, value -> absorbedBytes = value);
+        addLongDataSlots(() -> absorbedTypeCapacity, value -> absorbedTypeCapacity = value);
+        addLongDataSlots(() -> usedBytes, value -> usedBytes = value);
+        addLongDataSlots(() -> usedTypeCapacity, value -> usedTypeCapacity = value);
+        addDataSlot(new DataSlot() {
+            @Override
+            public int get() {
+                return migrateExistingItems ? 1 : 0;
+            }
+
+            @Override
+            public void set(int value) {
+                migrateExistingItems = value != 0;
+            }
+        });
+        addDataSlot(new DataSlot() {
+            @Override
+            public int get() {
+                return autoAcceptIncoming ? 1 : 0;
+            }
+
+            @Override
+            public void set(int value) {
+                autoAcceptIncoming = value != 0;
+            }
+        });
+        addDataSlot(new DataSlot() {
+            @Override
+            public int get() {
+                return autoExpandEnabled ? 1 : 0;
+            }
+
+            @Override
+            public void set(int value) {
+                autoExpandEnabled = value != 0;
+            }
+        });
+        addDataSlot(new DataSlot() {
+            @Override
+            public int get() {
+                return expansionCellValid ? 1 : 0;
+            }
+
+            @Override
+            public void set(int value) {
+                expansionCellValid = value != 0;
+            }
+        });
+        addDataSlot(new DataSlot() {
+            @Override
+            public int get() {
+                return expansionCellCraftable ? 1 : 0;
+            }
+
+            @Override
+            public void set(int value) {
+                expansionCellCraftable = value != 0;
+            }
+        });
+        addDataSlot(new DataSlot() {
+            @Override
+            public int get() {
+                return statusOrdinal;
+            }
+
+            @Override
+            public void set(int value) {
+                statusOrdinal = value;
+            }
+        });
+    }
+
+    private void addLongDataSlots(LongGetter getter, LongSetter setter) {
+        for (int part = 0; part < 4; part++) {
+            final int shift = part * 16;
+            addDataSlot(new DataSlot() {
+                @Override
+                public int get() {
+                    return (int) ((getter.get() >> shift) & 0xFFFFL);
+                }
+
+                @Override
+                public void set(int value) {
+                    long mask = 0xFFFFL << shift;
+                    long current = getter.get();
+                    long updated = (current & ~mask) | ((long) (value & 0xFFFF) << shift);
+                    setter.set(updated);
+                }
+            });
+        }
+    }
+
+    private void updateLocalDataFromBlockEntity() {
+        absorbedCellCount = blockEntity.getAbsorbedCellCount();
+        absorbedBytes = blockEntity.getAbsorbedBytes();
+        absorbedTypeCapacity = blockEntity.getAbsorbedTypeCapacity();
+        usedBytes = blockEntity.getUsedBytes();
+        usedTypeCapacity = blockEntity.getUsedTypeCapacity();
+        migrateExistingItems = blockEntity.isMigrateExistingItems();
+        autoAcceptIncoming = blockEntity.isAutoAcceptIncoming();
+        autoExpandEnabled = blockEntity.isAutoExpandEnabled();
+        expansionCellId = blockEntity.getExpansionCellId();
+        expansionCellValid = blockEntity.isExpansionCellValid();
+        expansionCellCraftable = blockEntity.isExpansionCellCraftable();
+        statusOrdinal = blockEntity.getLastStatus().ordinal();
+    }
+
+    @FunctionalInterface
+    private interface LongGetter {
+        long get();
+    }
+
+    @FunctionalInterface
+    private interface LongSetter {
+        void set(long value);
     }
 }

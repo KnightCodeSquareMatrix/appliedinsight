@@ -1,5 +1,5 @@
 # SorterBlockEntities
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/registry/SorterBlockEntities.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/registry/SorterBlockEntities.java`
 - **包**: `com.knightcode.appliedstoragesorter.registry`
 - **类型**: `class`
 - **所属层**: 注册装配层
@@ -15,7 +15,7 @@
 
 ## 主要协作者
 - `appeng.blockentity.AEBaseBlockEntity`
-- `com.knightcode.appliedstoragesorter.AppliedStorageSorter`
+- `com.knightcode.appliedstoragesorter.appliedinsight`
 - `com.knightcode.appliedstoragesorter.blockentity.DigitalAssetVaultBlockEntity`
 - `net.minecraft.core.registries.Registries`
 - `net.minecraft.world.level.block.entity.BlockEntityType`

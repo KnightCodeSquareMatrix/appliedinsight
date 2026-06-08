@@ -1,5 +1,5 @@
 # ZoneMoveExecutionDetailedResult
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/ae2/zone/ZoneMoveExecutionDetailedResult.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/ae2/zone/ZoneMoveExecutionDetailedResult.java`
 - **包**: `com.knightcode.appliedstoragesorter.ae2.zone`
 - **类型**: `record`
 - **所属层**: AE2 集成层

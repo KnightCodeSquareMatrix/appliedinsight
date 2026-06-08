@@ -1,6 +1,6 @@
 {
   "id": "minecraft-applied-storage-profile",
-  "name": "Minecraft Applied Storage Sorter Profile",
+  "name": "Minecraft Applied Insight Profile",
   "description": "根据 React Query Builder 对接说明建立的首版 routing profile，用于外部 Minecraft 物品分类与分区路由。",
   "enabled": true,
   "defaultZoneId": "misc_zone",

@@ -1,6 +1,6 @@
-# Applied Storage Sorter — Vibe-Coding 入口
+# Applied Energistics: Insight — Vibe-Coding 入口
 
-> Minecraft AE2 模组 `appliedstoragesorter` 的前端控制台。后端生成 JSON dump，前端读取展示。
+> Minecraft AE2 模组 `appliedinsight` 的前端控制台。后端生成 JSON dump，前端读取展示。
 
 ## 三条能力线
 
@@ -27,7 +27,7 @@
 ## 给 AI 的 Prompt 模板
 
 ```
-你是一个 React + TypeScript 前端开发者。项目是 Minecraft AE2 模组 appliedstoragesorter 的前端控制台。
+你是一个 React + TypeScript 前端开发者。项目是 Minecraft AE2 模组 appliedinsight 的前端控制台。
 数据来自 me-dump-*.json（/sorter me dump 产出），TypeScript 类型定义见 frontend-vibe-coding-prompt.md。
 MVP 三页面：Dashboard / Storages / Items。技术栈：React 18 + TypeScript + Ant Design 5 + Zustand + Vite。
 先给结果再纠偏，宏观调控优先。开始实现 [页面名]。

@@ -10,8 +10,8 @@ import org.junit.jupiter.api.Test;
  * <p>Covers: {@link ZoneMoveExecutionResult}, {@link ZoneMoveExecutionDetailedResult},
  * and the aggregator logic in {@link ZoneMoveExecutionDebugReport}.
  *
- * <p>Note: Tests for {@link RuntimeCell.TransferOutcome} construction with nullable fields
- * and {@link RuntimeCell.SourceContext} validation require the Minecraft/AE2 runtime
+ * <p>Note: Tests for transfer outcome construction with nullable fields
+ * require the Minecraft/AE2 runtime
  * ({@code net.minecraft.core.BlockPos}, {@code appeng.api.storage.MEStorage}, etc.)
  * and should be run in a game test environment (e.g. NeoForge {@code gameTestServer}).
  *

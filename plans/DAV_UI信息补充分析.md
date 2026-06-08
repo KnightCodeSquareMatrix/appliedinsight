@@ -8,7 +8,7 @@
 
 ## 1. 当前 DAV UI 状态回顾
 
-[`DigitalAssetVaultScreen.java`](src/main/java/com/knightcode/appliedstoragesorter/client/screen/DigitalAssetVaultScreen.java)
+[`DigitalAssetVaultScreen.java`](src/main/java/com/knightcode/appliedinsight/client/screen/DigitalAssetVaultScreen.java)
 
 ```
 ┌───────────────────────────┐
@@ -231,7 +231,7 @@ DAV 有 10 个 cell 槽，每个槽需要同步：
 - 需要 Menu 端编码/解码
 - 不支持批量更新
 
-**实现位置**: [`DigitalAssetVaultMenu.java`](src/main/java/com/knightcode/appliedstoragesorter/menu/DigitalAssetVaultMenu.java) 的构造函数中注册 data slots
+**实现位置**: [`DigitalAssetVaultMenu.java`](src/main/java/com/knightcode/appliedinsight/menu/DigitalAssetVaultMenu.java) 的构造函数中注册 data slots
 
 ### 方案 B: 自定义网络 Payload（推荐 P1 以后）
 
@@ -271,26 +271,26 @@ DAVCellStatusPayload(S→C):
 
 ## 7. 需要新增的 i18n 条目
 
-[`zh_cn.json`](src/main/resources/assets/appliedstoragesorter/lang/zh_cn.json)
+[`zh_cn.json`](src/main/resources/assets/appliedinsight/lang/zh_cn.json)
 
 ```json
 {
-  "gui.appliedstoragesorter.dav.no_card": "插入管理卡以声明此数字资产库所属区域",
-  "gui.appliedstoragesorter.dav.card_no_zone": "管理卡未分配区域",
-  "gui.appliedstoragesorter.dav.zone_title": "%s 数字资产库",
-  "gui.appliedstoragesorter.dav.zone_capacity": "容量: %s / %s (%s)",
-  "gui.appliedstoragesorter.dav.zone_health": "健康: %s",
-  "gui.appliedstoragesorter.dav.zone_types": "类型占用: %d/%d (%s)",
-  "gui.appliedstoragesorter.dav.cell_healthy": "健康",
-  "gui.appliedstoragesorter.dav.cell_nearly_full": "容量告警",
-  "gui.appliedstoragesorter.dav.cell_type_exhausted": "类型耗尽",
-  "gui.appliedstoragesorter.dav.cell_infinite": "无限容器",
-  "gui.appliedstoragesorter.dav.slots_used": "%d/%d 槽已用",
-  "gui.appliedstoragesorter.dav.total_usage": "总占用 %s",
-  "gui.appliedstoragesorter.dav.total_types": "%d 种物品",
-  "gui.appliedstoragesorter.dav.status_good": "良好",
-  "gui.appliedstoragesorter.dav.status_warning": "需关注",
-  "gui.appliedstoragesorter.dav.status_critical": "告警"
+  "gui.appliedinsight.dav.no_card": "插入管理卡以声明此数字资产库所属区域",
+  "gui.appliedinsight.dav.card_no_zone": "管理卡未分配区域",
+  "gui.appliedinsight.dav.zone_title": "%s 数字资产库",
+  "gui.appliedinsight.dav.zone_capacity": "容量: %s / %s (%s)",
+  "gui.appliedinsight.dav.zone_health": "健康: %s",
+  "gui.appliedinsight.dav.zone_types": "类型占用: %d/%d (%s)",
+  "gui.appliedinsight.dav.cell_healthy": "健康",
+  "gui.appliedinsight.dav.cell_nearly_full": "容量告警",
+  "gui.appliedinsight.dav.cell_type_exhausted": "类型耗尽",
+  "gui.appliedinsight.dav.cell_infinite": "无限容器",
+  "gui.appliedinsight.dav.slots_used": "%d/%d 槽已用",
+  "gui.appliedinsight.dav.total_usage": "总占用 %s",
+  "gui.appliedinsight.dav.total_types": "%d 种物品",
+  "gui.appliedinsight.dav.status_good": "良好",
+  "gui.appliedinsight.dav.status_warning": "需关注",
+  "gui.appliedinsight.dav.status_critical": "告警"
 }
 ```
 

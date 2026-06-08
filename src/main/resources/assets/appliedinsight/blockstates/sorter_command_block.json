@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=east":  { "model": "appliedinsight:block/sorter_command_block", "y": 90 },
+    "facing=north": { "model": "appliedinsight:block/sorter_command_block" },
+    "facing=south": { "model": "appliedinsight:block/sorter_command_block", "y": 180 },
+    "facing=west":  { "model": "appliedinsight:block/sorter_command_block", "y": 270 }
+  }
+}

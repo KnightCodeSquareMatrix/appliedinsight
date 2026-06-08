@@ -1,5 +1,5 @@
 # SorterCapabilities
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/registry/SorterCapabilities.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/registry/SorterCapabilities.java`
 - **包**: `com.knightcode.appliedstoragesorter.registry`
 - **类型**: `class`
 - **所属层**: 注册装配层

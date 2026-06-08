@@ -21,7 +21,7 @@ public final class SorterComponentHelper {
      * 玩家点击后在系统默认程序中打开该文件。
      *
      * @param label  显示文本（如 "detailedLog"）
-     * @param path   相对 game 目录的文件路径（如 "logs/appliedstoragesorter/plan-xxx.log"）
+     * @param path   相对 game 目录的文件路径（如 "logs/AppliedStorageSorter/plan-xxx.log"）
      * @return 带点击事件和悬浮提示的组件
      */
     public static Component clickableFile(String label, String path) {
@@ -34,7 +34,7 @@ public final class SorterComponentHelper {
                         absolute.toAbsolutePath().toString()))
                 .withHoverEvent(new HoverEvent(
                         HoverEvent.Action.SHOW_TEXT,
-                        Component.literal("Click to open: " + path)));
+                        Component.translatable("sorter.component.click_to_open", path)));
         return Component.literal(label + "=")
                 .withStyle(ChatFormatting.GRAY)
                 .append(Component.literal(path).withStyle(fileStyle));

@@ -142,13 +142,13 @@ public final class ZoneMergePlanner {
 
                     PlannedMove plannedMove = new PlannedMove(
                             itemKey, placementDecision.acceptedAmount(), sourceReference,
-                            placementDecision.targetCell().reference());
+                            placementDecision.targetReference());
                     SorterMoveOperation.ExecutableMove executableMove = new SorterMoveOperation.ExecutableMove(
                             plannedMove,
                             sourceDrive.actionHost(),
-                            placementDecision.targetCell().actionHost(),
+                            placementDecision.targetActionHost(),
                             sourceStorage,
-                            placementDecision.targetCell().storage());
+                            placementDecision.targetStorage());
 
                     plannedMoves.add(plannedMove);
                     executableMoves.add(executableMove);

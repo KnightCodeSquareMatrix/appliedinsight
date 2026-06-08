@@ -1,5 +1,5 @@
 # SorterFileLogger
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/logging/SorterFileLogger.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/logging/SorterFileLogger.java`
 - **包**: `com.knightcode.appliedstoragesorter.logging`
 - **类型**: `class`
 - **所属层**: 日志基础设施层
@@ -11,7 +11,7 @@
 - `/sorter me dump`：success / failure
 - `/sorter me storageDump`：success / failure（`logSorterMeStorageAnalysis` / `logSorterMeStorageAnalysisFailure`）
 
-每条日志通过 `ReportFileSupport.buildCommandHeader()` 生成统一命令头，输出到 `logs/appliedstoragesorter/` 下的单文件。
+每条日志通过 `ReportFileSupport.buildCommandHeader()` 生成统一命令头，输出到 `logs/appliedinsight/` 下的单文件。
 
 ## 边界检查
 边界健康，位于 logging 基础设施层。`SorterFileLogger` 只负责命令级摘要，不参与详细的 merge 复盘（由 `SorterMergeReportFileLogger` 负责）。
@@ -20,7 +20,7 @@
 没有过度抽象；当前把 merge / dump / storageDump 三条命令的摘要日志集中到一个轻量日志器是合理的。
 
 ## 主要协作者
-- `com.knightcode.appliedstoragesorter.AppliedStorageSorter`
+- `com.knightcode.appliedstoragesorter.appliedinsight`
 - `com.knightcode.appliedstoragesorter.ae2.Ae2ControllerTargetResolver`
 - `com.knightcode.appliedstoragesorter.ae2.Ae2GridTargetResult`
 - `com.knightcode.appliedstoragesorter.ae2.dump.SorterNetworkDumpResult`

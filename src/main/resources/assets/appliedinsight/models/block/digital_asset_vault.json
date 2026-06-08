@@ -1,0 +1,37 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "appliedinsight:block/new_dav/side",
+    "shell": "appliedinsight:block/new_dav/side",
+    "top": "appliedinsight:block/new_dav/top",
+    "front": "appliedinsight:block/new_dav/vault_front",
+    "lights": "appliedinsight:block/new_dav/vault_front_lights"
+  },
+  "render_type": "cutout",
+  "elements": [
+    {
+      "from": [0, 0, 0],
+      "to": [16, 16, 16],
+      "faces": {
+        "north": { "uv": [0, 0, 16, 16], "texture": "#front" },
+        "south": { "uv": [0, 0, 16, 16], "texture": "#shell" },
+        "east": { "uv": [0, 0, 16, 16], "texture": "#shell" },
+        "west": { "uv": [0, 0, 16, 16], "texture": "#shell" },
+        "up": { "uv": [0, 0, 16, 16], "texture": "#top" },
+        "down": { "uv": [0, 0, 16, 16], "texture": "#top" }
+      }
+    },
+    {
+      "from": [0, 0, 0],
+      "to": [16, 16, 16],
+      "shade": false,
+      "faces": {
+        "north": {
+          "uv": [0, 0, 16, 16],
+          "texture": "#lights",
+          "neoforge_data": { "block_light": 10, "sky_light": 10 }
+        }
+      }
+    }
+  ]
+}

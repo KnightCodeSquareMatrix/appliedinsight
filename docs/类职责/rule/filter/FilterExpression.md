@@ -1,5 +1,5 @@
 # FilterExpression
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/rule/filter/FilterExpression.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/rule/filter/FilterExpression.java`
 - **包**: `com.knightcode.appliedstoragesorter.rule.filter`
 - **类型**: `type`
 - **所属层**: 纯规则模型层

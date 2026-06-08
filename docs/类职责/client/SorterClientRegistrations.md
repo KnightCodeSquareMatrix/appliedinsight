@@ -1,5 +1,5 @@
 # SorterClientRegistrations
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/client/SorterClientRegistrations.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/client/SorterClientRegistrations.java`
 - **包**: `com.knightcode.appliedstoragesorter.client`
 - **类型**: `class`
 - **所属层**: 客户端展示层

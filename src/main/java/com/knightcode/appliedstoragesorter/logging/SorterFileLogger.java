@@ -19,13 +19,13 @@ import net.neoforged.fml.loading.FMLPaths;
 
 /**
  * 命令级摘要日志记录器。
- * 负责向 {@code logs/appliedstoragesorter.log} 追加写入命令级摘要。
+ * 负责向 {@code logs/AppliedStorageSorter.log} 追加写入命令级摘要。
  * <p>
  * 所有文本拼装委托给 {@link ReportFileSupport}，本类只负责组织日志内容。
  */
 public final class SorterFileLogger {
     private static final Logger log = LoggerFactory.getLogger(SorterFileLogger.class);
-    private static final Path LOG_PATH = FMLPaths.GAMEDIR.get().resolve("logs").resolve("appliedstoragesorter.log");
+    private static final Path LOG_PATH = FMLPaths.GAMEDIR.get().resolve("logs").resolve("AppliedStorageSorter.log");
 
     private SorterFileLogger() {
     }

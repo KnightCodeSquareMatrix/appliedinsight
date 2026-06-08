@@ -1,5 +1,5 @@
 # SorterNetworkDumpWriter
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/ae2/dump/SorterNetworkDumpWriter.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/ae2/dump/SorterNetworkDumpWriter.java`
 - **包**: `com.knightcode.appliedstoragesorter.ae2.dump`
 - **类型**: `class`
 - **所属层**: AE2 集成层

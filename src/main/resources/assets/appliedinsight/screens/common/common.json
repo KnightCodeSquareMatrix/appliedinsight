@@ -1,0 +1,9 @@
+{
+  "includes": ["palette.json"],
+  "widgets": {
+    "verticalToolbar": {
+      "left": 3,
+      "top": 1
+    }
+  }
+}

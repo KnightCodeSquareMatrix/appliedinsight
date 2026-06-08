@@ -1,4 +1,4 @@
-# Applied Storage Sorter — Project Instructions
+# Applied Insight — Project Instructions
 
 > GitHub Copilot 项目级指令。首次打开此项目时，Copilot 会自动读取此文件。
 
@@ -12,7 +12,7 @@ Read `docs/ai/AI_ENTRY.md` first — it contains the complete project context, a
 
 ## Quick Facts
 
-- **Mod ID**: `appliedstoragesorter`, Minecraft 1.21.1, NeoForge 21.1.224, AE2 19.2.17
+- **Mod ID**: `appliedinsight`, Minecraft 1.21.1, NeoForge 21.1.224, AE2 19.2.17
 - **Java**: 21, **Gradle**: 9.2.1
 - **Build**: `./gradlew build copyModJarToPrism` (build + auto-deploy to PrismLauncher)
 - **Two dump types**: `me-dump` (micro facts) and `storage-analysis` (macro analysis)
@@ -37,7 +37,7 @@ Read `docs/ai/AI_ENTRY.md` first — it contains the complete project context, a
 
 | File | Purpose |
 |------|---------|
-| `AppliedStorageSorter.java` | Mod main class (event registration, network packet registration) |
+| `appliedinsight.java` | Mod main class (event registration, network packet registration) |
 | `SorterCommands.java` | Command registration (Brigadier) |
 | `SorterNetworkDumpWriter.java` | me-dump writer |
 | `SorterStorageAnalysisDumpWriter.java` | storage-analysis writer |

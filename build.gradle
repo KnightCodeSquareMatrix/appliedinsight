@@ -31,6 +31,14 @@ repositories {
     maven { url = 'https://maven.aliyun.com/repository/public' }
     maven { url = 'https://mirrors.cloud.tencent.com/nexus/repository/maven-public' }
     maven { url = 'https://maven.neoforged.net/releases' }
+    maven {
+        name = 'BlameJared'
+        url = 'https://maven.blamejared.com/'
+    }
+    maven {
+        name = 'TerraformersMC'
+        url = 'https://maven.terraformersmc.com/releases/'
+    }
 
     // Add here additional repositories if required by some of the dependencies below.
 }
@@ -150,12 +158,12 @@ dependencies {
     // 运行时由 AE2 的 transitive 依赖提供（Guideme 21.1.1 对应 1.21.1）
     compileOnly "org.appliedenergistics:guideme:21.1.1"
 
-    // Example optional mod dependency with JEI
-    // The JEI API is declared for compile time use, while the full JEI artifact is used at runtime
-    // compileOnly "mezz.jei:jei-${mc_version}-common-api:${jei_version}"
-    // compileOnly "mezz.jei:jei-${mc_version}-neoforge-api:${jei_version}"
-    // We add the full version to localRuntime, not runtimeOnly, so that we do not publish a dependency on it
-    // localRuntime "mezz.jei:jei-${mc_version}-neoforge:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+    compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
+    localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
+
+    compileOnly "dev.emi:emi-neoforge:${emi_version}:api"
+    localRuntime "dev.emi:emi-neoforge:${emi_version}"
 
     // Example mod dependency using a mod jar from ./libs with a flat dir repository
     // This maps to ./libs/coolmod-${mc_version}-${coolmod_version}.jar
@@ -225,7 +233,7 @@ tasks.register('analyzeSorterDump', JavaExec) {
     group = 'application'
     description = 'Analyze a sorter dump JSON file without launching Minecraft.'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'com.knightcode.appliedstoragesorter.analysis.SorterDumpAnalyzer'
+    mainClass = 'com.knightcode.appliedinsight.analysis.SorterDumpAnalyzer'
 
     if (project.hasProperty('dumpFile')) {
         args project.property('dumpFile')
@@ -240,7 +248,7 @@ tasks.register('routingProfileJsonCli', JavaExec) {
     group = 'application'
     description = 'Read or write standalone routing profile JSON files without launching Minecraft.'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'com.knightcode.appliedstoragesorter.rule.route.RoutingProfileJsonCli'
+    mainClass = 'com.knightcode.appliedinsight.rule.route.RoutingProfileJsonCli'
 
     if (project.hasProperty('cliArgs')) {
         args project.property('cliArgs').toString().split('\\s+')
@@ -251,18 +259,43 @@ tasks.register('filterUiMetadataCli', JavaExec) {
     group = 'application'
     description = 'Write or inspect filter UI metadata JSON for React Query Builder integration.'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'com.knightcode.appliedstoragesorter.rule.filter.FilterUiMetadataCli'
+    mainClass = 'com.knightcode.appliedinsight.rule.filter.FilterUiMetadataCli'
 
     if (project.hasProperty('cliArgs')) {
         args project.property('cliArgs').toString().split('\\s+')
     }
 }
 
+tasks.register('exportFilterEditorMetadata', JavaExec) {
+    group = 'application'
+    description = 'Export filter UI metadata to tools/filter-editor/metadata.json for the static web editor.'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.knightcode.appliedinsight.rule.filter.FilterUiMetadataCli'
+    args 'write-default', 'tools/filter-editor/metadata.json'
+}
+
+def filterEditorGeneratedDir = layout.buildDirectory.dir('generated/filter-editor')
+
+tasks.register('syncFilterEditorAssets', Copy) {
+    group = 'build'
+    description = 'Copy offline filter editor assets into generated mod resources.'
+    from('tools/filter-editor') {
+        include 'index.html', 'app.js', 'i18n.js', 'templates.js', 'style.css', 'metadata.js'
+    }
+    into(filterEditorGeneratedDir.map { it.dir('appliedinsight/filter-editor') })
+}
+
+sourceSets.main.resources.srcDir(filterEditorGeneratedDir)
+
+tasks.named('processResources').configure {
+    dependsOn syncFilterEditorAssets
+}
+
 tasks.register('analyzeSorterDumpRouting', JavaExec) {
     group = 'application'
     description = 'Analyze how a routing profile would classify items in a sorter dump JSON file.'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'com.knightcode.appliedstoragesorter.analysis.SorterDumpRoutingAnalyzer'
+    mainClass = 'com.knightcode.appliedinsight.analysis.SorterDumpRoutingAnalyzer'
 
     if (project.hasProperty('profileFile')) {
         args project.property('profileFile')
@@ -281,7 +314,7 @@ tasks.register('analyzeSorterDumpRoutingSuggestions', JavaExec) {
     group = 'application'
     description = 'Generate fallback-driven rule suggestions from a routing profile and sorter dump JSON file.'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'com.knightcode.appliedstoragesorter.analysis.SorterDumpRoutingSuggestionAnalyzer'
+    mainClass = 'com.knightcode.appliedinsight.analysis.SorterDumpRoutingSuggestionAnalyzer'
 
     if (project.hasProperty('profileFile')) {
         args project.property('profileFile')
@@ -300,7 +333,7 @@ tasks.register('generateRoutingProfileDraft', JavaExec) {
     group = 'application'
     description = 'Generate a draft routing profile JSON from a base profile and sorter dump analysis.'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'com.knightcode.appliedstoragesorter.analysis.SorterDumpProfileGenerationAnalyzer'
+    mainClass = 'com.knightcode.appliedinsight.analysis.SorterDumpProfileGenerationAnalyzer'
 
     if (project.hasProperty('profileFile')) {
         args project.property('profileFile')
@@ -323,7 +356,7 @@ tasks.register('analyzeZoneAllocationPlan', JavaExec) {
     group = 'application'
     description = 'Generate a detailed text report for planner item-to-zone classification from a profile and sorter dump.'
     classpath = sourceSets.main.runtimeClasspath
-    mainClass = 'com.knightcode.appliedstoragesorter.analysis.ZoneAllocationPlannerAnalyzer'
+    mainClass = 'com.knightcode.appliedinsight.analysis.ZoneAllocationPlannerAnalyzer'
 
     if (project.hasProperty('profileFile')) {
         args project.property('profileFile')
@@ -393,7 +426,7 @@ tasks.register('copyModJarToFileServer', Copy) {
     rename '(.+)-([0-9].+\\.jar)', '$1.jar'
     outputs.upToDateWhen { false }
     doLast {
-        logger.lifecycle("  ✓ jar 已更新到文件服务器目录: ${fileServerDir}/appliedstoragesorter.jar")
+        logger.lifecycle("  ✓ jar 已更新到文件服务器目录: ${fileServerDir}/appliedinsight.jar")
     }
 }
 
@@ -407,12 +440,12 @@ tasks.register('quickBuild') {
 // ── 打开 dumps 目录 ──────────────────────────────────────────────────────────
 tasks.register('openDumpsDir') {
     doLast {
-        def dumpsDir = rootProject.file('dumps/appliedstoragesorter')
+        def dumpsDir = rootProject.file('dumps/appliedinsight')
         dumpsDir.mkdirs()
         java.awt.Desktop.getDesktop().browse(dumpsDir.toURI())
     }
     group = 'utility'
-    description = '在文件管理器中打开 dumps/appliedstoragesorter 目录。'
+    description = '在文件管理器中打开 dumps/appliedinsight 目录。'
 }
 
 // ── 打开 PrismLauncher mods 目录 ─────────────────────────────────────────────
@@ -431,7 +464,7 @@ def reactDumpsDir = rootProject.file(
 )
 
 tasks.register('syncDumpToReact', Copy) {
-    from rootProject.file('dumps/appliedstoragesorter')
+    from rootProject.file('dumps/appliedinsight')
     include '*.json'
     into reactDumpsDir
     // 只保留最新的各类型一份（按最后修改时间排序取最新的）
@@ -445,7 +478,7 @@ tasks.register('syncDumpToReact', Copy) {
     }
     outputs.upToDateWhen { false }
     group = 'utility'
-    description = '从 dumps/appliedstoragesorter 同步最新 JSON 到 React 项目的 public/dumps/。'
+    description = '从 dumps/appliedinsight 同步最新 JSON 到 React 项目的 public/dumps/。'
 }
 
 // build 时自动执行拷贝任务

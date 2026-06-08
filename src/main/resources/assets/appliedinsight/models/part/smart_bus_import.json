@@ -1,0 +1,25 @@
+{
+  "textures": {
+    "face_east": "appliedinsight:part/smart_bus_import_east",
+    "face_west": "appliedinsight:part/smart_bus_import_west",
+    "face_up": "appliedinsight:part/smart_bus_import_up",
+    "face_down": "appliedinsight:part/smart_bus_import_down",
+    "side": "appliedinsight:part/smart_bus_sides",
+    "particle": "appliedinsight:part/smart_bus_sides"
+  },
+  "render_type": "minecraft:cutout",
+  "elements": [
+    {
+      "from": [2, 2, 0],
+      "to": [14, 14, 6],
+      "faces": {
+        "north": { "texture": "#side", "uv": [2, 2, 14, 14] },
+        "south": { "texture": "#side", "uv": [2, 2, 14, 14] },
+        "east":  { "texture": "#face_east", "uv": [10, 2, 16, 14] },
+        "west":  { "texture": "#face_west", "uv": [0, 2, 6, 14] },
+        "up":    { "texture": "#face_up", "uv": [2, 0, 14, 6] },
+        "down":  { "texture": "#face_down", "uv": [2, 10, 14, 16] }
+      }
+    }
+  ]
+}

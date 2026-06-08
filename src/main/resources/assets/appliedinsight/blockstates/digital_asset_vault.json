@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=east":  { "model": "appliedinsight:block/digital_asset_vault", "y": 90 },
+    "facing=north": { "model": "appliedinsight:block/digital_asset_vault" },
+    "facing=south": { "model": "appliedinsight:block/digital_asset_vault", "y": 180 },
+    "facing=west":  { "model": "appliedinsight:block/digital_asset_vault", "y": 270 }
+  }
+}

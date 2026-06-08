@@ -203,7 +203,7 @@ zone-local 的“当前最多能接多少”“为什么接不了”这类判断
 
 请优先审计并修改：
 
-- `src/main/java/com/knightcode/appliedstoragesorter/ae2/zone/Ae2ZoneMoveExecutor.java`
+- `src/main/java/com/knightcode/appliedinsight/ae2/zone/Ae2ZoneMoveExecutor.java`
 
 必要时可轻量波及：
 

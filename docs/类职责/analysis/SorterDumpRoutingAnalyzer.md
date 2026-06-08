@@ -1,5 +1,5 @@
 # SorterDumpRoutingAnalyzer
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/analysis/SorterDumpRoutingAnalyzer.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/analysis/SorterDumpRoutingAnalyzer.java`
 - **包**: `com.knightcode.appliedstoragesorter.analysis`
 - **类型**: `class`
 - **所属层**: 离线分析层

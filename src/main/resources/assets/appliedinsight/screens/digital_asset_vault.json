@@ -1,0 +1,27 @@
+{
+  "includes": ["common/common.json", "common/new_dav_player_inventory.json"],
+  "helpTopic": "appliedinsight:digital-asset-vault.md",
+  "background": {
+    "texture": "appliedinsight:textures/gui/digital_asset_vault.png",
+    "textureWidth": 256,
+    "textureHeight": 256,
+    "srcRect": [0, 0, 226, 238]
+  },
+  "slots": {
+    "appliedinsight_INPUT_CELL": {
+      "left": 167,
+      "top": 44
+    }
+  },
+  "text": {
+    "dialog_title": {
+      "text": {
+        "translate": "block.appliedinsight.digital_asset_vault"
+      },
+      "position": {
+        "left": 8,
+        "top": 8
+      }
+    }
+  }
+}

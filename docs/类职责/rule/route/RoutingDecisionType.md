@@ -1,5 +1,5 @@
 # RoutingDecisionType
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/rule/route/RoutingDecisionType.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/rule/route/RoutingDecisionType.java`
 - **包**: `com.knightcode.appliedstoragesorter.rule.route`
 - **类型**: `enum`
 - **所属层**: 纯规则模型层

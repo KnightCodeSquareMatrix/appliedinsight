@@ -80,7 +80,7 @@ public final class SorterDumpRoutingSuggestionAnalyzer {
         }
 
         try (BufferedWriter writer = Files.newBufferedWriter(outputFile)) {
-            writer.write("Applied Storage Sorter Routing Suggestions\n");
+            writer.write("Applied Energistics: Insight Routing Suggestions\n");
             writer.write("========================================\n");
             writer.write("profileId=" + result.profileId() + "\n");
             writer.write("dumpFile=" + result.dumpFile() + "\n\n");

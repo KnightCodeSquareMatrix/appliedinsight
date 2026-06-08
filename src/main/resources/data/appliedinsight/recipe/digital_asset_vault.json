@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " D ",
+    "CAC",
+    " D "
+  ],
+  "key": {
+    "D": {
+      "item": "ae2:drive"
+    },
+    "C": {
+      "item": "ae2:item_storage_cell_1k"
+    },
+    "A": {
+      "item": "ae2:controller"
+    }
+  },
+  "result": {
+    "id": "appliedinsight:digital_asset_vault",
+    "count": 1
+  }
+}

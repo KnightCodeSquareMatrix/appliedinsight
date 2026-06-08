@@ -1,6 +1,6 @@
 # 基础设施总览 (Infrastructure Overview)
 
-> 本文档描述 Applied Storage Sorter 的基础设施层。
+> 本文档描述 Applied Energistics: Insight 的基础设施层。
 > 基础设施是支撑业务逻辑运转的底层能力，不参与业务决策。
 
 ## 1. Logger 基础设施
@@ -17,21 +17,21 @@
 
 | 类 | 职责 | 输出位置 |
 |---|------|---------|
-| `SorterFileLogger` | 命令摘要日志 | `logs/appliedstoragesorter.log` |
-| `SorterMergeReportFileLogger` | merge 详细复盘日志 | `logs/appliedstoragesorter/merge-*.log` |
-| `SorterPlanFileLogger` | plan / planAndMove 详细日志 | `logs/appliedstoragesorter/plan-*.log` / `plan-and-move-*.log` |
+| `SorterFileLogger` | 命令摘要日志 | `logs/appliedinsight.log` |
+| `SorterMergeReportFileLogger` | merge 详细复盘日志 | `logs/appliedinsight/merge-*.log` |
+| `SorterPlanFileLogger` | plan / planAndMove 详细日志 | `logs/appliedinsight/plan-*.log` / `plan-and-move-*.log` |
 | `ReportFileSupport` | 共享工具：文件写入、坐标格式化、时间戳、命令头 | — |
 
 ### 日志产物
 
 | 产物 | 类型 | 说明 |
 |------|------|------|
-| `logs/appliedstoragesorter.log` | 技术运行日志 | 命令级摘要 |
-| `logs/appliedstoragesorter/plan-*.log` | 报告型 | plan 明细 |
-| `logs/appliedstoragesorter/plan-and-move-*.log` | 报告型 | planAndMove 明细 |
-| `logs/appliedstoragesorter/merge-*.log` | 报告型 | merge 复盘明细 |
-| `dumps/appliedstoragesorter/me-dump-*.json` | JSON 导出 | 网络快照 |
-| `dumps/appliedstoragesorter/storage-analysis-*.json` | JSON 导出 | 存储分析报告 |
+| `logs/appliedinsight.log` | 技术运行日志 | 命令级摘要 |
+| `logs/appliedinsight/plan-*.log` | 报告型 | plan 明细 |
+| `logs/appliedinsight/plan-and-move-*.log` | 报告型 | planAndMove 明细 |
+| `logs/appliedinsight/merge-*.log` | 报告型 | merge 复盘明细 |
+| `dumps/appliedinsight/me-dump-*.json` | JSON 导出 | 网络快照 |
+| `dumps/appliedinsight/storage-analysis-*.json` | JSON 导出 | 存储分析报告 |
 
 ## 2. 网络通信层
 

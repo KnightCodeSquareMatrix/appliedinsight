@@ -1,6 +1,6 @@
 # 扩展开发指南 (Extension Guide)
 
-> 本文档描述如何扩展 **Applied Storage Sorter** 的功能。
+> 本文档描述如何扩展 **Applied Energistics: Insight** 的功能。
 > 面向希望新增命令、过滤器、分析器、profile generator 或其他扩展点的开发者。
 
 ---
@@ -39,7 +39,7 @@
 
 ### 2.1 步骤概览
 
-1. 在 [`SorterCommands`](src/main/java/com/knightcode/appliedstoragesorter/command/SorterCommands.java) 中注册新命令
+1. 在 [`SorterCommands`](src/main/java/com/knightcode/appliedinsight/command/SorterCommands.java) 中注册新命令
 2. 在 `application/` 包中创建对应的 Service 类
 3. 在 `application/result/` 包中（可选）创建新的 Result record
 4. 在 `logging/` 包中（可选）添加日志输出
@@ -48,7 +48,7 @@
 
 **Step 1: 注册命令**
 
-在 [`SorterCommands.register()`](src/main/java/com/knightcode/appliedstoragesorter/command/SorterCommands.java:24) 中添加：
+在 [`SorterCommands.register()`](src/main/java/com/knightcode/appliedinsight/command/SorterCommands.java:24) 中添加：
 
 ```java
 .then(Commands.literal("health")
@@ -97,11 +97,11 @@ public final class SorterHealthService {
 
 ### 3.1 步骤
 
-1. 在 [`FilterField`](src/main/java/com/knightcode/appliedstoragesorter/rule/filter/FilterField.java) 枚举中添加新字段
-2. 在 [`FilterFieldDefinition`](src/main/java/com/knightcode/appliedstoragesorter/rule/filter/FilterFieldDefinition.java) 中添加字段定义
-3. 在 [`ItemMatchContext`](src/main/java/com/knightcode/appliedstoragesorter/rule/filter/ItemMatchContext.java) 中添加对应的上下文数据
-4. 在 [`ItemFilterMatcher`](src/main/java/com/knightcode/appliedstoragesorter/rule/filter/ItemFilterMatcher.java) 中添加匹配逻辑
-5. 更新 [`FilterUiMetadata`](src/main/java/com/knightcode/appliedstoragesorter/rule/filter/FilterUiMetadata.java) 中的 metadata
+1. 在 [`FilterField`](src/main/java/com/knightcode/appliedinsight/rule/filter/FilterField.java) 枚举中添加新字段
+2. 在 [`FilterFieldDefinition`](src/main/java/com/knightcode/appliedinsight/rule/filter/FilterFieldDefinition.java) 中添加字段定义
+3. 在 [`ItemMatchContext`](src/main/java/com/knightcode/appliedinsight/rule/filter/ItemMatchContext.java) 中添加对应的上下文数据
+4. 在 [`ItemFilterMatcher`](src/main/java/com/knightcode/appliedinsight/rule/filter/ItemFilterMatcher.java) 中添加匹配逻辑
+5. 更新 [`FilterUiMetadata`](src/main/java/com/knightcode/appliedinsight/rule/filter/FilterUiMetadata.java) 中的 metadata
 6. 添加单元测试
 
 ### 3.2 示例：新增 `DAMAGE` 字段
@@ -175,9 +175,9 @@ case DAMAGE -> {
 
 ### 4.1 步骤
 
-1. 在 [`FilterOperator`](src/main/java/com/knightcode/appliedstoragesorter/rule/filter/FilterOperator.java) 枚举中添加新操作符
-2. 在 [`FilterOperatorDefinition`](src/main/java/com/knightcode/appliedstoragesorter/rule/filter/FilterOperatorDefinition.java) 中添加定义
-3. 在 [`ItemFilterMatcher`](src/main/java/com/knightcode/appliedstoragesorter/rule/filter/ItemFilterMatcher.java) 中添加匹配逻辑
+1. 在 [`FilterOperator`](src/main/java/com/knightcode/appliedinsight/rule/filter/FilterOperator.java) 枚举中添加新操作符
+2. 在 [`FilterOperatorDefinition`](src/main/java/com/knightcode/appliedinsight/rule/filter/FilterOperatorDefinition.java) 中添加定义
+3. 在 [`ItemFilterMatcher`](src/main/java/com/knightcode/appliedinsight/rule/filter/ItemFilterMatcher.java) 中添加匹配逻辑
 4. 更新 `FilterUiMetadata`
 5. 添加单元测试
 
@@ -280,7 +280,7 @@ tasks.register('analyzeFragmentation', JavaExec) {
 
 ### 6.1 步骤
 
-1. 实现 [`RoutingProfileGenerator`](src/main/java/com/knightcode/appliedstoragesorter/profilegen/RoutingProfileGenerator.java) 接口
+1. 实现 [`RoutingProfileGenerator`](src/main/java/com/knightcode/appliedinsight/profilegen/RoutingProfileGenerator.java) 接口
 2. 在 `profilegen/` 包中创建实现类
 3. 在 `SorterDumpProfileGenerationAnalyzer` 中注册新的 generator（可选）
 
@@ -344,7 +344,7 @@ public final class SorterHealthFileLogger {
             CommandSourceStack source,
             HealthReport report) {
         String fileName = "health-" + System.currentTimeMillis() + ".log";
-        Path filePath = ReportFileSupport.getReportPath("logs/appliedstoragesorter", fileName);
+        Path filePath = ReportFileSupport.getReportPath("logs/appliedinsight", fileName);
 
         try (var writer = Files.newBufferedWriter(filePath, StandardCharsets.UTF_8)) {
             writer.write("[health_report]\n");

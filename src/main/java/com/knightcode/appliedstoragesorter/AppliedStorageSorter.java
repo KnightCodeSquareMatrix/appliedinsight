@@ -5,6 +5,12 @@ import org.slf4j.Logger;
 import com.knightcode.appliedstoragesorter.command.SorterCommands;
 import com.knightcode.appliedstoragesorter.network.FileChunkPayload;
 import com.knightcode.appliedstoragesorter.network.FileChunkPayloadHandler;
+import com.knightcode.appliedstoragesorter.network.NewDavSetExpansionCellPayload;
+import com.knightcode.appliedstoragesorter.network.NewDavSetExpansionCellPayloadHandler;
+import com.knightcode.appliedstoragesorter.network.NewDavTogglePayload;
+import com.knightcode.appliedstoragesorter.network.NewDavTogglePayloadHandler;
+import com.knightcode.appliedstoragesorter.network.SmartBusFilterPayload;
+import com.knightcode.appliedstoragesorter.network.SmartBusModePayload;
 import com.knightcode.appliedstoragesorter.network.SorterAnalysisPayload;
 import com.knightcode.appliedstoragesorter.network.SorterAnalysisPayloadHandler;
 import com.knightcode.appliedstoragesorter.network.SorterCommandPayload;
@@ -28,7 +34,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 @Mod(AppliedStorageSorter.MODID)
 public class AppliedStorageSorter {
-    public static final String MODID = "appliedstoragesorter";
+    public static final String MODID = "appliedinsight";
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public AppliedStorageSorter(IEventBus modEventBus, ModContainer modContainer) {
@@ -46,7 +52,7 @@ public class AppliedStorageSorter {
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
-        LOGGER.info("Applied Storage Sorter initialized.");
+        LOGGER.info("Applied Energistics: Insight initialized.");
     }
 
     private void registerPayloads(RegisterPayloadHandlersEvent event) {
@@ -55,6 +61,22 @@ public class AppliedStorageSorter {
                 SorterCommandPayload.TYPE,
                 SorterCommandPayload.CODEC,
                 SorterCommandPayloadHandler::handle);
+        registrar.playToServer(
+                NewDavTogglePayload.TYPE,
+                NewDavTogglePayload.CODEC,
+                NewDavTogglePayloadHandler::handle);
+        registrar.playToServer(
+                NewDavSetExpansionCellPayload.TYPE,
+                NewDavSetExpansionCellPayload.CODEC,
+                NewDavSetExpansionCellPayloadHandler::handle);
+        registrar.playToServer(
+                SmartBusModePayload.TYPE,
+                SmartBusModePayload.CODEC,
+                SmartBusModePayload::handle);
+        registrar.playToServer(
+                SmartBusFilterPayload.TYPE,
+                SmartBusFilterPayload.CODEC,
+                SmartBusFilterPayload::handle);
         registrar.playToClient(
                 SorterAnalysisPayload.TYPE,
                 SorterAnalysisPayload.CODEC,

@@ -1,5 +1,5 @@
 # SorterMergeService
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/application/SorterMergeService.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/application/SorterMergeService.java`
 - **包**: `com.knightcode.appliedstoragesorter.application`
 - **类型**: `class`
 - **所属层**: 应用服务层
@@ -26,4 +26,4 @@
 
 ## 维护备注
 - 它是刻意保留的低复杂度 merge 入口，未来适合直接接 GUI / 控制面板按钮。
-- 当前除了写入 `appliedstoragesorter.log` 摘要，还会生成 `logs/appliedstoragesorter/merge-*.log` 详细复盘文件，后续若要接前端价值展示，优先扩展详细报告而不是继续堆总日志字段。
+- 当前除了写入 `appliedinsight.log` 摘要，还会生成 `logs/appliedinsight/merge-*.log` 详细复盘文件，后续若要接前端价值展示，优先扩展详细报告而不是继续堆总日志字段。

@@ -190,13 +190,13 @@ Modern UI（[`icyllis/modern-ui`](https://github.com/icyllis/modern-ui)）经调
 // 职责：统一管理所有 GUI 纹理引用
 public final class SorterTextures {
     public static final ResourceLocation DAV_VAULT = ResourceLocation.parse(
-            "appliedstoragesorter:textures/gui/digital_asset_vault.png");
+            "appliedinsight:textures/gui/digital_asset_vault.png");
     // P0 时新增
     public static final ResourceLocation COMMAND_BLOCK = ResourceLocation.parse(
-            "appliedstoragesorter:textures/gui/sorter_command_block.png");
+            "appliedinsight:textures/gui/sorter_command_block.png");
     // P1 时新增
     public static final ResourceLocation RESULT_VIEWER = ResourceLocation.parse(
-            "appliedstoragesorter:textures/gui/result_viewer.png");
+            "appliedinsight:textures/gui/result_viewer.png");
     private SorterTextures() {}
 }
 ```

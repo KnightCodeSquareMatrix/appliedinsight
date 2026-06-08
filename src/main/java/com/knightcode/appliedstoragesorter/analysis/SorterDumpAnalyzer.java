@@ -124,7 +124,7 @@ public final class SorterDumpAnalyzer {
         Files.createDirectories(outputFile.getParent() != null ? outputFile.getParent() : Path.of("."));
 
         try (BufferedWriter writer = Files.newBufferedWriter(outputFile)) {
-            writer.write("Applied Storage Sorter Dump Analysis\n");
+            writer.write("Applied Energistics: Insight Dump Analysis\n");
             writer.write("===================================\n");
             writer.write("input=" + result.inputFile() + "\n");
             writer.write("generatedAt=" + result.generatedAt() + "\n");

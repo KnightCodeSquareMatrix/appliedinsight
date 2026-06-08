@@ -1,5 +1,5 @@
 # SorterCommands
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/command/SorterCommands.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/command/SorterCommands.java`
 - **包**: `com.knightcode.appliedstoragesorter.command`
 - **类型**: `class`
 - **所属层**: 命令入口层

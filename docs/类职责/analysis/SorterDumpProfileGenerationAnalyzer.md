@@ -1,5 +1,5 @@
 # SorterDumpProfileGenerationAnalyzer
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/analysis/SorterDumpProfileGenerationAnalyzer.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/analysis/SorterDumpProfileGenerationAnalyzer.java`
 - **包**: `com.knightcode.appliedstoragesorter.analysis`
 - **类型**: `class`
 - **所属层**: 离线分析层

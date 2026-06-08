@@ -1,0 +1,21 @@
+{
+  "includes": ["common/common.json"],
+  "helpTopic": "appliedinsight:sorter-command-block.md",
+  "background": {
+    "texture": "appliedinsight:textures/gui/sorter_command_block.png",
+    "textureWidth": 440,
+    "textureHeight": 224,
+    "srcRect": [0, 0, 440, 224]
+  },
+  "text": {
+    "dialog_title": {
+      "text": {
+        "translate": "screen.appliedinsight.sorter_command_block.title"
+      },
+      "position": {
+        "left": 8,
+        "top": 6
+      }
+    }
+  }
+}

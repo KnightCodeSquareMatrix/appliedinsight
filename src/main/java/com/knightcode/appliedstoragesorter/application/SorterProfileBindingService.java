@@ -23,11 +23,12 @@ public final class SorterProfileBindingService {
             var profiles = PROFILE_REPOSITORY.listProfiles();
             if (profiles.isEmpty()) {
                 return SorterFeedbackResult.failure(
-                        "No global profiles found in " + PROFILE_REPOSITORY.profileDirectory());
+                        Component.translatable("sorter.command.profile.error.no_profiles",
+                                PROFILE_REPOSITORY.profileDirectory()));
             }
 
             List<Component> lines = new ArrayList<>();
-            lines.add(SorterComponentHelper.line("Available global profiles:"));
+            lines.add(Component.translatable("sorter.command.profile.list_header"));
             for (int i = 0; i < profiles.size(); i++) {
                 var storedProfile = profiles.get(i);
                 lines.add(SorterComponentHelper.line((i + 1) + ". " + storedProfile.profile().name()
@@ -37,19 +38,19 @@ public final class SorterProfileBindingService {
             }
             return SorterFeedbackResult.success(lines);
         } catch (IOException exception) {
-            return SorterFeedbackResult.failure("Failed to list global profiles. Check server logs.");
+            return SorterFeedbackResult.failure(Component.translatable("sorter.command.profile.error.list_failed"));
         }
     }
 
     public static SorterFeedbackResult bindProfile(CommandSourceStack source, int profileNumber) {
         if (!Config.ENABLE_SORTER.get()) {
-            return SorterFeedbackResult.failure("Applied Storage Sorter is disabled in the server config.");
+            return SorterFeedbackResult.failure(Component.translatable("sorter.command.error.disabled"));
         }
         if (source.getEntity() == null) {
-            return SorterFeedbackResult.failure("This command must be run by a player.");
+            return SorterFeedbackResult.failure(Component.translatable("sorter.command.error.player_only"));
         }
         if (source.getServer() == null) {
-            return SorterFeedbackResult.failure("Server is not available.");
+            return SorterFeedbackResult.failure(Component.translatable("sorter.command.error.no_server"));
         }
 
         var gridTarget = Ae2ControllerTargetResolver.resolveGridTarget(source);
@@ -58,7 +59,7 @@ public final class SorterProfileBindingService {
         }
 
         if (gridTarget.controllerPos() == null || gridTarget.dimensionId() == null) {
-            return SorterFeedbackResult.failure("Could not resolve controller identity for this ME network.");
+            return SorterFeedbackResult.failure(Component.translatable("sorter.command.profile.error.no_controller"));
         }
 
         try {
@@ -68,26 +69,26 @@ public final class SorterProfileBindingService {
                     .bindProfile(bindingKey, storedProfile.profile().id());
 
             return SorterFeedbackResult.success(List.of(
-                    SorterComponentHelper.line("Bound current ME network to global profile: " + storedProfile.profile().name()),
+                    Component.translatable("sorter.command.profile.bind_success", storedProfile.profile().name()),
                     SorterComponentHelper.keyValue("profileId", storedProfile.profile().id()),
                     SorterComponentHelper.keyValue("controller", gridTarget.controllerPos().toShortString()),
                     SorterComponentHelper.keyValue("dimension", gridTarget.dimensionId())));
         } catch (IllegalArgumentException exception) {
             return SorterFeedbackResult.failure(exception.getMessage());
         } catch (IOException exception) {
-            return SorterFeedbackResult.failure("Failed to save network profile binding. Check server logs.");
+            return SorterFeedbackResult.failure(Component.translatable("sorter.command.profile.error.save_failed"));
         }
     }
 
     public static SorterFeedbackResult showBoundProfile(CommandSourceStack source) {
         if (!Config.ENABLE_SORTER.get()) {
-            return SorterFeedbackResult.failure("Applied Storage Sorter is disabled in the server config.");
+            return SorterFeedbackResult.failure(Component.translatable("sorter.command.error.disabled"));
         }
         if (source.getEntity() == null) {
-            return SorterFeedbackResult.failure("This command must be run by a player.");
+            return SorterFeedbackResult.failure(Component.translatable("sorter.command.error.player_only"));
         }
         if (source.getServer() == null) {
-            return SorterFeedbackResult.failure("Server is not available.");
+            return SorterFeedbackResult.failure(Component.translatable("sorter.command.error.no_server"));
         }
 
         var gridTarget = Ae2ControllerTargetResolver.resolveGridTarget(source);
@@ -96,29 +97,29 @@ public final class SorterProfileBindingService {
         }
 
         if (gridTarget.controllerPos() == null || gridTarget.dimensionId() == null) {
-            return SorterFeedbackResult.failure("Could not resolve controller identity for this ME network.");
+            return SorterFeedbackResult.failure(Component.translatable("sorter.command.profile.error.no_controller"));
         }
 
         try {
             NetworkBindingKey bindingKey = new NetworkBindingKey(gridTarget.dimensionId(), gridTarget.controllerPos());
             var profileId = new NetworkProfileBindingStore(source.getServer()).findProfileId(bindingKey).orElse(null);
             if (profileId == null) {
-                return SorterFeedbackResult.failure("Current ME network is not bound to any global profile.");
+                return SorterFeedbackResult.failure(Component.translatable("sorter.command.profile.error.not_bound"));
             }
 
             var storedProfile = PROFILE_REPOSITORY.findById(profileId).orElse(null);
             if (storedProfile == null) {
                 return SorterFeedbackResult.failure(
-                        "Current ME network is bound to missing profile id: " + profileId);
+                        Component.translatable("sorter.command.profile.error.binding_missing", profileId));
             }
 
             return SorterFeedbackResult.success(List.of(
-                    SorterComponentHelper.line("Current ME network profile:"),
+                    Component.translatable("sorter.command.profile.show_header"),
                     SorterComponentHelper.keyValue("name", storedProfile.profile().name()),
                     SorterComponentHelper.keyValue("id", storedProfile.profile().id()),
                     SorterComponentHelper.keyValue("version", String.valueOf(storedProfile.profile().version()))));
         } catch (IOException exception) {
-            return SorterFeedbackResult.failure("Failed to read current network profile binding. Check server logs.");
+            return SorterFeedbackResult.failure(Component.translatable("sorter.command.profile.error.read_failed"));
         }
     }
 }

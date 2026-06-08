@@ -5,7 +5,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.knightcode.appliedstoragesorter.ae2.CellCapacityInspector;
+import com.knightcode.appliedstoragesorter.ae2.CellCapacityInspector.CellCapacity;
 import com.knightcode.appliedstoragesorter.ae2.scan.DriveCellReference;
+import com.knightcode.appliedstoragesorter.ae2.scan.CellInfo;
 import com.knightcode.appliedstoragesorter.ae2.scan.DriveMachineAccessor;
 
 import appeng.api.networking.IGrid;
@@ -18,7 +21,7 @@ public final class RuntimeZoneRegistryBuilder {
 
     public static RuntimeTopology buildTopology(IGrid grid) {
         Map<String, RuntimeZone> zonesById = new LinkedHashMap<>();
-        List<RuntimeCell> unassignedCells = new ArrayList<>();
+        List<CellInfo> unassignedCells = new ArrayList<>();
 
         for (var drive : DriveMachineAccessor.findSupportedDrives(grid)) {
             String zoneId = drive.getDeclaredZoneId().orElse(null);
@@ -29,7 +32,17 @@ public final class RuntimeZoneRegistryBuilder {
                     continue;
                 }
 
-                RuntimeCell cell = new RuntimeCell(
+                // Extract cell identity and capacity metadata (ADR-012)
+                String cellItemId = drive.getCellItemId(slot).orElse(null);
+                CellCapacity capacity = null;
+                if (!drive.isExternalStorageBus()) {
+                    var originalCell = drive.getOriginalCellInventory(slot);
+                    if (originalCell != null) {
+                        capacity = CellCapacityInspector.inspect(originalCell);
+                    }
+                }
+
+                CellInfo cell = new CellInfo(
                         new DriveCellReference(
                                 drive.blockPos().immutable(),
                                 slot,
@@ -38,7 +51,9 @@ public final class RuntimeZoneRegistryBuilder {
                         zoneId != null && !zoneId.isBlank() ? zoneId : "__unassigned__",
                         drive.blockId(),
                         drive.actionHost(),
-                        storage);
+                        storage,
+                        cellItemId,
+                        capacity);
 
                 if (zoneId == null || zoneId.isBlank()) {
                     unassignedCells.add(cell);

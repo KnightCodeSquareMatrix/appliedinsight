@@ -1,5 +1,5 @@
 # SorterNetworkDumpResult
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/ae2/dump/SorterNetworkDumpResult.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/ae2/dump/SorterNetworkDumpResult.java`
 - **包**: `com.knightcode.appliedstoragesorter.ae2.dump`
 - **类型**: `record`
 - **所属层**: AE2 集成层

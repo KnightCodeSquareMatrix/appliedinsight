@@ -730,8 +730,8 @@ FilterUiMetadata.json (后端独立)
 ```json
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://appliedstoragesorter.knightcode.com/schema/filter-routing-table.schema.json",
-  "title": "Applied Storage Sorter - Frontend Filter Routing Table",
+  "$id": "https://appliedinsight.knightcode.com/schema/filter-routing-table.schema.json",
+  "title": "Applied Energistics: Insight - Frontend Filter Routing Table",
   "description": "Frontend-facing aggregated view of routing rules, filters, zones, and UI metadata.",
   "type": "object",
   "required": ["schemaVersion", "profile", "routeRules", "filters", "zones", "uiMetadata"],

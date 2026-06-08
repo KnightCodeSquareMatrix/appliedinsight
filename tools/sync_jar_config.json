@@ -4,9 +4,9 @@
     "port": 22,
     "user": "root",
     "key": null,
-    "remote_jar_path": "/data/appliedstoragesorter/tools/serve/appliedstoragesorter.jar"
+    "remote_jar_path": "/data/appliedinsight/tools/serve/appliedinsight.jar"
   },
   "watch_interval": 5,
   "destinations": [],
-  "rename_to": "appliedstoragesorter.jar"
+  "rename_to": "appliedinsight.jar"
 }

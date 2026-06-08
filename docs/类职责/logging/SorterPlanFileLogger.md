@@ -1,5 +1,5 @@
 # SorterPlanFileLogger
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/logging/SorterPlanFileLogger.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/logging/SorterPlanFileLogger.java`
 - **包**: `com.knightcode.appliedstoragesorter.logging`
 - **类型**: `class`
 - **所属层**: 日志基础设施层
@@ -14,7 +14,7 @@
 没有过度抽象，但内容组织已经较多。
 
 ## 主要协作者
-- `com.knightcode.appliedstoragesorter.AppliedStorageSorter`
+- `com.knightcode.appliedstoragesorter.appliedinsight`
 - `com.knightcode.appliedstoragesorter.ae2.Ae2GridTargetResult`
 - `com.knightcode.appliedstoragesorter.ae2.scan.Ae2DriveScanSummary`
 - `com.knightcode.appliedstoragesorter.ae2.scan.DriveMachineAccessor`

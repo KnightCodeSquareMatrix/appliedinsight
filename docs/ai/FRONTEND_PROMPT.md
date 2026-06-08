@@ -1,6 +1,6 @@
-# Applied Storage Sorter — 前端开发 Prompt
+# Applied Energistics: Insight — 前端开发 Prompt
 
-> Minecraft AE2 模组 `appliedstoragesorter` 的前端控制台。后端生成 JSON dump，前端读取展示。
+> Minecraft AE2 模组 `appliedinsight` 的前端控制台。后端生成 JSON dump，前端读取展示。
 
 完整版（TypeScript 类型、组件树、开发步骤）见 [`frontend-vibe-coding-prompt.md`](frontend-vibe-coding-prompt.md)。
 

@@ -11,8 +11,6 @@ import java.util.Set;
 
 import org.jetbrains.annotations.Nullable;
 
-import com.knightcode.appliedstoragesorter.blockentity.DigitalAssetVaultBlockEntity;
-
 import appeng.api.implementations.blockentities.IChestOrDrive;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.security.IActionHost;
@@ -29,7 +27,7 @@ public final class DriveMachineAccessor {
     private static final Set<String> SUPPORTED_DRIVE_BLOCK_IDS = Set.of(
             "ae2:drive",
             "extendedae:ex_drive",
-            "appliedstoragesorter:digital_asset_vault");
+            "appliedinsight:digital_asset_vault");
     private static final String STORAGE_BUS_BLOCK_ID = "ae2:storage_bus";
 
     private DriveMachineAccessor() {
@@ -270,10 +268,6 @@ public final class DriveMachineAccessor {
         }
 
         public Optional<String> getDeclaredZoneId() {
-            if (blockEntity instanceof DigitalAssetVaultBlockEntity vault) {
-                return vault.getDeclaredZoneId();
-            }
-
             return Optional.empty();
         }
 

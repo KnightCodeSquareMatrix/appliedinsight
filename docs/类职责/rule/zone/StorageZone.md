@@ -1,5 +1,5 @@
 # StorageZone
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/rule/zone/StorageZone.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/rule/zone/StorageZone.java`
 - **包**: `com.knightcode.appliedstoragesorter.rule.zone`
 - **类型**: `record`
 - **所属层**: 纯规则模型层

@@ -1,5 +1,5 @@
 # HeuristicRoutingProfileGenerator
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/profilegen/HeuristicRoutingProfileGenerator.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/profilegen/HeuristicRoutingProfileGenerator.java`
 - **包**: `com.knightcode.appliedstoragesorter.profilegen`
 - **类型**: `class`
 - **所属层**: 规则草案生成层

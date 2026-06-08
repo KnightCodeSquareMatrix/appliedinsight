@@ -1,0 +1,67 @@
+{
+  "body_core_colors": {
+    "#1A1C1CFF": {
+      "role": "background.outline_dark",
+      "target": "#08090BFF"
+    },
+    "#1F1F1FFF": {
+      "role": "background.outline_dark",
+      "target": "#08090BFF"
+    },
+    "#1F2221FF": {
+      "role": "background.outline_dark",
+      "target": "#08090BFF"
+    },
+    "#262826FF": {
+      "role": "background.shadow",
+      "target": "#0F1318FF"
+    },
+    "#2D2F2DFF": {
+      "role": "background.shadow",
+      "target": "#0F1318FF"
+    },
+    "#413F54FF": {
+      "role": "action_button.outline_dark",
+      "target": "#08090BFF"
+    },
+    "#4D4D67FF": {
+      "role": "background.shadow",
+      "target": "#0F1318FF"
+    },
+    "#787E97FF": {
+      "role": "storage_slot.shadow",
+      "target": "#11171DFF"
+    },
+    "#878FA5FF": {
+      "role": "background.shadow",
+      "target": "#0F1318FF"
+    },
+    "#9A9FB4FF": {
+      "role": "section.fill",
+      "target": "#14191FFF"
+    },
+    "#CBCCD4FF": {
+      "role": "background.fill",
+      "target": "#181C22FF"
+    },
+    "#E8E8EAFF": {
+      "role": "section.edge_light",
+      "target": "#2FA7C0FF"
+    },
+    "#F2F2F2FF": {
+      "role": "background.edge_light",
+      "target": "#237C92FF"
+    }
+  },
+  "conflict_core_colors": {
+    "#84122AFF": {
+      "role": "background.outline_dark",
+      "target": "#08090BFF"
+    },
+    "#AA212BFF": {
+      "role": "status.offline",
+      "target": "#E55C5CFF"
+    }
+  },
+  "lights_mapping": "hue bucket -> status.online / status.warning / status.offline / section.edge_light"
+}

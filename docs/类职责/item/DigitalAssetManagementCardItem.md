@@ -1,28 +1,13 @@
-# DigitalAssetManagementCardItem
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/item/DigitalAssetManagementCardItem.java`
-- **包**: `com.knightcode.appliedstoragesorter.item`
-- **类型**: `class`
-- **所属层**: 物品/玩家输入层
+# （已移除）DigitalAssetManagementCardItem
 
-## 职责
-管理卡物品，实现 zoneId/zoneName 的读写、清理和 tooltip 展示。
+> **v0.9.0-beta 起已从游戏中注销。** 管理卡（Zone Card）机制已由 **路由 Profile 文件绑定**（`config/appliedinsight/profiles/` + `/sorter me bindProfile`）替代。
+>
+> 仓库内可能仍保留历史源码/纹理/Recipe 文档供参考；**不要**在新功能中重新引入该物品，除非 ADR 明确恢复。
 
-## 边界检查
-边界健康。玩家输入载体和规则运行时没有耦死。
+## 历史职责（归档）
+携带 zone stamp 数据的可持久化物品，用于旧版 DAV 输入层。
 
-## 抽象检查
-没有过度抽象。
-
-## 主要协作者
-- `net.minecraft.ChatFormatting`
-- `net.minecraft.core.component.DataComponents`
-- `net.minecraft.nbt.CompoundTag`
-- `net.minecraft.network.chat.Component`
-- `net.minecraft.world.item.Item`
-- `net.minecraft.world.item.ItemStack`
-- `net.minecraft.world.item.TooltipFlag`
-- `net.minecraft.world.item.component.CustomData`
-- `org.jetbrains.annotations.Nullable`
-
-## 维护备注
-- 当前实现简洁，优先保持单一职责，不要为了未来猜想提前拆分。
+## 替代方案
+- 服主/开发者：编辑 `config/appliedinsight/profiles/*.json`
+- 绑定网络：`/sorter me bindProfile <n>`
+- 玩家 GUI：SorterCommandBlock「以绑定配置整理」

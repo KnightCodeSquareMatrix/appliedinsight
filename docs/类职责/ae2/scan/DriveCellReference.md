@@ -1,5 +1,5 @@
 # DriveCellReference
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/ae2/scan/DriveCellReference.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/ae2/scan/DriveCellReference.java`
 - **包**: `com.knightcode.appliedstoragesorter.ae2.scan`
 - **类型**: `record`
 - **所属层**: AE2 集成层

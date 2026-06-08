@@ -44,11 +44,11 @@ public final class SorterStorageAnalysisService {
         if (!Config.ENABLE_SORTER.get()) {
             log.debug("Skip sorter storage analysis because sorter is disabled.");
             return SorterStorageAnalysisCommandResult.failure(
-                    "Applied Storage Sorter is disabled in the server config.");
+                    Component.translatable("sorter.command.error.disabled"));
         }
         if (source.getEntity() == null) {
             log.debug("Reject sorter storage analysis because command source has no entity.");
-            return SorterStorageAnalysisCommandResult.failure("This command must be run by a player.");
+            return SorterStorageAnalysisCommandResult.failure(Component.translatable("sorter.command.error.player_only"));
         }
         var gridTarget = resolver.resolve(source);
         if (!gridTarget.success()) {
@@ -91,7 +91,7 @@ public final class SorterStorageAnalysisService {
             log.error("Failed to write sorter storage analysis dump.", exception);
             SorterFileLogger.logSorterMeStorageAnalysisFailure(source, gridTarget, exception);
             return SorterStorageAnalysisCommandResult.failure(
-                    "Failed to write storage analysis JSON. Check logs/appliedstoragesorter.log");
+                    Component.translatable("sorter.command.storageanalysis.error.write_failed"));
         }
     }
 

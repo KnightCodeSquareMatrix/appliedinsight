@@ -1,8 +1,0 @@
-{
-  "block.appliedstoragesorter.digital_asset_vault": "Digital Asset Vault",
-  "block.appliedstoragesorter.sorter_command_block": "Sorter Command Block",
-  "item.appliedstoragesorter.digital_asset_management_card": "Digital Asset Management Card",
-  "item.appliedstoragesorter.digital_asset_management_card.zone.unassigned": "Not assigned to any zone",
-  "item.appliedstoragesorter.digital_asset_management_card.zone.named": "Zone: %s (%s)",
-  "item.appliedstoragesorter.digital_asset_management_card.zone.id": "Zone ID: %s"
-}

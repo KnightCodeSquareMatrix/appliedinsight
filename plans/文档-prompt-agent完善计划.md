@@ -1,4 +1,4 @@
-# Applied Storage Sorter — 文档 / Prompt / Agent 系统性完善计划
+# Applied Energistics: Insight — 文档 / Prompt / Agent 系统性完善计划
 
 > 基于 [`plans/项目理解总结.md`](plans/项目理解总结.md) 的项目理解，制定本完善计划。
 > 工具链：Roo + DeepSeek + VS Code + GitHub Copilot

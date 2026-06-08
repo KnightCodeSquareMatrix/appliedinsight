@@ -45,15 +45,15 @@ public final class SorterPlanService {
     public static SorterFeedbackResult execute(CommandSourceStack source, boolean executeMove, GridTargetResolver resolver) {
         if (!Config.ENABLE_SORTER.get()) {
             log.debug("Skip sorter plan because sorter is disabled.");
-            return SorterFeedbackResult.failure("Applied Storage Sorter is disabled in the server config.");
+            return SorterFeedbackResult.failure(Component.translatable("sorter.command.error.disabled"));
         }
         if (source.getEntity() == null) {
             log.debug("Reject sorter plan because command source has no entity.");
-            return SorterFeedbackResult.failure("This command must be run by a player.");
+            return SorterFeedbackResult.failure(Component.translatable("sorter.command.error.player_only"));
         }
         if (source.getServer() == null) {
             log.warn("Reject sorter plan because server is unavailable.");
-            return SorterFeedbackResult.failure("Server is not available.");
+            return SorterFeedbackResult.failure(Component.translatable("sorter.command.error.no_server"));
         }
 
         var gridTarget = resolver.resolve(source);
@@ -63,7 +63,7 @@ public final class SorterPlanService {
         }
         if (gridTarget.controllerPos() == null || gridTarget.dimensionId() == null || gridTarget.grid() == null) {
             log.warn("Sorter plan missing runtime network details after target resolution.");
-            return SorterFeedbackResult.failure("Could not resolve runtime ME network details.");
+            return SorterFeedbackResult.failure(Component.translatable("sorter.command.plan.error.no_network"));
         }
 
         try {
@@ -71,13 +71,13 @@ public final class SorterPlanService {
             var profileId = new NetworkProfileBindingStore(source.getServer()).findProfileId(bindingKey).orElse(null);
             if (profileId == null) {
                 return SorterFeedbackResult.failure(
-                        "Current ME network is not bound to any global profile. Use /sorter me bindProfile <number> first.");
+                        Component.translatable("sorter.command.plan.error.no_binding"));
             }
 
             var storedProfile = PROFILE_REPOSITORY.findById(profileId).orElse(null);
             if (storedProfile == null) {
                 log.warn("Sorter plan bound profile is missing: {}", profileId);
-                return SorterFeedbackResult.failure("Bound profile is missing: " + profileId);
+                return SorterFeedbackResult.failure(Component.translatable("sorter.command.plan.error.profile_missing", profileId));
             }
 
             var scanSummary = Ae2DriveScanner.scan(gridTarget.grid());
@@ -134,7 +134,7 @@ public final class SorterPlanService {
             return SorterFeedbackResult.success(lines);
         } catch (IOException exception) {
             log.error("Failed to load sorter profile bindings or stored profile data.", exception);
-            return SorterFeedbackResult.failure("Failed to load bound profile or bindings. Check server logs.");
+            return SorterFeedbackResult.failure(Component.translatable("sorter.command.plan.error.load_failed"));
         }
     }
 

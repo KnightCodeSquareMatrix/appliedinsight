@@ -1,10 +1,10 @@
-# Applied Storage Sorter — 前端 Vibe-Coding Prompt
+# Applied Energistics: Insight — 前端 Vibe-Coding Prompt
 
 > **完整版 prompt**（本文档）。如需精简入口，见 [`FRONTEND_PROMPT.md`](FRONTEND_PROMPT.md)。
 
 ## 项目简介
 
-这是一个 Minecraft AE2 模组 `appliedstoragesorter` 的前端控制台。
+这是一个 Minecraft AE2 模组 `appliedinsight` 的前端控制台。
 后端（NeoForge 模组）通过游戏内命令生成 JSON dump，前端读取这些 JSON 提供：
 - **存储健康诊断**：Zone/Bus/Cell 的容量、占用、剩余类型、健康告警
 - **Storage Dashboard**：宏观总览 → 单 storage 详情 → 单 item 下钻
@@ -23,8 +23,8 @@
 
 ### 数据来源
 前端从两个后端 JSON 聚合派生：
-1. `RoutingProfile.json` — 位于配置目录 `appliedstoragesorter/profiles/`
-2. `FilterUiMetadata.json` — 位于配置目录 `appliedstoragesorter/`（或打包于 mod 资源中）
+1. `RoutingProfile.json` — 位于配置目录 `appliedinsight/profiles/`
+2. `FilterUiMetadata.json` — 位于配置目录 `appliedinsight/`（或打包于 mod 资源中）
 
 ### 核心 TypeScript 类型（完整版见契约文档附录 A）
 
@@ -101,7 +101,7 @@ RulesPage
 
 ### 3.1 主要数据源：`me-dump-*.json`
 
-由后端 `/sorter me dump` 命令生成，放在游戏目录的 `dumps/appliedstoragesorter/` 下。
+由后端 `/sorter me dump` 命令生成，放在游戏目录的 `dumps/appliedinsight/` 下。
 
 ### 3.2 JSON 结构
 
@@ -661,8 +661,8 @@ interface RuleTreeNode {
 ## 13. 参考文件路径
 
 ### 数据文件
-- me-dump 示例: `dumps/appliedstoragesorter/me-dump-20260519-225051.json`（约 140KB）
-- storage-analysis 示例: `dumps/appliedstoragesorter/storage-analysis-*.json`
+- me-dump 示例: `dumps/appliedinsight/me-dump-20260519-225051.json`（约 140KB）
+- storage-analysis 示例: `dumps/appliedinsight/storage-analysis-*.json`
 - JSON Schema: `src/main/resources/schema/sorter-network-dump.schema.json`
 
 ### 后端文档

@@ -9,6 +9,8 @@ import appeng.api.networking.IGridNodeListener;
 import appeng.api.networking.IInWorldGridNodeHost;
 import appeng.api.networking.IManagedGridNode;
 import appeng.api.util.AECableType;
+import appeng.blockentity.AEBaseBlockEntity;
+import com.knightcode.appliedstoragesorter.registry.SorterBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -16,7 +18,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
@@ -29,14 +30,14 @@ import net.minecraft.world.level.block.state.BlockState;
  *   <li>NBT 通过 {@code loadFromNBT/saveToNBT} 读写，在 {@code create()} 之前加载</li>
  * </ul>
  */
-public class SorterCommandBlockEntity extends BlockEntity implements IInWorldGridNodeHost {
-    private static final Component TITLE = Component.translatable("block.appliedstoragesorter.sorter_command_block");
+public class SorterCommandBlockEntity extends AEBaseBlockEntity implements IInWorldGridNodeHost {
+    private static final Component TITLE = Component.translatable("block.appliedinsight.sorter_command_block");
     private static final int NODE_IDLE_POWER = 1;
 
     private final IManagedGridNode mainNode;
 
     public SorterCommandBlockEntity(BlockPos pos, BlockState state) {
-        super(com.knightcode.appliedstoragesorter.registry.SorterBlockEntities.SORTER_COMMAND_BLOCK.get(), pos, state);
+        super(SorterBlockEntities.SORTER_COMMAND_BLOCK.get(), pos, state);
         this.mainNode = GridHelper.createManagedNode(this, new NodeListener())
                 .setInWorldNode(true)
                 .setExposedOnSides(Set.of(Direction.values()))
@@ -48,20 +49,29 @@ public class SorterCommandBlockEntity extends BlockEntity implements IInWorldGri
         return mainNode;
     }
 
+    public NetworkStatus getNetworkStatus() {
+        if (mainNode == null) {
+            return NetworkStatus.OFFLINE;
+        }
+        if (mainNode.isOnline()) {
+            return NetworkStatus.ONLINE;
+        }
+        return mainNode.getGrid() != null ? NetworkStatus.CHANNEL_LIMITED : NetworkStatus.OFFLINE;
+    }
+
     public boolean isNodeOnline() {
         return mainNode != null && mainNode.isOnline();
     }
 
     public void openMenu(Player player) {
-        if (!isNodeOnline()) {
-            player.sendSystemMessage(Component.literal("§c[错误] 方块未接入 ME 网络或频道不足！"));
-            return;
-        }
         player.openMenu(new SimpleMenuProvider(
                 (containerId, playerInventory, menuPlayer) -> new com.knightcode.appliedstoragesorter.menu.SorterCommandBlockMenu(
                         containerId, playerInventory, this),
                 TITLE),
-                buf -> buf.writeBlockPos(getBlockPos()));
+                buf -> {
+                    buf.writeBlockPos(getBlockPos());
+                    buf.writeVarInt(getNetworkStatus().ordinal());
+                });
     }
 
     // --- AE2 Grid Node Lifecycle ---
@@ -74,14 +84,14 @@ public class SorterCommandBlockEntity extends BlockEntity implements IInWorldGri
     public void onLoad() {
         super.onLoad();
         if (level != null && !level.isClientSide()) {
-            GridHelper.onFirstTick(this, SorterCommandBlockEntity::onReady);
+            GridHelper.onFirstTick(this, SorterCommandBlockEntity::onFirstTickReady);
         }
     }
 
     /**
      * 第一 tick 回调，此时 chunk 已就绪，创建网格节点。
      */
-    private static void onReady(SorterCommandBlockEntity self) {
+    private static void onFirstTickReady(SorterCommandBlockEntity self) {
         self.mainNode.create(self.level, self.worldPosition);
     }
 
@@ -103,14 +113,14 @@ public class SorterCommandBlockEntity extends BlockEntity implements IInWorldGri
     // --- NBT ---
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    public void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         mainNode.saveToNBT(tag);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
+    public void loadTag(CompoundTag tag, HolderLookup.Provider registries) {
+        super.loadTag(tag, registries);
         mainNode.loadFromNBT(tag);
     }
 
@@ -132,5 +142,11 @@ public class SorterCommandBlockEntity extends BlockEntity implements IInWorldGri
         public void onSaveChanges(SorterCommandBlockEntity nodeOwner, IGridNode node) {
             nodeOwner.setChanged();
         }
+    }
+
+    public enum NetworkStatus {
+        OFFLINE,
+        CHANNEL_LIMITED,
+        ONLINE
     }
 }

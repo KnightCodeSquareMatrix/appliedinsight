@@ -1,5 +1,5 @@
 # RoutingProfileGenerator
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/profilegen/RoutingProfileGenerator.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/profilegen/RoutingProfileGenerator.java`
 - **包**: `com.knightcode.appliedstoragesorter.profilegen`
 - **类型**: `interface`
 - **所属层**: 规则草案生成层

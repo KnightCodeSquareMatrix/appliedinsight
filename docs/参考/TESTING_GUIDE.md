@@ -1,6 +1,6 @@
 # 测试指南 (Testing Guide)
 
-> 本文档描述 **Applied Storage Sorter** 的测试策略、测试类型和编写指南。
+> 本文档描述 **Applied Energistics: Insight** 的测试策略、测试类型和编写指南。
 > 面向开发者和 QA 人员。
 
 ---
@@ -60,10 +60,10 @@ dependencies {
 
 | 测试类 | 包路径 | 测试内容 |
 |--------|--------|---------|
-| [`ItemFilterMatcherTest`](src/test/java/com/knightcode/appliedstoragesorter/rule/filter/ItemFilterMatcherTest.java) | `rule.filter` | 过滤器匹配逻辑（ITEM_ID、MOD_ID、TAG、NBT_PATH、REGEX、AND/OR 组合） |
-| [`RoutingProfileJsonCodecTest`](src/test/java/com/knightcode/appliedstoragesorter/rule/route/RoutingProfileJsonCodecTest.java) | `rule.route` | Profile JSON 编解码（加载 web 生成的 profile） |
-| [`ZoneAllocationPlannerTest`](src/test/java/com/knightcode/appliedstoragesorter/plan/ZoneAllocationPlannerTest.java) | `plan` | 离线规划器（从 profile + dump 分类物品到 zone） |
-| [`RuntimeCellTransferTest`](src/test/java/com/knightcode/appliedstoragesorter/ae2/zone/RuntimeCellTransferTest.java) | `ae2.zone` | 搬运结果模型（ExecutionResult、DebugReport） |
+| [`ItemFilterMatcherTest`](src/test/java/com/knightcode/appliedinsight/rule/filter/ItemFilterMatcherTest.java) | `rule.filter` | 过滤器匹配逻辑（ITEM_ID、MOD_ID、TAG、NBT_PATH、REGEX、AND/OR 组合） |
+| [`RoutingProfileJsonCodecTest`](src/test/java/com/knightcode/appliedinsight/rule/route/RoutingProfileJsonCodecTest.java) | `rule.route` | Profile JSON 编解码（加载 web 生成的 profile） |
+| [`ZoneAllocationPlannerTest`](src/test/java/com/knightcode/appliedinsight/plan/ZoneAllocationPlannerTest.java) | `plan` | 离线规划器（从 profile + dump 分类物品到 zone） |
+| [`RuntimeCellTransferTest`](src/test/java/com/knightcode/appliedinsight/ae2/zone/RuntimeCellTransferTest.java) | `ae2.zone` | 搬运结果模型（ExecutionResult、DebugReport） |
 
 ### 2.2 测试模式
 
@@ -330,7 +330,7 @@ src/main/resources/testfiles/
 # 从游戏中导出 dump
 # 在游戏中执行 /sorter me dump
 # 复制到测试资源目录
-cp dumps/appliedstoragesorter/me-dump-*.json src/main/resources/testfiles/my-test-dump.json
+cp dumps/appliedinsight/me-dump-*.json src/main/resources/testfiles/my-test-dump.json
 ```
 
 ### 8.3 测试输出目录

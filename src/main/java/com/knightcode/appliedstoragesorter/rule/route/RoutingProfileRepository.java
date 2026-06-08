@@ -12,7 +12,7 @@ import net.neoforged.fml.loading.FMLPaths;
 
 public final class RoutingProfileRepository {
     private static final Path PROFILE_DIR = FMLPaths.CONFIGDIR.get()
-            .resolve("appliedstoragesorter")
+            .resolve("AppliedStorageSorter")
             .resolve("profiles");
 
     public List<StoredProfile> listProfiles() throws IOException {

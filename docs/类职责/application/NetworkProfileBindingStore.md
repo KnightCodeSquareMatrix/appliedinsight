@@ -1,5 +1,5 @@
 # NetworkProfileBindingStore
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/application/NetworkProfileBindingStore.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/application/NetworkProfileBindingStore.java`
 - **包**: `com.knightcode.appliedstoragesorter.application`
 - **类型**: `class`
 - **所属层**: 应用服务层

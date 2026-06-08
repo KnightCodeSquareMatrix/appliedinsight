@@ -1,5 +1,5 @@
 # Config
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/Config.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/Config.java`
 - **包**: `com.knightcode.appliedstoragesorter`
 - **类型**: `class`
 - **所属层**: 入口/装配层

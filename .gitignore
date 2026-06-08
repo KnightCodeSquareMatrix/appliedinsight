@@ -50,6 +50,11 @@ examplemod-template-26.1.1/
 
 ### Python venv ###
 .venv/
+tools/__pycache__/
+tools/ae2_reference_sprites/
+tools/generated_gui_palettes/
+tools/generated_gui_previews/
+tools/generated_gui_textures/
 
 ### Windows trash ###
 **/*Zone.Identifier
@@ -57,6 +62,25 @@ examplemod-template-26.1.1/
 ### Reference imports ###
 ae2src/
 ~/
+
+### AE2 reference source (full repo copy, huge) ###
+ae2_source/
+
+### AI / Claude worktrees ###
+.claude/
+
+### Rust engine (native build artifacts) ###
+rust-engine/
+
+### Build / test output ###
+test_output/
+
+### Generated assets ###
+generated_gui_textures/
+
+### Temp / backup files ###
+*.bak
+*.paint
 
 ### Build artifacts ###
 *.jar

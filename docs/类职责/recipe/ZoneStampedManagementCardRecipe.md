@@ -1,5 +1,5 @@
 # ZoneStampedManagementCardRecipe
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/recipe/ZoneStampedManagementCardRecipe.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/recipe/ZoneStampedManagementCardRecipe.java`
 - **包**: `com.knightcode.appliedstoragesorter.recipe`
 - **类型**: `class`
 - **所属层**: 配方输入层

@@ -8,15 +8,17 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.knightcode.appliedstoragesorter.ae2.scan.CellInfo;
+
 public final class RuntimeTopology {
     private final Map<String, RuntimeZone> zonesById;
-    private final List<RuntimeCell> unassignedCells;
+    private final List<CellInfo> unassignedCells;
     private final List<String> diagnostics;
     private final boolean degraded;
 
     public RuntimeTopology(
             Collection<RuntimeZone> zones,
-            List<RuntimeCell> unassignedCells,
+            List<CellInfo> unassignedCells,
             List<String> diagnostics,
             boolean degraded) {
         Objects.requireNonNull(zones, "zones");
@@ -45,12 +47,12 @@ public final class RuntimeTopology {
         return Optional.ofNullable(zonesById.get(zoneId));
     }
 
-    public List<RuntimeCell> unassignedCells() {
+    public List<CellInfo> unassignedCells() {
         return unassignedCells;
     }
 
-    public List<RuntimeCell> allCells() {
-        List<RuntimeCell> all = new ArrayList<>();
+    public List<CellInfo> allCells() {
+        List<CellInfo> all = new ArrayList<>();
         for (RuntimeZone zone : zonesById.values()) {
             all.addAll(zone.cells());
         }

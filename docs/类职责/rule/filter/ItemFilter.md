@@ -1,5 +1,5 @@
 # ItemFilter
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/rule/filter/ItemFilter.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/rule/filter/ItemFilter.java`
 - **包**: `com.knightcode.appliedstoragesorter.rule.filter`
 - **类型**: `record`
 - **所属层**: 纯规则模型层

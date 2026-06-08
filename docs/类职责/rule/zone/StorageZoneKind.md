@@ -1,5 +1,5 @@
 # StorageZoneKind
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/rule/zone/StorageZoneKind.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/rule/zone/StorageZoneKind.java`
 - **包**: `com.knightcode.appliedstoragesorter.rule.zone`
 - **类型**: `enum`
 - **所属层**: 纯规则模型层

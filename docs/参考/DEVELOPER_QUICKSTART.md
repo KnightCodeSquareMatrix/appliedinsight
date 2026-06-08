@@ -57,8 +57,8 @@ java -version
 ## 2. 获取源码
 
 ```bash
-git clone https://github.com/your-repo/appliedstoragesorter.git
-cd appliedstoragesorter
+git clone https://github.com/your-repo/appliedinsight.git
+cd appliedinsight
 ```
 
 ---
@@ -99,7 +99,7 @@ cd appliedstoragesorter
 ## 4. 项目结构速览
 
 ```
-appliedstoragesorter/
+appliedinsight/
 ├── build.gradle                    # Gradle 构建配置
 ├── settings.gradle                 # Gradle 项目设置
 ├── gradle.properties               # 版本号等属性
@@ -113,8 +113,8 @@ appliedstoragesorter/
 │   └── ...
 ├── src/
 │   ├── main/
-│   │   ├── java/com/knightcode/appliedstoragesorter/
-│   │   │   ├── AppliedStorageSorter.java    # 模组主入口
+│   │   ├── java/com/knightcode/appliedinsight/
+│   │   │   ├── appliedinsight.java    # 模组主入口
 │   │   │   ├── Config.java                  # 配置
 │   │   │   ├── command/                     # 命令层
 │   │   │   ├── rule/                        # 规则层（纯 Java）
@@ -196,9 +196,9 @@ appliedstoragesorter/
 ### 5.3 调试技巧
 
 - 命令输出通过 `SorterComponentHelper` 构建，支持 `keyValue`、`clickableFile` 等格式
-- 日志文件位于 `logs/appliedstoragesorter/`
-- dump 文件位于 `dumps/appliedstoragesorter/`
-- 配置位于 `config/appliedstoragesorter/server.toml`
+- 日志文件位于 `logs/appliedinsight/`
+- dump 文件位于 `dumps/appliedinsight/`
+- 配置位于 `config/appliedinsight/server.toml`
 
 ---
 
@@ -250,7 +250,7 @@ appliedstoragesorter/
 ### Q: 如何查看详细日志？
 
 ```bash
-tail -f logs/appliedstoragesorter.log
+tail -f logs/appliedinsight.log
 ```
 
 ### Q: 如何调试离线分析器？

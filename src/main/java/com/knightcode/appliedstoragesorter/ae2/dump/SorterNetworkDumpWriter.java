@@ -31,7 +31,7 @@ import net.minecraft.world.item.ItemStack;
 public final class SorterNetworkDumpWriter {
     private static final Logger log = LoggerFactory.getLogger(SorterNetworkDumpWriter.class);
     private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().serializeNulls().create();
-    private static final Path DUMP_DIR = ReportFileSupport.resolveDumpDir("appliedstoragesorter");
+    private static final Path DUMP_DIR = ReportFileSupport.resolveDumpDir("AppliedStorageSorter");
 
     private SorterNetworkDumpWriter() {
     }

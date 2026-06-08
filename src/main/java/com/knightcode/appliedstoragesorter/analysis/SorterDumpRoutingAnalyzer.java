@@ -123,7 +123,7 @@ public final class SorterDumpRoutingAnalyzer {
         }
 
         try (BufferedWriter writer = Files.newBufferedWriter(outputFile)) {
-            writer.write("Applied Storage Sorter Dump Routing Analysis\n");
+            writer.write("Applied Energistics: Insight Dump Routing Analysis\n");
             writer.write("============================================\n");
             writer.write("profileId=" + result.profileId() + "\n");
             writer.write("dumpFile=" + result.dumpFile() + "\n\n");

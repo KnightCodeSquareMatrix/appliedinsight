@@ -1,11 +1,11 @@
 # RoutingProfileRepository
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/rule/route/RoutingProfileRepository.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/rule/route/RoutingProfileRepository.java`
 - **包**: `com.knightcode.appliedstoragesorter.rule.route`
 - **类型**: `class`
 - **所属层**: 纯规则模型层
 
 ## 职责
-从 config/appliedstoragesorter/profiles 目录加载、列出和按编号/ID 查找 profile。
+从 config/appliedinsight/profiles 目录加载、列出和按编号/ID 查找 profile。
 
 ## 边界检查
 边界健康。文件系统访问集中在仓储层。

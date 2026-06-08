@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import com.knightcode.appliedstoragesorter.ae2.scan.CellInfo;
 import com.knightcode.appliedstoragesorter.ae2.scan.DriveCellReference;
 
 import appeng.api.stacks.AEItemKey;
@@ -11,7 +12,7 @@ import appeng.api.stacks.AEItemKey;
 public abstract class ZoneManager {
     private final String zoneId;
     private final String zoneName;
-    private final List<RuntimeCell> cells = new ArrayList<>();
+    private final List<CellInfo> cells = new ArrayList<>();
 
     protected ZoneManager(String zoneId, String zoneName) {
         this.zoneId = requireNonBlank(zoneId, "zoneId");
@@ -26,7 +27,7 @@ public abstract class ZoneManager {
         return zoneName;
     }
 
-    public final List<RuntimeCell> cells() {
+    public final List<CellInfo> cells() {
         return List.copyOf(cells);
     }
 
@@ -38,7 +39,7 @@ public abstract class ZoneManager {
         return cells.isEmpty();
     }
 
-    public final void addCell(RuntimeCell cell) {
+    public final void addCell(CellInfo cell) {
         cells.add(requireCellForZone(cell));
     }
 
@@ -47,8 +48,8 @@ public abstract class ZoneManager {
         return cells.removeIf(cell -> cell.reference().equals(reference));
     }
 
-    public final void replaceCell(RuntimeCell cell) {
-        RuntimeCell validated = requireCellForZone(cell);
+    public final void replaceCell(CellInfo cell) {
+        CellInfo validated = requireCellForZone(cell);
         removeCell(validated.reference());
         cells.add(validated);
     }
@@ -74,9 +75,9 @@ public abstract class ZoneManager {
             DriveCellReference sourceReference,
             AEItemKey itemKey,
             long amount,
-            List<RuntimeCell> cells);
+            List<CellInfo> cells);
 
-    private RuntimeCell requireCellForZone(RuntimeCell cell) {
+    private CellInfo requireCellForZone(CellInfo cell) {
         Objects.requireNonNull(cell, "cell");
         if (!zoneId.equals(cell.zoneId())) {
             throw new IllegalArgumentException(

@@ -1,5 +1,5 @@
 # RoutingProfileJsonCli
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/rule/route/RoutingProfileJsonCli.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/rule/route/RoutingProfileJsonCli.java`
 - **包**: `com.knightcode.appliedstoragesorter.rule.route`
 - **类型**: `class`
 - **所属层**: 纯规则模型层

@@ -1,0 +1,613 @@
+{
+  "version": 2,
+  "required_color_groups": {
+    "background": [
+      "outline_dark",
+      "edge_light",
+      "fill",
+      "shadow"
+    ],
+    "section": [
+      "outline_dark",
+      "edge_light",
+      "fill",
+      "shadow"
+    ],
+    "help_button": [
+      "icon_light",
+      "icon_shadow",
+      "frame_light",
+      "frame_dark",
+      "face"
+    ],
+    "action_button": [
+      "outline_dark",
+      "edge_light",
+      "face",
+      "shadow"
+    ],
+    "storage_slot": [
+      "outline_dark",
+      "edge_light",
+      "face",
+      "shadow"
+    ],
+    "text": [
+      "primary",
+      "muted",
+      "warning"
+    ],
+    "status": [
+      "online",
+      "warning",
+      "offline",
+      "lamp_border"
+    ]
+  },
+  "themes": {
+    "ae2_cool_gray": {
+      "description": "AE2-adjacent reference palette with cool blue-gray metals and restrained mint status colors.",
+      "colors": {
+        "background": {
+          "outline_dark": "#1E232BFF",
+          "edge_light": "#7D8694FF",
+          "fill": "#3A414CFF",
+          "shadow": "#2A2F38FF"
+        },
+        "section": {
+          "outline_dark": "#20242BFF",
+          "edge_light": "#8B93A0FF",
+          "fill": "#2E343DFF",
+          "shadow": "#282D35FF"
+        },
+        "help_button": {
+          "icon_light": "#E2E5EAFF",
+          "icon_shadow": "#1F242BFF",
+          "frame_light": "#C9CCDAFF",
+          "frame_dark": "#1E232BFF",
+          "face": "#A6ABBEFF"
+        },
+        "action_button": {
+          "outline_dark": "#1E232BFF",
+          "edge_light": "#C9CCDAFF",
+          "face": "#A6ABBEFF",
+          "shadow": "#656A80FF"
+        },
+        "storage_slot": {
+          "outline_dark": "#1E232BFF",
+          "edge_light": "#E4E6EDFF",
+          "face": "#B8BDCCFF",
+          "shadow": "#6F7487FF"
+        },
+        "text": {
+          "primary": "#E2E5EAFF",
+          "muted": "#99A3AFFF",
+          "warning": "#E4C464FF"
+        },
+        "status": {
+          "online": "#73C99BFF",
+          "warning": "#D6BB63FF",
+          "offline": "#C87474FF",
+          "lamp_border": "#20242BFF"
+        }
+      }
+    },
+    "graphite_green": {
+      "description": "Graphite machine body with desaturated green undertones for a distinct storage-governance terminal.",
+      "colors": {
+        "background": {
+          "outline_dark": "#1D2221FF",
+          "edge_light": "#7C8780FF",
+          "fill": "#343A39FF",
+          "shadow": "#272D2CFF"
+        },
+        "section": {
+          "outline_dark": "#1D2322FF",
+          "edge_light": "#879289FF",
+          "fill": "#2B3130FF",
+          "shadow": "#252B2AFF"
+        },
+        "help_button": {
+          "icon_light": "#DEE3DDFF",
+          "icon_shadow": "#1D2222FF",
+          "frame_light": "#CDD2C9FF",
+          "frame_dark": "#1D2221FF",
+          "face": "#AAB2A6FF"
+        },
+        "action_button": {
+          "outline_dark": "#1D2221FF",
+          "edge_light": "#CDD2C9FF",
+          "face": "#AAB2A6FF",
+          "shadow": "#647066FF"
+        },
+        "storage_slot": {
+          "outline_dark": "#1D2221FF",
+          "edge_light": "#E4E8E0FF",
+          "face": "#B8C0B4FF",
+          "shadow": "#6B756BFF"
+        },
+        "text": {
+          "primary": "#DEE3DDFF",
+          "muted": "#9BA69FFF",
+          "warning": "#DABB62FF"
+        },
+        "status": {
+          "online": "#79C392FF",
+          "warning": "#D9B85AFF",
+          "offline": "#C86E68FF",
+          "lamp_border": "#1D2322FF"
+        }
+      }
+    },
+    "warehouse_bluegray": {
+      "description": "A cleaner warehouse console palette with cool neutral steel and signal-style accents.",
+      "colors": {
+        "background": {
+          "outline_dark": "#1D2229FF",
+          "edge_light": "#808998FF",
+          "fill": "#38404AFF",
+          "shadow": "#2A313AFF"
+        },
+        "section": {
+          "outline_dark": "#20252DFF",
+          "edge_light": "#8E97A5FF",
+          "fill": "#2E3640FF",
+          "shadow": "#282F38FF"
+        },
+        "help_button": {
+          "icon_light": "#E2E6ECFF",
+          "icon_shadow": "#1E242BFF",
+          "frame_light": "#CDD1DCFF",
+          "frame_dark": "#1D2229FF",
+          "face": "#AAB0BFFF"
+        },
+        "action_button": {
+          "outline_dark": "#1D2229FF",
+          "edge_light": "#CDD1DCFF",
+          "face": "#AAB0BFFF",
+          "shadow": "#687085FF"
+        },
+        "storage_slot": {
+          "outline_dark": "#1D2229FF",
+          "edge_light": "#E3E6EDFF",
+          "face": "#B9C0CCFF",
+          "shadow": "#727A8BFF"
+        },
+        "text": {
+          "primary": "#E2E6ECFF",
+          "muted": "#9CA8B7FF",
+          "warning": "#DDBF66FF"
+        },
+        "status": {
+          "online": "#77C79BFF",
+          "warning": "#D7B95BFF",
+          "offline": "#C77474FF",
+          "lamp_border": "#20252DFF"
+        }
+      }
+    },
+    "archive_brown": {
+      "description": "An archival machine tone with soot-brown grays and paper-like highlights, less AE2-adjacent but still restrained.",
+      "colors": {
+        "background": {
+          "outline_dark": "#211D1AFF",
+          "edge_light": "#837A73FF",
+          "fill": "#3B3734FF",
+          "shadow": "#2B2623FF"
+        },
+        "section": {
+          "outline_dark": "#221D1BFF",
+          "edge_light": "#8C827AFF",
+          "fill": "#302A27FF",
+          "shadow": "#2A2522FF"
+        },
+        "help_button": {
+          "icon_light": "#E4DDD5FF",
+          "icon_shadow": "#221D1AFF",
+          "frame_light": "#D7D0C8FF",
+          "frame_dark": "#211D1AFF",
+          "face": "#B4ACA4FF"
+        },
+        "action_button": {
+          "outline_dark": "#211D1AFF",
+          "edge_light": "#D7D0C8FF",
+          "face": "#B4ACA4FF",
+          "shadow": "#756960FF"
+        },
+        "storage_slot": {
+          "outline_dark": "#211D1AFF",
+          "edge_light": "#E9E3DBFF",
+          "face": "#C3BBB1FF",
+          "shadow": "#7C7066FF"
+        },
+        "text": {
+          "primary": "#E4DDD5FF",
+          "muted": "#A59B91FF",
+          "warning": "#D7B65DFF"
+        },
+        "status": {
+          "online": "#81BD82FF",
+          "warning": "#D5AF58FF",
+          "offline": "#C76E61FF",
+          "lamp_border": "#221D1BFF"
+        }
+      }
+    },
+    "me_spatial_purple": {
+      "description": "Inspired by Spatial IO and Fluix Crystals, featuring deep desaturated violet metals and energetic crystalline status colors.",
+      "colors": {
+        "background": {
+          "outline_dark": "#1E1A24FF",
+          "edge_light": "#7E748EFF",
+          "fill": "#3A3543FF",
+          "shadow": "#2A2631FF"
+        },
+        "section": {
+          "outline_dark": "#201C25FF",
+          "edge_light": "#8B829AFF",
+          "fill": "#2E2A35FF",
+          "shadow": "#28242EFF"
+        },
+        "help_button": {
+          "icon_light": "#E4E0EAFF",
+          "icon_shadow": "#1F1B24FF",
+          "frame_light": "#CCC5DAFF",
+          "frame_dark": "#1E1A24FF",
+          "face": "#AAA3BEFF"
+        },
+        "action_button": {
+          "outline_dark": "#1E1A24FF",
+          "edge_light": "#CCC5DAFF",
+          "face": "#AAA3BEFF",
+          "shadow": "#676080FF"
+        },
+        "storage_slot": {
+          "outline_dark": "#1E1A24FF",
+          "edge_light": "#E7E3EDFF",
+          "face": "#BCB6CCFF",
+          "shadow": "#726B87FF"
+        },
+        "text": {
+          "primary": "#E4E0EAFF",
+          "muted": "#9D96AFFF",
+          "warning": "#E4C464FF"
+        },
+        "status": {
+          "online": "#9579E2FF",
+          "warning": "#D6A663FF",
+          "offline": "#C86A89FF",
+          "lamp_border": "#201C25FF"
+        }
+      }
+    },
+    "ae2_classic": {
+      "description": "A faithful recreation of the original AE2 palette, with its iconic teal and gray tones.",
+      "colors": {
+        "background": {
+          "outline_dark": "#1E232BFF",
+          "edge_light": "#7D8694FF",
+          "fill": "#3B414CFF",
+          "shadow": "#2A2F38FF"
+        },
+        "section": {
+          "outline_dark": "#20242BFF",
+          "edge_light": "#8B93A0FF",
+          "fill": "#2E343DFF",
+          "shadow": "#282D35FF"
+        },
+        "help_button": {
+          "icon_light": "#E2E5EAFF",
+          "icon_shadow": "#1F242BFF",
+          "frame_light": "#C9CCDAFF",
+          "frame_dark": "#1E232BFF",
+          "face": "#A6ABBEFF"
+        },
+        "action_button": {
+          "outline_dark": "#1E232BFF",
+          "edge_light": "#C9CCDAFF",
+          "face": "#A6ABBEFF",
+          "shadow": "#656A80FF"
+        },
+        "storage_slot": {
+          "outline_dark": "#1E232BFF",
+          "edge_light": "#E4E6EDFF",
+          "face": "#B8BDCCFF",
+          "shadow": "#6F7487FF"
+        },
+        "text": {
+          "primary": "#E2E5EAFF",
+          "muted": "#99A3AFFF",
+          "warning": "#E4C464FF"
+        },
+        "status": {
+          "online": "#73C99BFF",
+          "warning": "#D6BB63FF",
+          "offline": "#C87474FF",
+          "lamp_border": "#20242BFF"
+        }
+      }
+    },
+    "quantum_cyberpunk": {
+      "description": "A high-density quantum terminal theme with dark iron hulls and sharp, glowing neon-cyan status matrices.",
+      "colors": {
+        "background": {
+          "outline_dark": "#1A1D23FF",
+          "edge_light": "#767E8CFF",
+          "fill": "#32373FFF",
+          "shadow": "#24282FFF"
+        },
+        "section": {
+          "outline_dark": "#1B1E24FF",
+          "edge_light": "#838D9EFF",
+          "fill": "#282C34FF",
+          "shadow": "#23262DFF"
+        },
+        "help_button": {
+          "icon_light": "#DFE4EAFF",
+          "icon_shadow": "#1A1E24FF",
+          "frame_light": "#C5CDDAFF",
+          "frame_dark": "#1A1D23FF",
+          "face": "#A2AABFFF"
+        },
+        "action_button": {
+          "outline_dark": "#1A1D23FF",
+          "edge_light": "#C5CDDAFF",
+          "face": "#A2AABFFF",
+          "shadow": "#616A80FF"
+        },
+        "storage_slot": {
+          "outline_dark": "#1A1D23FF",
+          "edge_light": "#DFE4EDFF",
+          "face": "#B4BDCCFF",
+          "shadow": "#6B7587FF"
+        },
+        "text": {
+          "primary": "#DFE4EAFF",
+          "muted": "#96A0AFFF",
+          "warning": "#E4C464FF"
+        },
+        "status": {
+          "online": "#52D6CEFF",
+          "warning": "#D6C653FF",
+          "offline": "#C85C5CFF",
+          "lamp_border": "#1B1E24FF"
+        }
+      }
+    },
+    "singularity_obsidian": {
+      "description": "Ultra-dark endgame obsidian terminal with sharp silver highlights and high-contrast energy status indicators.",
+      "colors": {
+        "background": {
+          "outline_dark": "#111417FF",
+          "edge_light": "#636A75FF",
+          "fill": "#262A30FF",
+          "shadow": "#1B1E23FF"
+        },
+        "section": {
+          "outline_dark": "#131519FF",
+          "edge_light": "#707885FF",
+          "fill": "#1F2227FF",
+          "shadow": "#1A1D21FF"
+        },
+        "help_button": {
+          "icon_light": "#E2E5EBFF",
+          "icon_shadow": "#121418FF",
+          "frame_light": "#BDC4D1FF",
+          "frame_dark": "#111417FF",
+          "face": "#9AA0ADFF"
+        },
+        "action_button": {
+          "outline_dark": "#111417FF",
+          "edge_light": "#BDC4D1FF",
+          "face": "#9AA0ADFF",
+          "shadow": "#5B616CFF"
+        },
+        "storage_slot": {
+          "outline_dark": "#111417FF",
+          "edge_light": "#DCE1EBFF",
+          "face": "#ADB4C2FF",
+          "shadow": "#646B78FF"
+        },
+        "text": {
+          "primary": "#E2E5EBFF",
+          "muted": "#8D94A0FF",
+          "warning": "#E4C464FF"
+        },
+        "status": {
+          "online": "#4DE2A6FF",
+          "warning": "#D6A343FF",
+          "offline": "#D95252FF",
+          "lamp_border": "#131519FF"
+        }
+      }
+    },
+    "deep_oceanic_mech": {
+      "description": "Deep-sea research facility vibe with heavy teal-navy steel hulls and brilliant electric-blue status nodes.",
+      "colors": {
+        "background": {
+          "outline_dark": "#191E24FF",
+          "edge_light": "#727F90FF",
+          "fill": "#313943FF",
+          "shadow": "#222830FF"
+        },
+        "section": {
+          "outline_dark": "#1B2027FF",
+          "edge_light": "#7F8E9FFF",
+          "fill": "#272E37FF",
+          "shadow": "#222830FF"
+        },
+        "help_button": {
+          "icon_light": "#DEE5EAFF",
+          "icon_shadow": "#1A1F26FF",
+          "frame_light": "#C3D0DCFF",
+          "frame_dark": "#191E24FF",
+          "face": "#A1AEC0FF"
+        },
+        "action_button": {
+          "outline_dark": "#191E24FF",
+          "edge_light": "#C3D0DCFF",
+          "face": "#A1AEC0FF",
+          "shadow": "#606D80FF"
+        },
+        "storage_slot": {
+          "outline_dark": "#191E24FF",
+          "edge_light": "#DEE8EDFF",
+          "face": "#B2C0CCFF",
+          "shadow": "#6A7787FF"
+        },
+        "text": {
+          "primary": "#DEE5EAFF",
+          "muted": "#95A2AFFF",
+          "warning": "#E4C464FF"
+        },
+        "status": {
+          "online": "#4CA6E2FF",
+          "warning": "#D6B253FF",
+          "offline": "#C86363FF",
+          "lamp_border": "#1B2027FF"
+        }
+      }
+    },
+    "me_dark_matter": {
+      "description": "An ultra-dark obsidian terminal with restrained cyan-blue panel edging and a brighter AE-style help button accent stack.",
+      "colors": {
+        "background": {
+          "outline_dark": "#08090BFF",
+          "edge_light": "#31AFCBFF",
+          "fill": "#181C22FF",
+          "shadow": "#0F1318FF"
+        },
+        "section": {
+          "outline_dark": "#08090BFF",
+          "edge_light": "#45D4EEFF",
+          "fill": "#14191FFF",
+          "shadow": "#0C1116FF"
+        },
+        "help_button": {
+          "icon_light": "#EAFBFFFF",
+          "icon_shadow": "#617B8DFF",
+          "frame_light": "#8FF1FFFF",
+          "frame_dark": "#08090BFF",
+          "face": "#33414CFF"
+        },
+        "action_button": {
+          "outline_dark": "#08090BFF",
+          "edge_light": "#66E4FFFF",
+          "face": "#2A3541FF",
+          "shadow": "#161E26FF"
+        },
+        "storage_slot": {
+          "outline_dark": "#08090BFF",
+          "edge_light": "#4F7188FF",
+          "face": "#202A33FF",
+          "shadow": "#11171DFF"
+        },
+        "text": {
+          "primary": "#EAFBFFFF",
+          "muted": "#87AFC0FF",
+          "warning": "#E4C464FF"
+        },
+        "status": {
+          "online": "#4CDFFFFF",
+          "warning": "#D6A343FF",
+          "offline": "#E55C5CFF",
+          "lamp_border": "#08090BFF"
+        }
+      }
+    },
+    "me_dark_matter_v2": {
+      "description": "A refined me_dark_matter variant with dimmer cyan-blue edging on the main terminal body while keeping the help button as the brightest accent.",
+      "colors": {
+        "background": {
+          "outline_dark": "#08090BFF",
+          "edge_light": "#237C92FF",
+          "fill": "#181C22FF",
+          "shadow": "#0F1318FF"
+        },
+        "section": {
+          "outline_dark": "#08090BFF",
+          "edge_light": "#2FA7C0FF",
+          "fill": "#14191FFF",
+          "shadow": "#0C1116FF"
+        },
+        "help_button": {
+          "icon_light": "#EAFBFFFF",
+          "icon_shadow": "#617B8DFF",
+          "frame_light": "#8FF1FFFF",
+          "frame_dark": "#08090BFF",
+          "face": "#33414CFF"
+        },
+        "action_button": {
+          "outline_dark": "#08090BFF",
+          "edge_light": "#4BBFD7FF",
+          "face": "#2A3541FF",
+          "shadow": "#161E26FF"
+        },
+        "storage_slot": {
+          "outline_dark": "#08090BFF",
+          "edge_light": "#4F7188FF",
+          "face": "#202A33FF",
+          "shadow": "#11171DFF"
+        },
+        "text": {
+          "primary": "#EAFBFFFF",
+          "muted": "#87AFC0FF",
+          "warning": "#E4C464FF"
+        },
+        "status": {
+          "online": "#36BCD5FF",
+          "warning": "#D6A343FF",
+          "offline": "#E55C5CFF",
+          "lamp_border": "#08090BFF"
+        }
+      }
+    },
+    "applied_dark_matter_v2": {
+      "description": "Applied Energistics: Insight variant of me_dark_matter_v2 with matching background texture.",
+      "colors": {
+        "background": {
+          "outline_dark": "#08090BFF",
+          "edge_light": "#237C92FF",
+          "fill": "#181C22FF",
+          "shadow": "#0F1318FF"
+        },
+        "section": {
+          "outline_dark": "#08090BFF",
+          "edge_light": "#2FA7C0FF",
+          "fill": "#14191FFF",
+          "shadow": "#0C1116FF"
+        },
+        "help_button": {
+          "icon_light": "#EAFBFFFF",
+          "icon_shadow": "#617B8DFF",
+          "frame_light": "#8FF1FFFF",
+          "frame_dark": "#08090BFF",
+          "face": "#33414CFF"
+        },
+        "action_button": {
+          "outline_dark": "#08090BFF",
+          "edge_light": "#4BBFD7FF",
+          "face": "#2A3541FF",
+          "shadow": "#161E26FF"
+        },
+        "storage_slot": {
+          "outline_dark": "#08090BFF",
+          "edge_light": "#4F7188FF",
+          "face": "#202A33FF",
+          "shadow": "#11171DFF"
+        },
+        "text": {
+          "primary": "#EAFBFFFF",
+          "muted": "#87AFC0FF",
+          "warning": "#E4C464FF"
+        },
+        "status": {
+          "online": "#36BCD5FF",
+          "warning": "#D6A343FF",
+          "offline": "#E55C5CFF",
+          "lamp_border": "#08090BFF"
+        }
+      }
+    }
+  }
+}

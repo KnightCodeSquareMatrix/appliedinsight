@@ -48,7 +48,7 @@ public final class ZoneAllocationPlannerAnalyzer {
         Map<String, Integer> decisionCounts = buildDecisionCounts(plan.assignments());
 
         try (BufferedWriter writer = Files.newBufferedWriter(outputFile)) {
-            writer.write("Applied Storage Sorter Zone Allocation Planner Report\n");
+            writer.write("Applied Energistics: Insight Zone Allocation Planner Report\n");
             writer.write("===================================================\n");
             writer.write("profileFile=" + profile.id() + " v" + profile.version() + "\n");
             writer.write("dumpFile=" + dumpFile + "\n");

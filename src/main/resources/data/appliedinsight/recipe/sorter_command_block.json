@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "P",
+    "C"
+  ],
+  "key": {
+    "P": {
+      "item": "ae2:quartz_glass"
+    },
+    "C": {
+      "item": "ae2:controller"
+    }
+  },
+  "result": {
+    "id": "appliedinsight:sorter_command_block",
+    "count": 1
+  }
+}

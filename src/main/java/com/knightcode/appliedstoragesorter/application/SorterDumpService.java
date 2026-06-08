@@ -15,6 +15,7 @@ import com.knightcode.appliedstoragesorter.logging.SorterFileLogger;
 import com.knightcode.appliedstoragesorter.network.FileChunkedSender;
 
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.fml.loading.FMLPaths;
@@ -29,10 +30,10 @@ public final class SorterDumpService {
 
     public static SorterFeedbackResult execute(CommandSourceStack source, GridTargetResolver resolver) {
         if (!Config.ENABLE_SORTER.get()) {
-            return SorterFeedbackResult.failure("Applied Storage Sorter is disabled in the server config.");
+            return SorterFeedbackResult.failure(Component.translatable("sorter.command.error.disabled"));
         }
         if (source.getEntity() == null) {
-            return SorterFeedbackResult.failure("This command must be run by a player.");
+            return SorterFeedbackResult.failure(Component.translatable("sorter.command.error.player_only"));
         }
         var gridTarget = resolver.resolve(source);
         if (!gridTarget.success()) {
@@ -48,17 +49,17 @@ public final class SorterDumpService {
             if (source.getEntity() instanceof ServerPlayer serverPlayer) {
                 var dumpFile = FMLPaths.GAMEDIR.get().resolve(dumpResult.dumpFilePath());
                 var fileId = ResourceLocation.fromNamespaceAndPath(
-                        "appliedstoragesorter", "me-dump-" + System.currentTimeMillis());
+                        "AppliedStorageSorter", "me-dump-" + System.currentTimeMillis());
                 FileChunkedSender.sendFile(serverPlayer, fileId, dumpFile);
             }
             return SorterFeedbackResult.success(List.of(
-                    SorterComponentHelper.line("Dumped %d unique item keys from %d mounted cells to:"
-                            .formatted(dumpResult.uniqueItemKeyCount(), dumpResult.mountedCellCount())),
+                    Component.translatable("sorter.command.dump.success",
+                            dumpResult.uniqueItemKeyCount(), dumpResult.mountedCellCount()),
                     SorterComponentHelper.clickableFile("dumpFile", dumpResult.dumpFilePath())));
         } catch (IOException exception) {
             SorterFileLogger.logSorterMeDumpFailure(source, gridTarget, scanSummary, exception);
             return SorterFeedbackResult.failure(
-                    "Failed to write sorter dump JSON. Check logs/appliedstoragesorter.log");
+                    Component.translatable("sorter.command.dump.error.write_failed"));
         }
     }
 }

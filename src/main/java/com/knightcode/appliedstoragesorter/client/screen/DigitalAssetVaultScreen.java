@@ -1,57 +1,183 @@
 package com.knightcode.appliedstoragesorter.client.screen;
 
+import appeng.client.gui.style.ScreenStyle;
+import com.knightcode.appliedstoragesorter.client.format.ByteUnitFormatter;
+import com.knightcode.appliedstoragesorter.client.gui.SorterBaseScreen;
+import com.knightcode.appliedstoragesorter.client.gui.theme.GuiThemeProvider;
+import com.knightcode.appliedstoragesorter.client.gui.widget.ExpansionCellPickerWidget;
+import com.knightcode.appliedstoragesorter.client.gui.widget.NewDavToggleButton;
 import com.knightcode.appliedstoragesorter.menu.DigitalAssetVaultMenu;
+import com.knightcode.appliedstoragesorter.network.NewDavTogglePayload;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
-public class DigitalAssetVaultScreen extends AbstractContainerScreen<DigitalAssetVaultMenu> {
-    /**
-     * AE2 Drive 纹理，尺寸 256x256，有效区域 176x201。
-     * DAV 继承自 DriveBlockEntity，UI 复用 Drive 的纹理以保持视觉一致性。
-     */
-    private static final ResourceLocation CONTAINER_TEXTURE = ResourceLocation.parse(
-            "appliedstoragesorter:textures/gui/digital_asset_vault.png");
+public class DigitalAssetVaultScreen extends SorterBaseScreen<DigitalAssetVaultMenu> {
+    private static final int LEFT_COL_X = 14;
+    private static final int LEFT_COL_WIDTH = 106;
+    private static final int TOGGLE_HEIGHT = 18;
+    private static final int CONTROL_TOP_Y = 26;
+    private static final int TOGGLE_ROW_1_Y = CONTROL_TOP_Y;
+    private static final int TOGGLE_ROW_2_Y = CONTROL_TOP_Y + 22;
+    private static final int TOGGLE_ROW_3_Y = CONTROL_TOP_Y + 44;
 
-    /** DAV 纹理中 cell 槽区域的列数（2 列 x 5 行，DAV 使用垂直布局） */
-    private static final int CELL_ROWS = 5;
+    private NewDavToggleButton migrateToggle;
+    private NewDavToggleButton autoAcceptToggle;
+    private NewDavToggleButton autoExpandToggle;
+    private ExpansionCellPickerWidget expansionCellPicker;
 
-    /** Drive 纹理中玩家背包区域的起始 Y（从 common/player_inventory.json 继承） */
-    private static final int PLAYER_INV_SECTION_Y = 84;
+    public DigitalAssetVaultScreen(DigitalAssetVaultMenu menu, Inventory playerInventory, Component title,
+            ScreenStyle style) {
+        super(menu, playerInventory, title, style);
+        this.inventoryLabelY = 10000;
+    }
 
-    /** Drive 纹理尺寸常量（176x201 主体 + 176x22 卡槽面板 = 总高 223） */
-    private static final int TEXTURE_WIDTH = 176;
-    private static final int TEXTURE_HEIGHT = 223;
-
-    /** 卡槽面板在纹理中的起始 Y 和高度 */
-    private static final int CARD_PANEL_START_Y = 201;
-    private static final int CARD_PANEL_HEIGHT = 22;
-
-    public DigitalAssetVaultScreen(DigitalAssetVaultMenu menu, Inventory playerInventory, Component title) {
-        super(menu, playerInventory, title);
-        this.imageWidth = TEXTURE_WIDTH;
-        this.imageHeight = TEXTURE_HEIGHT;
-        this.inventoryLabelY = this.imageHeight - 94;
+    public ExpansionCellPickerWidget getExpansionCellPicker() {
+        return expansionCellPicker;
     }
 
     @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-        // 1. 绘制 Drive 上半部分（标题 + cell 槽区域）：y=0..84
-        guiGraphics.blit(CONTAINER_TEXTURE, leftPos, topPos, 0, 0, TEXTURE_WIDTH, PLAYER_INV_SECTION_Y);
-        // 2. 绘制 Drive 下半部分（玩家背包区域）：y=84..201
-        guiGraphics.blit(CONTAINER_TEXTURE, leftPos, topPos + PLAYER_INV_SECTION_Y, 0, PLAYER_INV_SECTION_Y,
-                TEXTURE_WIDTH, CARD_PANEL_START_Y - PLAYER_INV_SECTION_Y);
-        // 3. 绘制卡槽面板（管理卡槽）：y=201..223
-        guiGraphics.blit(CONTAINER_TEXTURE, leftPos, topPos + CARD_PANEL_START_Y, 0, CARD_PANEL_START_Y,
-                TEXTURE_WIDTH, CARD_PANEL_HEIGHT);
+    protected void init() {
+        super.init();
+
+        int toggleX = leftPos + LEFT_COL_X;
+
+        migrateToggle = addToggle(toggleX, TOGGLE_ROW_1_Y,
+                "screen.appliedinsight.digital_asset_vault.toggle.migrate",
+                "screen.appliedinsight.digital_asset_vault.tooltip.migrate",
+                menu.isMigrateExistingItems(),
+                NewDavTogglePayload.SETTING_MIGRATE_EXISTING);
+
+        autoAcceptToggle = addToggle(toggleX, TOGGLE_ROW_2_Y,
+                "screen.appliedinsight.digital_asset_vault.toggle.auto_accept",
+                "screen.appliedinsight.digital_asset_vault.tooltip.auto_accept",
+                menu.isAutoAcceptIncoming(),
+                NewDavTogglePayload.SETTING_AUTO_ACCEPT);
+
+        autoExpandToggle = addToggle(toggleX, TOGGLE_ROW_3_Y,
+                "screen.appliedinsight.digital_asset_vault.toggle.auto_expand",
+                "screen.appliedinsight.digital_asset_vault.tooltip.auto_expand",
+                menu.isAutoExpandEnabled(),
+                NewDavTogglePayload.SETTING_AUTO_EXPAND);
+
+        expansionCellPicker = new ExpansionCellPickerWidget(
+                leftPos + DigitalAssetVaultMenu.EXPANSION_SLOT_X,
+                topPos + DigitalAssetVaultMenu.EXPANSION_SLOT_Y,
+                menu);
+        expansionCellPicker.setTooltip(Tooltip.create(
+                Component.translatable("screen.appliedinsight.digital_asset_vault.tooltip.expansion_cell")));
+        addRenderableWidget(expansionCellPicker);
+    }
+
+    private NewDavToggleButton addToggle(int x, int localY, String labelKey, String tooltipKey,
+            boolean initialState, int setting) {
+        NewDavToggleButton toggle = new NewDavToggleButton(
+                x, topPos + localY, LEFT_COL_WIDTH, TOGGLE_HEIGHT, labelKey, initialState,
+                newState -> sendToggle(setting));
+        toggle.setTooltip(Tooltip.create(Component.translatable(tooltipKey)));
+        addRenderableWidget(toggle);
+        return toggle;
+    }
+
+    private void sendToggle(int setting) {
+        net.neoforged.neoforge.network.PacketDistributor.sendToServer(
+                new NewDavTogglePayload(menu.getBlockEntity().getBlockPos(), setting));
+    }
+
+    @Override
+    public void containerTick() {
+        super.containerTick();
+        syncToggle(migrateToggle, menu.isMigrateExistingItems());
+        syncToggle(autoAcceptToggle, menu.isAutoAcceptIncoming());
+        syncToggle(autoExpandToggle, menu.isAutoExpandEnabled());
+    }
+
+    private void syncToggle(NewDavToggleButton toggle, boolean serverState) {
+        if (toggle != null && toggle.isToggled() != serverState) {
+            toggle.setState(serverState);
+        }
     }
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         super.render(guiGraphics, mouseX, mouseY, partialTick);
-        renderTooltip(guiGraphics, mouseX, mouseY);
+        renderCustomLabels(guiGraphics);
+    }
+
+    private void renderCustomLabels(GuiGraphics guiGraphics) {
+        int rightX = DigitalAssetVaultMenu.ABSORPTION_TEXT_X;
+        int textColor = themedTextColor();
+        int mutedColor = themedMutedTextColor();
+        var theme = GuiThemeProvider.resolve();
+
+        guiGraphics.drawString(font,
+                Component.translatable("screen.appliedinsight.digital_asset_vault.section.absorption"),
+                leftPos + DigitalAssetVaultMenu.SLOT_LABEL_X,
+                topPos + DigitalAssetVaultMenu.SLOT_LABEL_Y, mutedColor, false);
+
+        guiGraphics.drawString(font,
+                Component.translatable("screen.appliedinsight.digital_asset_vault.absorbed_cells",
+                        menu.getAbsorbedCellCount()),
+                leftPos + rightX, topPos + DigitalAssetVaultMenu.ABSORPTION_STAT_1_Y, textColor, false);
+
+        String bytesLine = Component.translatable("screen.appliedinsight.digital_asset_vault.bytes_line",
+                ByteUnitFormatter.formatPair(menu.getUsedBytes(), menu.getAbsorbedBytes())).getString();
+        guiGraphics.drawString(font,
+                Component.literal(trimToWidth(bytesLine, DigitalAssetVaultMenu.STAT_TEXT_MAX_WIDTH)),
+                leftPos + rightX, topPos + DigitalAssetVaultMenu.ABSORPTION_BYTES_VALUE_Y, textColor, false);
+
+        guiGraphics.drawString(font,
+                Component.translatable("screen.appliedinsight.digital_asset_vault.types_total",
+                        menu.getAbsorbedTypeCapacity()),
+                leftPos + rightX, topPos + DigitalAssetVaultMenu.ABSORPTION_TYPES_TOTAL_Y, textColor, false);
+
+        int typePercent = menu.getAbsorbedTypeCapacity() == 0 ? 0
+                : (int) Math.round(100.0 * menu.getUsedTypeCapacity() / menu.getAbsorbedTypeCapacity());
+        guiGraphics.drawString(font,
+                Component.translatable("screen.appliedinsight.digital_asset_vault.types_used_percent",
+                        menu.getUsedTypeCapacity(), typePercent),
+                leftPos + rightX, topPos + DigitalAssetVaultMenu.ABSORPTION_TYPES_USED_Y, mutedColor, false);
+
+        guiGraphics.drawString(font,
+                Component.translatable("screen.appliedinsight.digital_asset_vault.expansion_cell_label"),
+                leftPos + rightX, topPos + DigitalAssetVaultMenu.EXPANSION_LABEL_Y, mutedColor, false);
+
+        renderCellIndicator(guiGraphics, theme, rightX);
+
+        Component statusText = Component.translatable(menu.getStatus().translationKey());
+        guiGraphics.drawString(font,
+                Component.translatable("screen.appliedinsight.digital_asset_vault.status", statusText),
+                leftPos + rightX, topPos + DigitalAssetVaultMenu.STATUS_Y, textColor, false);
+    }
+
+    private String trimToWidth(String text, int maxWidth) {
+        if (font.width(text) <= maxWidth) {
+            return text;
+        }
+        int ellipsisWidth = font.width("...");
+        return font.plainSubstrByWidth(text, Math.max(0, maxWidth - ellipsisWidth)) + "...";
+    }
+
+    private void renderCellIndicator(GuiGraphics guiGraphics,
+            com.knightcode.appliedstoragesorter.client.gui.theme.GuiTheme theme, int rightX) {
+        if (menu.getExpansionCellId().isEmpty()) {
+            return;
+        }
+        if (!menu.isExpansionCellValid()) {
+            guiGraphics.drawString(font,
+                    Component.translatable("screen.appliedinsight.digital_asset_vault.indicator.invalid_cell"),
+                    leftPos + rightX, topPos + DigitalAssetVaultMenu.INDICATOR_Y, theme.statusOfflineColor(), false);
+            return;
+        }
+        if (!menu.isExpansionCellCraftable()) {
+            guiGraphics.drawString(font,
+                    Component.translatable("screen.appliedinsight.digital_asset_vault.indicator.no_pattern"),
+                    leftPos + rightX, topPos + DigitalAssetVaultMenu.INDICATOR_Y, theme.statusWarningColor(), false);
+            return;
+        }
+        guiGraphics.drawString(font,
+                Component.translatable("screen.appliedinsight.digital_asset_vault.indicator.pattern_found"),
+                leftPos + rightX, topPos + DigitalAssetVaultMenu.INDICATOR_Y, theme.statusOnlineColor(), false);
     }
 }

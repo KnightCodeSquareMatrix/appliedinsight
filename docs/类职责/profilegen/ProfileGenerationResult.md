@@ -1,5 +1,5 @@
 # ProfileGenerationResult
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/profilegen/ProfileGenerationResult.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/profilegen/ProfileGenerationResult.java`
 - **包**: `com.knightcode.appliedstoragesorter.profilegen`
 - **类型**: `record`
 - **所属层**: 规则草案生成层

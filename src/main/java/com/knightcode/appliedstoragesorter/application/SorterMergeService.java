@@ -14,6 +14,7 @@ import com.knightcode.appliedstoragesorter.logging.SorterFileLogger;
 import com.knightcode.appliedstoragesorter.logging.SorterMergeReportFileLogger;
 
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,11 +31,11 @@ public final class SorterMergeService {
     public static SorterFeedbackResult execute(CommandSourceStack source, GridTargetResolver resolver) {
         if (!Config.ENABLE_SORTER.get()) {
             log.debug("Skip sorter merge because sorter is disabled.");
-            return SorterFeedbackResult.failure("Applied Storage Sorter is disabled in the server config.");
+            return SorterFeedbackResult.failure(Component.translatable("sorter.command.error.disabled"));
         }
         if (source.getEntity() == null) {
             log.debug("Reject sorter merge because command source has no entity.");
-            return SorterFeedbackResult.failure("This command must be run by a player.");
+            return SorterFeedbackResult.failure(Component.translatable("sorter.command.error.player_only"));
         }
         var gridTarget = resolver.resolve(source);
         if (!gridTarget.success()) {

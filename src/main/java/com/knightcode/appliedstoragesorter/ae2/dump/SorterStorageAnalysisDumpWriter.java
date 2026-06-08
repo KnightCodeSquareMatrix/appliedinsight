@@ -15,7 +15,7 @@ import com.knightcode.appliedstoragesorter.logging.ReportFileSupport;
 
 public final class SorterStorageAnalysisDumpWriter {
     private static final Gson GSON = new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().serializeNulls().create();
-    private static final Path DUMP_DIR = ReportFileSupport.resolveDumpDir("appliedstoragesorter");
+    private static final Path DUMP_DIR = ReportFileSupport.resolveDumpDir("AppliedStorageSorter");
 
     private SorterStorageAnalysisDumpWriter() {
     }

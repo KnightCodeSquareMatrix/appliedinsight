@@ -54,7 +54,7 @@ public final class SorterCommandPayloadHandler {
             String dimensionId = serverLevel.dimension().location().toString();
             GridTargetResolver nodeResolver = src -> Ae2GridTargetResult.fromNode(
                     be.getMainNode(), be.getBlockPos(),
-                    "appliedstoragesorter:sorter_command_block", dimensionId);
+                    "appliedinsight:sorter_command_block", dimensionId);
 
             switch (payload.buttonId()) {
                 case SorterCommandPayload.CMD_ME_DUMP -> {

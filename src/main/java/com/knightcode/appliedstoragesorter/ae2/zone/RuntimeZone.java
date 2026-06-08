@@ -2,8 +2,11 @@ package com.knightcode.appliedstoragesorter.ae2.zone;
 
 import java.util.List;
 
+import com.knightcode.appliedstoragesorter.ae2.scan.CellInfo;
 import com.knightcode.appliedstoragesorter.ae2.scan.DriveCellReference;
 
+import appeng.api.config.Actionable;
+import appeng.api.networking.security.IActionSource;
 import appeng.api.stacks.AEItemKey;
 
 public final class RuntimeZone extends ZoneManager {
@@ -11,58 +14,96 @@ public final class RuntimeZone extends ZoneManager {
         super(zoneId, zoneName);
     }
 
+    /**
+     * ADR-012: public zone-level API. Finds the best cell in this zone
+     * for the given item and simulates acceptance. Consumers no longer
+     * iterate cells directly.
+     */
+    public ZonePlacementDecision acceptItem(DriveCellReference sourceRef, AEItemKey itemKey, long amount) {
+        return planPlacement(sourceRef, itemKey, amount);
+    }
+
     @Override
     protected ZonePlacementDecision doPlanPlacement(
             DriveCellReference sourceReference,
             AEItemKey itemKey,
             long amount,
-            List<RuntimeCell> cells) {
-        MoveCandidate bestCandidate = null;
+            List<CellInfo> cells) {
 
-        for (RuntimeCell cell : cells) {
-            if (cell.isSameCell(sourceReference)) {
+        CellInfo bestCell = null;
+        long bestAccepted = 0L;
+        boolean bestContainsItem = false;
+        int bestDistinctCount = Integer.MAX_VALUE;
+
+        for (CellInfo cell : cells) {
+            if (cell.reference().equals(sourceReference)) {
                 continue;
             }
 
-            long acceptedAmount = cell.simulateAcceptedAmount(itemKey, amount);
-            if (acceptedAmount <= 0) {
+            // ADR-012: use MEStorage directly, not deprecated CellInfo methods
+            long accepted = cell.storage().insert(
+                    itemKey, amount, Actionable.SIMULATE,
+                    IActionSource.ofMachine(cell.actionHost()));
+            if (accepted <= 0) {
                 continue;
             }
 
-            MoveCandidate candidate = new MoveCandidate(
-                    cell,
-                    acceptedAmount,
-                    cell.containsExactItem(itemKey),
-                    cell.distinctItemKeyCount());
+            boolean containsItem = containsItem(cell, itemKey);
 
-            if (bestCandidate == null || candidate.isBetterThan(bestCandidate)) {
-                bestCandidate = candidate;
+            // Prefer: already contains item > higher accepted > fewer types > lower slot
+            boolean better = false;
+            if (bestCell == null) {
+                better = true;
+            } else if (containsItem && !bestContainsItem) {
+                better = true;
+            } else if (!containsItem && bestContainsItem) {
+                better = false;
+            } else if (accepted > bestAccepted) {
+                better = true;
+            } else if (accepted == bestAccepted) {
+                int distinct = distinctCount(cell);
+                if (distinct < bestDistinctCount) {
+                    better = true;
+                } else if (distinct == bestDistinctCount
+                        && cell.reference().slot() < bestCell.reference().slot()) {
+                    better = true;
+                }
+            }
+
+            if (better) {
+                bestCell = cell;
+                bestAccepted = accepted;
+                bestContainsItem = containsItem;
+                bestDistinctCount = distinctCount(cell);
             }
         }
 
-        if (bestCandidate == null) {
+        if (bestCell == null) {
             return ZonePlacementDecision.rejected(zoneId(), "zone has no writable target cell for item");
         }
 
-        return ZonePlacementDecision.accepted(zoneId(), bestCandidate.cell(), bestCandidate.acceptedAmount());
+        return ZonePlacementDecision.accepted(
+                zoneId(), bestCell.reference(), bestCell.actionHost(), bestCell.storage(), bestAccepted);
     }
 
-    private record MoveCandidate(
-            RuntimeCell cell,
-            long acceptedAmount,
-            boolean alreadyContainsItem,
-            int distinctItemKeyCount) {
-        private boolean isBetterThan(MoveCandidate other) {
-            if (alreadyContainsItem != other.alreadyContainsItem) {
-                return alreadyContainsItem;
+    // ADR-012: direct MEStorage queries, replacing deprecated CellInfo methods
+
+    private static boolean containsItem(CellInfo cell, AEItemKey itemKey) {
+        for (var entry : cell.storage().getAvailableStacks()) {
+            if (entry.getLongValue() > 0 && itemKey.equals(entry.getKey())) {
+                return true;
             }
-            if (acceptedAmount != other.acceptedAmount) {
-                return acceptedAmount > other.acceptedAmount;
-            }
-            if (distinctItemKeyCount != other.distinctItemKeyCount) {
-                return distinctItemKeyCount < other.distinctItemKeyCount;
-            }
-            return cell.reference().slot() < other.cell.reference().slot();
         }
+        return false;
+    }
+
+    private static int distinctCount(CellInfo cell) {
+        int count = 0;
+        for (var entry : cell.storage().getAvailableStacks()) {
+            if (entry.getLongValue() > 0) {
+                count++;
+            }
+        }
+        return count;
     }
 }

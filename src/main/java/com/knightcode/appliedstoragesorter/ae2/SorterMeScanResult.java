@@ -94,7 +94,7 @@ public record SorterMeScanResult(
             Ae2DriveScanSummary driveScanSummary, String pivotDescription, String dimensionId) {
         return new SorterMeScanResult(
                 true,
-                "AE2 network resolved. Drives=%d, mounted cells=%d, duplicated item keys=%d. Details written to logs/appliedstoragesorter.log"
+                "AE2 network resolved. Drives=%d, mounted cells=%d, duplicated item keys=%d. Details written to logs/AppliedStorageSorter.log"
                         .formatted(
                                 driveScanSummary.driveCount(),
                                 driveScanSummary.mountedCellCount(),

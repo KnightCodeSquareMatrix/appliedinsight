@@ -1,0 +1,21 @@
+{
+  "includes": ["common/common.json"],
+  "helpTopic": "appliedinsight:smart-bus.md",
+  "background": {
+    "texture": "appliedinsight:textures/gui/smart_bus.png",
+    "textureWidth": 512,
+    "textureHeight": 512,
+    "srcRect": [0, 0, 400, 280]
+  },
+  "text": {
+    "dialog_title": {
+      "text": {
+        "translate": "item.appliedinsight.smart_bus"
+      },
+      "position": {
+        "left": 8,
+        "top": 6
+      }
+    }
+  }
+}

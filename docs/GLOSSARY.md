@@ -6,12 +6,12 @@
 
 | 原内容 | 新位置 |
 |--------|--------|
-| 术语表（中英文对照 + 一句话定义） | [`docs/架构/FACTS.md` §6（FACT-091 到 FACT-120）](docs/架构/FACTS.md#6-术语表精简版仅核心术语中英文对照--一句话定义) |
+| 术语表（中英文对照 + 一句话定义） | [`docs/架构/FACTS.md` §6（FACT-095 到 FACT-123）](docs/架构/FACTS.md#6-术语表精简版仅核心术语中英文对照--一句话定义) |
 
 ## 快速导航
 
 - [FACTS.md — 术语表（完整）](docs/架构/FACTS.md#6-术语表精简版仅核心术语中英文对照--一句话定义)
 - [FACTS.md — 项目定位](docs/架构/FACTS.md#1-项目定位)
-- [FACTS.md — 六层架构](docs/架构/FACTS.md#2-六层架构按依赖顺序api--application--domain--ae2--infrastructure--client)
+- [FACTS.md — 六层架构](docs/架构/FACTS.md#2-六层架构)
 
-> **最后更新**: 2026-05-28
+> **最后更新**: 2026-06-08 · 应用能源：洞察 / Applied Energistics: Insight

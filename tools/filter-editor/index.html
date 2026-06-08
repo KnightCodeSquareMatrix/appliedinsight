@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Applied Energistics: Insight · Filter Editor</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <h1 data-i18n="title">Smart Bus Filter Editor</h1>
+      <p class="subtitle" data-i18n="subtitle" data-i18n-html></p>
+    </div>
+    <div class="toolbar">
+      <button type="button" id="btn-lang" class="lang-toggle" title="Switch language">中文</button>
+      <button type="button" id="btn-import" data-i18n="btnImport">Import Clipboard</button>
+      <button type="button" id="btn-format" data-i18n="btnFormat">Format JSON</button>
+      <button type="button" class="primary" id="btn-copy" data-i18n="btnCopy">Copy for Game</button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="panel builder-panel">
+      <div class="panel-head">
+        <h2 data-i18n="ruleBuilder">Rule Builder</h2>
+        <span class="hint" data-i18n="builderHint">Groups can nest — e.g. (A AND B) OR (C AND D)</span>
+      </div>
+      <div class="templates-bar">
+        <span class="templates-title" data-i18n="templatesTitle">Quick templates</span>
+        <div id="templates-container" class="templates-container"></div>
+      </div>
+      <div id="rules-container" class="rules-container"></div>
+      <div class="root-actions">
+        <button type="button" id="btn-add-rule" class="ghost" data-i18n="btnAddRule">+ Add Rule</button>
+        <button type="button" id="btn-add-group" class="ghost" data-i18n="btnAddGroup">+ Add Group</button>
+      </div>
+    </section>
+
+    <section class="panel preview-panel">
+      <div class="panel-head">
+        <h2 data-i18n="jsonPreview">JSON Preview</h2>
+        <span id="validation-badge" class="badge ok" data-i18n="valid">Valid</span>
+      </div>
+      <pre id="json-preview" class="json-preview"></pre>
+      <p id="status-message" class="status-message"></p>
+      <label class="manual-paste-label" for="manual-paste" data-i18n="manualPasteLabel">Manual JSON paste</label>
+      <textarea id="manual-paste" class="manual-paste" rows="4" data-i18n-placeholder="manualPastePlaceholder"></textarea>
+      <button type="button" id="btn-manual-apply" class="ghost small" data-i18n="btnManualApply">Apply Manual Paste</button>
+    </section>
+  </main>
+
+  <footer class="app-footer">
+    <p data-i18n="footer" data-i18n-html></p>
+  </footer>
+
+  <script src="metadata.js"></script>
+  <script src="templates.js"></script>
+  <script src="i18n.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

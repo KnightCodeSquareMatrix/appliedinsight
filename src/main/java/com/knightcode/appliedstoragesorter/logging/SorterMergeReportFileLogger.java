@@ -29,7 +29,7 @@ import net.minecraft.commands.CommandSourceStack;
 
 public final class SorterMergeReportFileLogger {
     private static final Logger log = LoggerFactory.getLogger(SorterMergeReportFileLogger.class);
-    private static final Path LOG_DIR = ReportFileSupport.resolveLogDir("appliedstoragesorter");
+    private static final Path LOG_DIR = ReportFileSupport.resolveLogDir("AppliedStorageSorter");
     private static final int TOP_BENEFIT_ITEM_LIMIT = 20;
 
     private SorterMergeReportFileLogger() {

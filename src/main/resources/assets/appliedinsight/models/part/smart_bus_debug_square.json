@@ -1,0 +1,26 @@
+{
+  "textures": {
+    "face1": "appliedinsight:part/smart_bus_uv_debug_1",
+    "face2": "appliedinsight:part/smart_bus_uv_debug_2",
+    "face3": "appliedinsight:part/smart_bus_uv_debug_3",
+    "face4": "appliedinsight:part/smart_bus_uv_debug_4",
+    "face5": "appliedinsight:part/smart_bus_uv_debug_5",
+    "face6": "appliedinsight:part/smart_bus_uv_debug_6",
+    "particle": "appliedinsight:part/smart_bus_uv_debug_1"
+  },
+  "render_type": "minecraft:cutout",
+  "elements": [
+    {
+      "from": [2, 2, 0],
+      "to": [14, 14, 6],
+      "faces": {
+        "north": { "texture": "#face1", "uv": [4, 4, 12, 12] },
+        "south": { "texture": "#face2", "uv": [4, 4, 12, 12] },
+        "east":  { "texture": "#face3", "uv": [4, 4, 12, 12] },
+        "west":  { "texture": "#face4", "uv": [4, 4, 12, 12] },
+        "up":    { "texture": "#face5", "uv": [4, 4, 12, 12] },
+        "down":  { "texture": "#face6", "uv": [4, 4, 12, 12] }
+      }
+    }
+  ]
+}

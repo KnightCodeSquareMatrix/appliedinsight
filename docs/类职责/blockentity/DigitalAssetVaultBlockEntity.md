@@ -1,5 +1,5 @@
 # DigitalAssetVaultBlockEntity
-- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/blockentity/DigitalAssetVaultBlockEntity.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/blockentity/DigitalAssetVaultBlockEntity.java`
 - **包**: `com.knightcode.appliedstoragesorter.blockentity`
 - **类型**: `class`
 - **所属层**: 方块实体层
