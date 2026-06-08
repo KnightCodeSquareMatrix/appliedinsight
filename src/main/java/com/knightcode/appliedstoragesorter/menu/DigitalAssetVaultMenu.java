@@ -19,7 +19,7 @@ import net.minecraft.world.level.Level;
 
 public class DigitalAssetVaultMenu extends AEBaseMenu {
     public static final SlotSemantic INPUT_CELL = SlotSemantics.register(
-            "AppliedStorageSorter_INPUT_CELL", true, 501);
+            "appliedinsight_INPUT_CELL", true, 501);
 
     public static final int RIGHT_SECTION_X = 134;
     public static final int RIGHT_COL_X = RIGHT_SECTION_X + 6;
