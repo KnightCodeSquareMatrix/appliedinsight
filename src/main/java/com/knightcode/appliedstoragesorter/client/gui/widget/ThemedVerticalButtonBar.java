@@ -23,7 +23,8 @@ public class ThemedVerticalButtonBar implements ICompositeWidget {
     private final List<Button> buttons = new ArrayList<>();
     private Point screenOrigin = Point.ZERO;
     private Rect2i bounds = new Rect2i(0, 0, 0, 0);
-    private Point position;
+    /** Default matches {@code screens/common/common.json} until AE2 calls {@link #setPosition}. */
+    private Point position = new Point(3, 1);
 
     public void add(Button button) {
         buttons.add(button);
@@ -45,6 +46,9 @@ public class ThemedVerticalButtonBar implements ICompositeWidget {
 
     @Override
     public void updateBeforeRender() {
+        if (position == null) {
+            return;
+        }
         int currentY = position.getY() + MARGIN;
         int maxWidth = 0;
 
