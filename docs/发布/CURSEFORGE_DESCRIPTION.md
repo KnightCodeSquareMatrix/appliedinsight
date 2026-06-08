@@ -1,8 +1,12 @@
 # Applied Energistics: Insight
 
-**Applied Energistics: Insight** (`appliedinsight`) is an addon for **Applied Energistics 2** that helps you **see**, **filter**, and **grow** your ME storage — without constantly adding more drives.
+**Applied Energistics: Insight** (`appliedinsight`) is an addon for **Applied Energistics 2** built for the moment your ME network is **too big to eyeball** — when items scatter across drives, type slots fill up, and opening the ME terminal starts to lag.
 
-**Highlights:** self-expanding **Digital Asset Vault** · **Smart Bus** with web JSON editor & one-click presets · **Sorter Command Block** for network analysis and merge — no commands to memorize.
+It helps you **see** what the grid is doing, **organize** storage the AE2 way, and **grow** capacity without endlessly stacking drives.
+
+**Highlights:** self-expanding **Digital Asset Vault** (fewer backends → snappier terminals) · **Smart Bus** with web JSON editor & one-click presets · **Sorter Command Block** for explainable analysis and merge — no commands to memorize.
+
+**Recommended loop:** **Storage Analysis** → **Merge** → consolidate into **DAV** → repeat when the network grows again.
 
 ---
 
@@ -16,6 +20,19 @@
 | **Java** | 21 |
 
 Optional client mods: **JEI**, **EMI** (expansion cell drag-and-drop, filter editing).
+
+---
+
+## Why Insight?
+
+Late-game AE2 pain points this addon targets:
+
+- **Can't see the whole picture** — terminal search finds items, but not *where* fragmentation and pressure come from
+- **No first-class way to tidy the grid** — scattered stacks waste type slots; manual shuffling does not scale
+- **Drive walls slow terminals down** — every cell and external bus is another storage backend AE2 must enumerate on open
+- **Opaque bus tooling** — complex filters that fail silently are hard to trust
+
+Insight stays an **addon**, not a fork: it reads and acts through normal AE2 grid APIs, with clear in-game feedback instead of hidden behavior.
 
 ---
 
@@ -34,7 +51,7 @@ Smart Bus filters are powerful, but you **don't need to write JSON by hand**:
 
 ## Digital Asset Vault — one block, growing storage
 
-The **Digital Asset Vault (DAV)** is a centralized storage pool — not a slot-by-slot drive.
+The **Digital Asset Vault (DAV)** is a centralized storage pool — not a slot-by-slot drive. Consolidating stock into DAV replaces many per-cell enumerations with **one** ME storage backend, which often **reduces ME terminal open lag** on busy networks.
 
 - **Built-in capacity:** 2048 bytes / 126 item types (equivalent to two empty 1k cells) — ready to use immediately
 - **Cell absorption:** feed it empty AE2 storage cells to stack more bytes and types into one pool
@@ -77,11 +94,17 @@ Right-click the **Sorter Command Block** for a terminal GUI.
 
 | Button | What it does |
 |--------|----------------|
-| **Storage Analysis** | Network health: internal/external split, fragmentation, DAV capacity overview |
-| **Merge** | Consolidate scattered item types across cells to free type slots |
+| **Storage Analysis** | Network health: internal/external split, fragmentation, DAV capacity overview — see problems before you move items |
+| **Merge** | AE2-aligned consolidation: **cell → cell** and **cell → external** only; external storage buses are never merge sources (no pulling from drawers/chests) |
 | **Plan & Move** | Zone-based sorting via `config/appliedinsight/profiles/` routing profiles (server operators) |
 
-Works well with DAV: **merge** reduces fragmentation → DAV regains type headroom. The analysis UI labels DAV separately from traditional drive cells.
+**Merge semantics (v0.9.2+):**
+
+- **Cell → cell** — combine scattered stacks across internal drives and DAV
+- **Cell → external** — push into a Storage Bus that already holds the same item
+- **Never external → anywhere** — Insight does not drain outside inventories during merge
+
+Works well with DAV: **merge** reduces fragmentation → DAV regains type headroom → fewer scattered cells → terminals stay responsive. The analysis UI labels DAV separately from traditional drive cells.
 
 ---
 
@@ -90,7 +113,7 @@ Works well with DAV: **merge** reduces fragmentation → DAV regains type headro
 1. Install **AE2** + **Applied Energistics: Insight**
 2. Craft the **Digital Asset Vault**, **Smart Bus**, and **Sorter Command Block**
 3. Connect them to your ME network
-4. Open the Command Block → **Storage Analysis** → **Merge** if fragmented → set up DAV
+4. Open the Command Block → **Storage Analysis** → **Merge** if fragmented → route stock into **DAV**
 5. (Optional) Place Smart Bus on a cable → use a **preset** or the **web editor** → paste filter → set import/export mode
 
 In-game guide chapters are included via **GuideMe**.
@@ -107,6 +130,6 @@ In-game guide chapters are included via **GuideMe**.
 
 ## Version note
 
-Current release: **v0.9.1** — post-beta stabilization. Feedback and bug reports are very welcome.
+Current release: **v0.9.2** — post-beta stabilization; merge route aligned with AE2 storage semantics. Feedback and bug reports are very welcome.
 
 **License:** All Rights Reserved.
