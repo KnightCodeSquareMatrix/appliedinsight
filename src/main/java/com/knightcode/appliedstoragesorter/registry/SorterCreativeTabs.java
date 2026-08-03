@@ -13,5 +13,8 @@ public final class SorterCreativeTabs {
             event.accept(SorterItems.SMART_BUS.get());
             event.accept(SorterItems.SORTER_COMMAND_BLOCK.get());
         }
+        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+            event.accept(SorterItems.DAV_CELL.get());
+        }
     }
 }

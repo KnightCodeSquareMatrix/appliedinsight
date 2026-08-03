@@ -1,26 +1,29 @@
 # SorterRecipeSerializers
-- **源码路径**: `src/main/java/com/knightcode/appliedinsight/registry/SorterRecipeSerializers.java`
+- **源码路径**: `src/main/java/com/knightcode/appliedstoragesorter/registry/SorterRecipeSerializers.java`
 - **包**: `com.knightcode.appliedstoragesorter.registry`
 - **类型**: `class`
 - **所属层**: 注册装配层
 
 ## 职责
-负责集中注册模组对象，避免注册细节散落各处。
+集中注册模组自定义 `RecipeSerializer`，避免配方序列化器散落各处。
+
+## 已注册序列化器
+| ID | 配方类 | 说明 |
+|----|--------|------|
+| `appliedinsight:dav_cell_copy` | `DavCellCopyRecipe` | 空白 + 已绑定 DAV Cell → 2 张同 ID DAV Cell |
+
+> 历史 `ZoneStampedManagementCardRecipe`（管理卡压印）已随管理卡移除而注销。
 
 ## 边界检查
-边界健康。该类型位于应用装配或游戏集成层，依赖 NeoForge/Minecraft/AE2 是职责内的事情。
-
-## 抽象检查
-整体没有过度抽象，职责保持在可理解范围内。
+边界健康。该类型位于应用装配层，依赖 NeoForge/Minecraft 是职责内的事情。
 
 ## 主要协作者
-- `com.knightcode.appliedstoragesorter.appliedinsight`
-- `com.knightcode.appliedstoragesorter.recipe.ZoneStampedManagementCardRecipe`
+- `com.knightcode.appliedstoragesorter.recipe.DavCellCopyRecipe`
+- `com.knightcode.appliedstoragesorter.AppliedStorageSorter`
 - `net.minecraft.core.registries.Registries`
 - `net.minecraft.world.item.crafting.RecipeSerializer`
-- `net.neoforged.bus.api.IEventBus`
-- `net.neoforged.neoforge.registries.DeferredHolder`
+- `net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer`
 - `net.neoforged.neoforge.registries.DeferredRegister`
 
 ## 维护备注
-- 注册器类保持扁平和集中是优点，后续继续按注册对象类别拆分即可。
+- 在 `AppliedStorageSorter` 构造中调用 `SorterRecipeSerializers.register(modEventBus)`。

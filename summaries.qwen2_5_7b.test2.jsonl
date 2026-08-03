@@ -1,0 +1,4 @@
+{"path": "ai/FRONTEND_PROMPT.md", "reason": "确定前端页面结构和技术栈", "requirement_importance": 2, "summary": "该文件描述了 Minecraft AE2 模组 `appliedinsight` 的前端控制台，包括核心数据契约、MVP 页面结构和技术栈要求。"}
+{"path": "ai/GUI_VISUAL_CHECKLIST.md", "reason": "间接提供GUI设计线索", "requirement_importance": 1, "summary": "本文档概述了应用能源洞察模组GUI视觉优化工作，描述了AE2中Smart Bus、Digital Asset Vault等界面布局契约及其实现细节，并详细说明了数字资产仓库界面布局和贴图对齐问题及解决方案，最后概述了SorterCommandBlock GUI的设计与优化点。"}
+{"path": "ai/MODEL_ORCHESTRATION.md", "reason": "仅提供开发流程背景", "requirement_importance": 1, "summary": "本文定义了使用 Claude Code 时的本地协作约定，明确 Orchestrator 和 Worker 的角色分工及行为边界，强调 Worker 只处理局部任务而不直接修改代码或承担主要决策职责。"}
+{"path": "ai/REFACTORING_GUIDE.md", "reason": "提供重构指导，间接影响项目需求实现", "requirement_importance": 1, "summary": "本文档介绍了项目中的常见重构模式、基本原则及注意事项，涵盖小步收口、先读文档再改代码、重构后同步文档等内容，并提供了提取 Service 类、统一日志基础设施、拆分混合类和消除层穿透的具体步骤；描述了对现有代码进行重构的具体步骤和建议，包括检查清单、统一命令处理模式、网络包模式以及安全重构步骤，并指出了不建议的重构类型；还描述了不同优先级的代码重构任务及其说明，并强调了一次仅解决一个问题的原则。"}

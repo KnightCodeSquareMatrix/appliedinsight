@@ -1,0 +1,16 @@
+{
+  "model": "qwen2.5:7b",
+  "created_at": "2026-06-20T12:31:32.8745471Z",
+  "message": {
+    "role": "assistant",
+    "content": "本文档介绍了如何贡献到指南手册，包括安装必要的软件、运行环境设置以及编写页面的具体步骤和注意事项。"
+  },
+  "done": true,
+  "done_reason": "stop",
+  "total_duration": 98493718400,
+  "load_duration": 201506200,
+  "prompt_eval_count": 458,
+  "prompt_eval_duration": 21313867000,
+  "eval_count": 26,
+  "eval_duration": 60714526000
+}

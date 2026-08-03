@@ -10,7 +10,7 @@
 - **Mod ID**: `appliedinsight`（Java 类名/包名仍为历史命名 `AppliedStorageSorter` / `appliedstoragesorter`）
 
 ## 职责
-模组服务端入口。负责注册配置、方块/物品/菜单、网络 Payload、命令与 capability，挂到 NeoForge 事件总线。
+模组服务端入口。负责注册配置、方块/物品/菜单/配方序列化器、网络 Payload、命令与 capability，挂到 NeoForge 事件总线。
 
 ## 边界检查
 边界健康。它只做启动期装配，不承载业务流程，也没有把命令、规则、AE2 运行时逻辑塞进入口类。

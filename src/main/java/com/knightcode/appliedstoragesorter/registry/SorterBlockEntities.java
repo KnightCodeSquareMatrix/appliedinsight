@@ -19,6 +19,7 @@ public final class SorterBlockEntities {
                 var block = SorterBlocks.DIGITAL_ASSET_VAULT.get();
                 BlockEntityType.BlockEntitySupplier<DigitalAssetVaultBlockEntity> supplier = DigitalAssetVaultBlockEntity::new;
                 var type = BlockEntityType.Builder.of(supplier, block).build(null);
+                block.setBlockEntity(DigitalAssetVaultBlockEntity.class, type, null, null);
                 AEBaseBlockEntity.registerBlockEntityItem(type, SorterItems.DIGITAL_ASSET_VAULT.get());
                 return type;
             });

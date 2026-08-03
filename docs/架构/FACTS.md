@@ -46,7 +46,10 @@
 - FACT-035: 分析层高度可疑节点默认按 infinite-like 处理，用户可纠偏（开箱即用优先原则）。
 - FACT-036: analysis/ 和 profilegen/ 可离线运行，不污染在线命令链。
 - FACT-037: 玩家输入层 — SorterCommandBlock GUI、DAV 扩容 GUI、Smart Bus 过滤器 GUI；Profile 文件绑定替代旧管理卡。
-- FACT-038: DAV (Digital Asset Vault / 数字资产库) — 方块 ID `digital_asset_vault`，自带 2048 字节 / 126 types 基础容量（相当于 2×1k Cell），吸收空 Storage Cell 可继续扩容，作为 ME 存储节点。
+- FACT-038: DAV (Digital Asset Vault / 数字资产库) — 方块 ID `digital_asset_vault`，作为 ME 存储访问点；槽内 `DavCellItem` 的 `dav_cell_id` 决定连接的存储后端（初始后端含 2048 字节 / 126 types 基础容量，相当于 2×1k Cell）；吸收空 Storage Cell 可继续扩容。
+- FACT-038a: DAV 库存与喂入账本经 **`DavCellBackend`** 持久化；`DavCellItem` 仅保存 `dav_cell_id`（UUID）。当前默认实现为维度级 **`DavCellSavedData`**（`appliedinsight_dav_cells`）；方块 NBT 不再写入 `StoredItems`。换 SQL/H2 后端时改 `DavCellBackends` 分发，BlockEntity 与 `NewDavStorage` 不变。
+- FACT-038b: DAV Cell 槽**可取出/更换**；槽空时 DAV 不暴露 ME 存储。新放置 DAV 在首次 tick 且槽空时自动生成一张 Cell；玩家手动取出后**不会**自动补回。多个 DAV 插入相同 `dav_cell_id` 的 Cell 即共享同一后端（访问点模型，非复制库存）。
+- FACT-038c: DAV Cell 玩家获取途径 — 配方 `appliedinsight:dav_cell`（`ae2:item_storage_cell_1k` + `ae2:redstone_card` → **空白** `DavCellItem`，无 `dav_cell_id`）；配方 `appliedinsight:dav_cell_copy`（空白 DAV Cell + 已绑定 ID 的 DAV Cell → 2 张**相同 cell ID** 的 DAV Cell，用于复制访问点钥匙，**不复制** SavedData 库存）。相同 `dav_cell_id` 的 Cell 因 `CustomData` 一致可堆叠；不同 ID 或空白/已绑定混放不可堆叠。
 - FACT-039: DAV 不承担 route 决策，不承担 zone move 执行；内部实现类仍带 `NewDav*` 前缀（历史命名）。
 - FACT-040: **管理卡 (DigitalAssetManagementCard) 已在 beta 移除**；zone 数据改由 `config/appliedinsight/profiles/` + 网络绑定表达。
 - FACT-041: SorterCommandBlock 是推荐给普通玩家的操作入口（GUI 按钮触发命令）。
@@ -115,7 +118,9 @@
 
 ## 6. 术语表（精简版，仅核心术语，中英文对照 + 一句话定义）
 
-- **DAV (Digital Asset Vault / 数字资产库)** — 方块 ID `digital_asset_vault`，内置 2048 字节 / 126 types，吸收 Cell 可继续扩容，ME 存储节点。
+- **DAV (Digital Asset Vault / 数字资产库)** — 方块 ID `digital_asset_vault`；DAV Cell 槽内的 `dav_cell_id` 连接世界级存储后端（初始 2048 字节 / 126 types），吸收 Cell 可扩容，ME 存储节点。
+- **DavCellBackend / DavCellSavedData** — DAV 虚拟盘后端契约与当前 SavedData 实现；cell ID 在 `DavCellItem` 上，库存在世界级后端；多 DAV 可共用同一 cell ID。
+- **DavCellItem** — 伪 AE2 盘片，只存 cell ID（空白 Cell 无 ID），不可入 ME Drive；可放入 DAV Cell 槽选择/切换后端；可由 1k Cell + 红石卡合成空白盘，或由空白盘 + 已绑定盘复制出两张同 ID 盘。
 - **管理卡 (DigitalAssetManagementCard)** — **已移除**（beta）；由 Profile 文件 + bindProfile 替代。
 - FACT-093: **SorterCommandBlock (命令执行方块)** — GUI 操作入口，推荐给普通玩家，提供 3 个核心操作按钮和存储概览面板。
 - FACT-094: **RoutingProfile (路由配置)** — 规则层的配置文件，包含一组 RouteRule。
@@ -169,4 +174,4 @@
 - FACT-136: 客户端分析翻译层 (`client/analysis/`) — `AnalysisPresenter` 将服务端 `StorageDiagnosis` 转为 `PlayerFacingAnalysis`。
 - FACT-137: `dark_matter_controller` 方块类仍保留于源码，**未注册**到游戏（材质测试用，beta 对玩家不可见）。
 
-> **最后更新**: 2026-06-09（0.9.2 merge 路线收紧）
+> **最后更新**: 2026-06-09（DAV Cell 配方与同 ID 复制 + 文档同步）

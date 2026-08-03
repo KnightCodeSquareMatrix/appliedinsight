@@ -25,6 +25,7 @@ import com.knightcode.appliedstoragesorter.registry.SorterCapabilities;
 import com.knightcode.appliedstoragesorter.registry.SorterCreativeTabs;
 import com.knightcode.appliedstoragesorter.registry.SorterItems;
 import com.knightcode.appliedstoragesorter.registry.SorterMenus;
+import com.knightcode.appliedstoragesorter.registry.SorterRecipeSerializers;
 import com.mojang.logging.LogUtils;
 
 import net.neoforged.bus.api.IEventBus;
@@ -50,6 +51,7 @@ public class AppliedStorageSorter {
         SorterItems.register(modEventBus);
         SorterBlockEntities.register(modEventBus);
         SorterMenus.register(modEventBus);
+        SorterRecipeSerializers.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
         NeoForge.EVENT_BUS.addListener(SorterCommands::register);

@@ -2,6 +2,15 @@
 
 All notable changes to **应用能源：洞察** (Applied Energistics: Insight) are documented here.
 
+## [0.9.4] - 2026-08-03
+
+### Fixed
+- **DAV network storage** - register the DAV block entity with AE2's entity block base so placement no longer fails during comparator-state evaluation.
+- **DAV storage mounting** - avoid writing an unchanged DAV Cell during storage queries, preventing repeated provider remounts that blocked ME terminal insertion.
+
+### Migration from 0.9.3
+Replace the JAR, then re-place any DAV created by an affected build.
+
 ## [0.9.2] — 2026-06-09
 
 ### Changed

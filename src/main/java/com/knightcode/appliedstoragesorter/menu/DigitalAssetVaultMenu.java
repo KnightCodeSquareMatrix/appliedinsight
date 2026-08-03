@@ -5,6 +5,8 @@ import appeng.menu.AEBaseMenu;
 import appeng.menu.SlotSemantic;
 import appeng.menu.SlotSemantics;
 import com.knightcode.appliedstoragesorter.blockentity.DigitalAssetVaultBlockEntity;
+import com.knightcode.appliedstoragesorter.ae2.dav.cell.DavCellStack;
+import com.knightcode.appliedstoragesorter.menu.slot.DavCellSlot;
 import com.knightcode.appliedstoragesorter.menu.slot.StorageCellSlot;
 import com.knightcode.appliedstoragesorter.registry.SorterBlocks;
 import com.knightcode.appliedstoragesorter.registry.SorterMenus;
@@ -20,6 +22,8 @@ import net.minecraft.world.level.Level;
 public class DigitalAssetVaultMenu extends AEBaseMenu {
     public static final SlotSemantic INPUT_CELL = SlotSemantics.register(
             "appliedinsight_INPUT_CELL", true, 501);
+    public static final SlotSemantic BUILT_IN_DAV_CELL = SlotSemantics.register(
+            "appliedinsight_BUILT_IN_DAV_CELL", true, 502);
 
     public static final int RIGHT_SECTION_X = 182;
     public static final int RIGHT_COL_X = RIGHT_SECTION_X + 6;
@@ -28,6 +32,9 @@ public class DigitalAssetVaultMenu extends AEBaseMenu {
 
     public static final int SLOT_LABEL_X = RIGHT_SECTION_X + 8;
     public static final int SLOT_LABEL_Y = 28;
+    public static final int ABSORPTION_HINT_Y = 38;
+    public static final int BUILT_IN_DAV_CELL_SLOT_X = 230;
+    public static final int BUILT_IN_DAV_CELL_SLOT_Y = 46;
     public static final int INPUT_SLOT_X = 258;
     public static final int INPUT_SLOT_Y = 46;
 
@@ -63,7 +70,9 @@ public class DigitalAssetVaultMenu extends AEBaseMenu {
     public static final int STATUS_LINE_HEIGHT = 9;
     public static final int PLAYER_INV_Y = 184;
 
-    private static final int PLAYER_INV_START = 1;
+    private static final int INPUT_CELL_SLOT_INDEX = 0;
+    private static final int BUILT_IN_DAV_CELL_SLOT_INDEX = 1;
+    private static final int PLAYER_INV_START = 2;
     private static final int PLAYER_INV_END = PLAYER_INV_START + 27;
     private static final int HOTBAR_START = PLAYER_INV_END;
     private static final int HOTBAR_END = HOTBAR_START + 9;
@@ -102,6 +111,8 @@ public class DigitalAssetVaultMenu extends AEBaseMenu {
         this.access = ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos());
 
         addSlot(new StorageCellSlot(blockEntity.getInputInventory().toItemHandler(), 0, 0, 0), INPUT_CELL);
+        addSlot(new DavCellSlot(blockEntity.getBuiltInCellInventory().toItemHandler(), 0, 0, 0),
+                BUILT_IN_DAV_CELL);
         createPlayerInventorySlots(playerInventory);
         addCounterDataSlots();
         updateLocalDataFromBlockEntity();
@@ -205,12 +216,16 @@ public class DigitalAssetVaultMenu extends AEBaseMenu {
         ItemStack stack = slot.getItem();
         moved = stack.copy();
 
-        if (index == 0) {
+        if (index == BUILT_IN_DAV_CELL_SLOT_INDEX || index == INPUT_CELL_SLOT_INDEX) {
             if (!moveItemStackTo(stack, PLAYER_INV_START, HOTBAR_END, true)) {
                 return ItemStack.EMPTY;
             }
+        } else if (DavCellStack.isDavCell(stack)) {
+            if (!moveItemStackTo(stack, BUILT_IN_DAV_CELL_SLOT_INDEX, BUILT_IN_DAV_CELL_SLOT_INDEX + 1, false)) {
+                return ItemStack.EMPTY;
+            }
         } else if (StorageCells.isCellHandled(stack)) {
-            if (!moveItemStackTo(stack, 0, 1, false)) {
+            if (!moveItemStackTo(stack, INPUT_CELL_SLOT_INDEX, INPUT_CELL_SLOT_INDEX + 1, false)) {
                 return ItemStack.EMPTY;
             }
         } else if (index >= PLAYER_INV_START && index < PLAYER_INV_END) {

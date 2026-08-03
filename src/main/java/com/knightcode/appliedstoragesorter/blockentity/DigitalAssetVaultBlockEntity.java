@@ -46,6 +46,11 @@ import com.knightcode.appliedstoragesorter.application.NewDavMigrationService;
 import com.knightcode.appliedstoragesorter.application.result.NewDavMigrationResult;
 import com.knightcode.appliedstoragesorter.ae2.dav.NewDavStorage;
 import com.knightcode.appliedstoragesorter.ae2.dav.NewDavStorageProvider;
+import com.knightcode.appliedstoragesorter.ae2.dav.cell.DavCellBackend;
+import com.knightcode.appliedstoragesorter.ae2.dav.cell.DavCellLedger;
+import com.knightcode.appliedstoragesorter.ae2.dav.cell.DavCellStack;
+import com.knightcode.appliedstoragesorter.ae2.dav.cell.DavCellStack;
+import com.knightcode.appliedstoragesorter.ae2.dav.cell.DavVaultCellBinding;
 import com.knightcode.appliedstoragesorter.menu.DigitalAssetVaultMenu;
 import com.knightcode.appliedstoragesorter.registry.SorterBlockEntities;
 import com.knightcode.appliedstoragesorter.registry.SorterItems;
@@ -90,20 +95,15 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
     private static final int AUTO_EXPAND_BLOCKED_LOG_INTERVAL = 200;
     private static final int CRAFTABILITY_REFRESH_INTERVAL = 20;
     private static final int AUTO_EXPAND_COOLDOWN_TICKS = 40;
-    /** Built-in vault capacity equivalent to two empty AE2 1k storage cells (2 x 1024 bytes). */
-    private static final long BUILTIN_BYTES = 2048L;
-    /** Built-in type slots equivalent to two empty AE2 1k storage cells (2 x 63 types). */
-    private static final long BUILTIN_TYPE_CAPACITY = 126L;
-
     private final AppEngInternalInventory inputInventory = new AppEngInternalInventory(this, 1, 1);
+    private final AppEngInternalInventory builtInCellInventory = new AppEngInternalInventory(this, 1, 1);
     private final IActionSource actionSource;
-    private final Map<AEItemKey, Long> storedItems = new LinkedHashMap<>();
     private final NewDavStorage storage = new NewDavStorage(this);
     private final NewDavStorageProvider storageProvider = new NewDavStorageProvider(storage);
     private final IManagedGridNode mainNode;
-    private long absorbedCellCount;
-    private long absorbedBytes;
-    private long absorbedTypeCapacity;
+    private Map<AEItemKey, Long> pendingLegacyItems = Map.of();
+    private DavCellLedger pendingLegacyLedger = DavCellLedger.EMPTY;
+    private boolean legacyMigrationPending;
     private boolean migrateExistingItems;
     private boolean autoAcceptIncoming = true;
     private int migrationTickInterval = DEFAULT_MIGRATION_TICK_INTERVAL;
@@ -128,6 +128,7 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
     public DigitalAssetVaultBlockEntity(BlockPos pos, BlockState state) {
         super(SorterBlockEntities.DIGITAL_ASSET_VAULT.get(), pos, state);
         inputInventory.setFilter(new CellOnlyFilter());
+        builtInCellInventory.setFilter(new BuiltInDavCellFilter());
         actionSource = new MachineSource(this);
         mainNode = GridHelper.createManagedNode(this, new NodeListener())
                 .setInWorldNode(true)
@@ -143,28 +144,46 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
         return inputInventory;
     }
 
+    public AppEngInternalInventory getBuiltInCellInventory() {
+        return builtInCellInventory;
+    }
+
     public IManagedGridNode getMainNode() {
         return mainNode;
     }
 
     public long getAbsorbedCellCount() {
-        return absorbedCellCount;
+        DavCellBackend backend = backendOrNull();
+        if (backend != null) {
+            return backend.ledger().absorbedCellCount();
+        }
+        return 0L;
     }
 
     public long getAbsorbedBytes() {
-        return BUILTIN_BYTES + absorbedBytes;
+        DavCellBackend backend = backendOrNull();
+        if (backend != null) {
+            return backend.totalBytes();
+        }
+        return 0L;
     }
 
     public long getAbsorbedTypeCapacity() {
-        return BUILTIN_TYPE_CAPACITY + absorbedTypeCapacity;
+        DavCellBackend backend = backendOrNull();
+        if (backend != null) {
+            return backend.totalTypeCapacity();
+        }
+        return 0L;
     }
 
     public long getUsedBytes() {
-        return storedItems.values().stream().mapToLong(Long::longValue).sum();
+        DavCellBackend backend = backendOrNull();
+        return backend != null ? backend.usedBytes() : 0L;
     }
 
     public long getUsedTypeCapacity() {
-        return storedItems.size();
+        DavCellBackend backend = backendOrNull();
+        return backend != null ? backend.usedTypeCapacity() : 0L;
     }
 
     public boolean isMigrateExistingItems() {
@@ -186,7 +205,7 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
                 getAbsorbedBytes(),
                 getUsedTypeCapacity(),
                 getAbsorbedTypeCapacity(),
-                storedItems.size(),
+                getUsedTypeCapacity(),
                 migrationCooldownTicks);
         setChanged();
     }
@@ -196,7 +215,8 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
     }
 
     public boolean wouldInsertNewType(AEItemKey key) {
-        return !storedItems.containsKey(key);
+        DavCellBackend backend = backendOrNull();
+        return backend == null || backend.wouldInsertNewType(key);
     }
 
     public void setAutoAcceptIncoming(boolean autoAcceptIncoming) {
@@ -404,6 +424,7 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, DigitalAssetVaultBlockEntity blockEntity) {
+        blockEntity.ensureDavCellReady();
         blockEntity.tryAbsorbInputCell();
         blockEntity.tickMigrationLoop();
         blockEntity.tickCraftabilityRefresh();
@@ -487,7 +508,6 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
     @Override
     public void clearContent() {
         inputInventory.clear();
-        storedItems.clear();
     }
 
     public long insertStoredItem(AEItemKey key, long amount, Actionable mode) {
@@ -502,49 +522,34 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
     }
 
     private long insertStoredItemUnchecked(AEItemKey key, long amount, Actionable mode) {
-        if (amount <= 0) {
+        DavCellBackend backend = backendOrNull();
+        if (backend == null) {
             return 0;
         }
-        long freeBytes = Math.max(0, getAbsorbedBytes() - getUsedBytes());
-        long freeTypes = Math.max(0, getAbsorbedTypeCapacity() - getUsedTypeCapacity());
-        boolean newType = !storedItems.containsKey(key);
-        if (newType && freeTypes <= 0) {
-            return 0;
-        }
-        long accepted = Math.min(amount, freeBytes);
-        if (accepted <= 0) {
-            return 0;
-        }
-        if (mode == Actionable.MODULATE) {
-            storedItems.merge(key, accepted, Math::addExact);
+        long accepted = backend.insert(key, amount, mode);
+        if (accepted > 0 && mode == Actionable.MODULATE) {
             markStorageChanged();
         }
         return accepted;
     }
 
     public long extractStoredItem(AEItemKey key, long amount, Actionable mode) {
-        if (amount <= 0) {
+        DavCellBackend backend = backendOrNull();
+        if (backend == null) {
             return 0;
         }
-        long stored = storedItems.getOrDefault(key, 0L);
-        long extracted = Math.min(amount, stored);
-        if (extracted <= 0) {
-            return 0;
-        }
-        if (mode == Actionable.MODULATE) {
-            long remaining = stored - extracted;
-            if (remaining > 0) {
-                storedItems.put(key, remaining);
-            } else {
-                storedItems.remove(key);
-            }
+        long extracted = backend.extract(key, amount, mode);
+        if (extracted > 0 && mode == Actionable.MODULATE) {
             markStorageChanged();
         }
         return extracted;
     }
 
     public void writeStoredItemsTo(KeyCounter out) {
-        storedItems.forEach(out::add);
+        DavCellBackend backend = backendOrNull();
+        if (backend != null) {
+            backend.writeAvailableStacks(out);
+        }
     }
 
     private void tickMigrationLoop() {
@@ -926,12 +931,14 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
                     capacity.usedBytes());
             return false;
         }
-        long previousCellCount = absorbedCellCount;
-        long previousBytes = getAbsorbedBytes();
-        long previousTypeCapacity = getAbsorbedTypeCapacity();
-        absorbedCellCount = Math.addExact(absorbedCellCount, 1L);
-        absorbedBytes = Math.addExact(absorbedBytes, capacity.totalBytes());
-        absorbedTypeCapacity = Math.addExact(absorbedTypeCapacity, capacity.totalItemTypes().longValue());
+        DavCellBackend backend = backendOrNull();
+        if (backend == null) {
+            return false;
+        }
+        long previousCellCount = backend.ledger().absorbedCellCount();
+        long previousBytes = backend.totalBytes();
+        long previousTypeCapacity = backend.totalTypeCapacity();
+        backend.absorbCapacity(capacity.totalBytes(), capacity.totalItemTypes().longValue());
         migrationIdleStreak = 0;
         clearExpansionJobState();
         requestStorageUpdate();
@@ -949,11 +956,11 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
                 capacity.totalBytes(),
                 capacity.totalItemTypes(),
                 previousCellCount,
-                absorbedCellCount,
+                backend.ledger().absorbedCellCount(),
                 previousBytes,
-                getAbsorbedBytes(),
+                backend.totalBytes(),
                 previousTypeCapacity,
-                getAbsorbedTypeCapacity(),
+                backend.totalTypeCapacity(),
                 getUsedBytes(),
                 getAbsorbedBytes(),
                 getUsedTypeCapacity(),
@@ -1037,9 +1044,11 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
             return;
         }
 
-        absorbedCellCount = Math.addExact(absorbedCellCount, 1L);
-        absorbedBytes = Math.addExact(absorbedBytes, capacity.totalBytes());
-        absorbedTypeCapacity = Math.addExact(absorbedTypeCapacity, capacity.totalItemTypes().longValue());
+        DavCellBackend backend = backendOrNull();
+        if (backend == null) {
+            return;
+        }
+        backend.absorbCapacity(capacity.totalBytes(), capacity.totalItemTypes().longValue());
         migrationIdleStreak = 0;
         inputInventory.setItemDirect(0, ItemStack.EMPTY);
         requestStorageUpdate();
@@ -1134,10 +1143,7 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
 
     private void writeBreakPersistedData(CompoundTag tag, HolderLookup.Provider registries) {
         inputInventory.writeToNBT(tag, INVENTORY_TAG, registries);
-        saveStoredItems(tag, registries);
-        tag.putLong(ABSORBED_CELL_COUNT_TAG, absorbedCellCount);
-        tag.putLong(ABSORBED_BYTES_TAG, absorbedBytes);
-        tag.putLong(ABSORBED_TYPE_CAPACITY_TAG, absorbedTypeCapacity);
+        builtInCellInventory.writeToNBT(tag, DavVaultCellBinding.BUILT_IN_CELL_INVENTORY_TAG, registries);
         tag.putBoolean("MigrateExistingItems", migrateExistingItems);
         tag.putBoolean("AutoAcceptIncoming", autoAcceptIncoming);
         tag.putInt("MigrationTickInterval", migrationTickInterval);
@@ -1151,10 +1157,18 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
 
     private void readBreakPersistedData(CompoundTag tag, HolderLookup.Provider registries) {
         inputInventory.readFromNBT(tag, INVENTORY_TAG, registries);
-        loadStoredItems(tag, registries);
-        absorbedCellCount = tag.getLong(ABSORBED_CELL_COUNT_TAG);
-        absorbedBytes = tag.getLong(ABSORBED_BYTES_TAG);
-        absorbedTypeCapacity = tag.getLong(ABSORBED_TYPE_CAPACITY_TAG);
+        if (tag.contains(DavVaultCellBinding.BUILT_IN_CELL_INVENTORY_TAG, Tag.TAG_COMPOUND)) {
+            builtInCellInventory.readFromNBT(tag, DavVaultCellBinding.BUILT_IN_CELL_INVENTORY_TAG, registries);
+        }
+        pendingLegacyItems = loadLegacyStoredItems(tag, registries);
+        pendingLegacyLedger = new DavCellLedger(
+                tag.getLong(ABSORBED_CELL_COUNT_TAG),
+                tag.getLong(ABSORBED_BYTES_TAG),
+                tag.getLong(ABSORBED_TYPE_CAPACITY_TAG));
+        legacyMigrationPending = !pendingLegacyItems.isEmpty()
+                || pendingLegacyLedger.absorbedCellCount() > 0
+                || pendingLegacyLedger.absorbedBytes() > 0
+                || pendingLegacyLedger.absorbedTypeCapacity() > 0;
         migrateExistingItems = tag.getBoolean("MigrateExistingItems");
         autoAcceptIncoming = !tag.contains("AutoAcceptIncoming") || tag.getBoolean("AutoAcceptIncoming");
         migrationTickInterval = tag.contains("MigrationTickInterval")
@@ -1172,28 +1186,49 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
         expansionCraftingLink = null;
     }
 
-    private void saveStoredItems(CompoundTag tag, HolderLookup.Provider registries) {
-        var list = new ListTag();
-        storedItems.forEach((key, amount) -> {
-            var entry = new CompoundTag();
-            entry.put(STORED_KEY_TAG, key.toTagGeneric(registries));
-            entry.putLong(STORED_AMOUNT_TAG, amount);
-            list.add(entry);
-        });
-        tag.put(STORED_ITEMS_TAG, list);
-    }
-
-    private void loadStoredItems(CompoundTag tag, HolderLookup.Provider registries) {
-        storedItems.clear();
+    private Map<AEItemKey, Long> loadLegacyStoredItems(CompoundTag tag, HolderLookup.Provider registries) {
+        if (!tag.contains(STORED_ITEMS_TAG, Tag.TAG_LIST)) {
+            return Map.of();
+        }
+        Map<AEItemKey, Long> legacyItems = new LinkedHashMap<>();
         var list = tag.getList(STORED_ITEMS_TAG, Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
             var entry = list.getCompound(i);
             var key = AEKey.fromTagGeneric(registries, entry.getCompound(STORED_KEY_TAG));
             long amount = entry.getLong(STORED_AMOUNT_TAG);
             if (key instanceof AEItemKey itemKey && amount > 0) {
-                storedItems.put(itemKey, amount);
+                legacyItems.put(itemKey, amount);
             }
         }
+        return Map.copyOf(legacyItems);
+    }
+
+    private void ensureDavCellReady() {
+        if (level == null || level.isClientSide()) {
+            return;
+        }
+        DavVaultCellBinding.prepareInstalledCell(this);
+        if (legacyMigrationPending) {
+            DavVaultCellBinding.migrateLegacyData(
+                    this,
+                    pendingLegacyItems,
+                    pendingLegacyLedger.absorbedCellCount(),
+                    pendingLegacyLedger.absorbedBytes(),
+                    pendingLegacyLedger.absorbedTypeCapacity());
+            pendingLegacyItems = Map.of();
+            pendingLegacyLedger = DavCellLedger.EMPTY;
+            legacyMigrationPending = false;
+            requestStorageUpdate();
+        }
+    }
+
+    @Nullable
+    private DavCellBackend backendOrNull() {
+        if (level == null || level.isClientSide()) {
+            return null;
+        }
+        ensureDavCellReady();
+        return DavVaultCellBinding.resolveBackend(this);
     }
 
     @Override
@@ -1205,6 +1240,11 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
     }
 
     private static void onFirstTickReady(DigitalAssetVaultBlockEntity self) {
+        DavVaultCellBinding.provisionInitialCellIfEmpty(self);
+        self.ensureDavCellReady();
+        if (self.builtInCellInventory.getStackInSlot(0).isEmpty()) {
+            self.onBuiltInCellChanged();
+        }
         self.mainNode.create(self.level, self.worldPosition);
         self.validateExpansionCell();
     }
@@ -1236,7 +1276,30 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
 
     @Override
     public void onChangeInventory(AppEngInternalInventory inventory, int slot) {
+        if (inventory == builtInCellInventory) {
+            onBuiltInCellChanged();
+        }
         setChanged();
+    }
+
+    private void onBuiltInCellChanged() {
+        if (level == null || level.isClientSide()) {
+            return;
+        }
+        var stack = builtInCellInventory.getStackInSlot(0);
+        if (stack.isEmpty()) {
+            setStatus(Status.NO_DAV_CELL);
+            requestStorageUpdate();
+            return;
+        }
+        if (!DavCellStack.isDavCell(stack)) {
+            setStatus(Status.INVALID_DAV_CELL);
+            requestStorageUpdate();
+            return;
+        }
+        DavVaultCellBinding.prepareInstalledCell(this);
+        setStatus(Status.IDLE);
+        requestStorageUpdate();
     }
 
     @Override
@@ -1271,7 +1334,9 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
         EXPAND_ONCE_COMPLETED("expand_once_completed"),
         EXPAND_ONCE_FAILED("expand_once_failed"),
         EXPAND_ONCE_NO_PATTERN("expand_once_no_pattern"),
-        MIGRATE_TO_SQL_TBD("migrate_to_sql_tbd");
+        MIGRATE_TO_SQL_TBD("migrate_to_sql_tbd"),
+        NO_DAV_CELL("no_dav_cell"),
+        INVALID_DAV_CELL("invalid_dav_cell");
 
         private final String translationKeySuffix;
 
@@ -1301,6 +1366,18 @@ public class DigitalAssetVaultBlockEntity extends AEBaseBlockEntity
                 return IDLE;
             }
             return values[ordinal];
+        }
+    }
+
+    private static final class BuiltInDavCellFilter implements IAEItemFilter {
+        @Override
+        public boolean allowExtract(appeng.api.inventories.InternalInventory inv, int slot, int amount) {
+            return true;
+        }
+
+        @Override
+        public boolean allowInsert(appeng.api.inventories.InternalInventory inv, int slot, ItemStack stack) {
+            return stack.isEmpty() || DavCellStack.isDavCell(stack);
         }
     }
 

@@ -5,7 +5,15 @@
 - **所属层**: 注册装配层
 
 ## 职责
-负责集中注册模组对象，避免注册细节散落各处。
+集中注册模组物品，避免注册细节散落各处。
+
+## 已注册物品（摘要）
+| ID | 类型 | 备注 |
+|----|------|------|
+| `digital_asset_vault` | `BlockItem` | DAV 方块 |
+| `dav_cell` | `DavCellItem` | 伪 AE2 盘片；可由 `dav_cell` / `dav_cell_copy` 配方获取 |
+| `smart_bus` | `PartItem` | Smart Bus Part |
+| `sorter_command_block` | `BlockItem` | 命令执行块 |
 
 ## 边界检查
 边界健康。该类型位于应用装配或游戏集成层，依赖 NeoForge/Minecraft/AE2 是职责内的事情。

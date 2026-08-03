@@ -4,6 +4,7 @@ import appeng.api.parts.PartModels;
 import appeng.items.parts.PartItem;
 import com.knightcode.appliedstoragesorter.AppliedStorageSorter;
 import com.knightcode.appliedstoragesorter.ae2.part.SmartBusPart;
+import com.knightcode.appliedstoragesorter.item.DavCellItem;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
@@ -18,6 +19,9 @@ public final class SorterItems {
 
     public static final DeferredHolder<Item, BlockItem> DIGITAL_ASSET_VAULT = ITEMS.register("digital_asset_vault",
             () -> new BlockItem(SorterBlocks.DIGITAL_ASSET_VAULT.get(), new Item.Properties()));
+
+    public static final DeferredHolder<Item, DavCellItem> DAV_CELL = ITEMS.register("dav_cell",
+            () -> new DavCellItem(new Item.Properties()));
 
     public static final DeferredHolder<Item, PartItem<SmartBusPart>> SMART_BUS = ITEMS.register("smart_bus",
             () -> new PartItem<>(new Item.Properties(), SmartBusPart.class, SmartBusPart::new));

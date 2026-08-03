@@ -1,5 +1,6 @@
 # ZoneStampedManagementCardRecipe
-- **源码路径**: `src/main/java/com/knightcode/appliedinsight/recipe/ZoneStampedManagementCardRecipe.java`
+- **状态**: **已移除**（管理卡 beta 下线后注销；仅作文档归档）
+- **源码路径**: `src/main/java/com/knightcode/appliedinsight/recipe/ZoneStampedManagementCardRecipe.java`（历史）
 - **包**: `com.knightcode.appliedstoragesorter.recipe`
 - **类型**: `class`
 - **所属层**: 配方输入层

@@ -8,6 +8,10 @@
     "srcRect": [0, 0, 360, 262]
   },
   "slots": {
+    "appliedinsight_BUILT_IN_DAV_CELL": {
+      "left": 230,
+      "top": 46
+    },
     "appliedinsight_INPUT_CELL": {
       "left": 258,
       "top": 46

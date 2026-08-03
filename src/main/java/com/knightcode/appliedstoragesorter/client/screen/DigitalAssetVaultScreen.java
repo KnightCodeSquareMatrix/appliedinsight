@@ -8,10 +8,17 @@ import com.knightcode.appliedstoragesorter.blockentity.DigitalAssetVaultBlockEnt
 import com.knightcode.appliedstoragesorter.client.gui.widget.ExpansionCellPickerWidget;
 import com.knightcode.appliedstoragesorter.client.gui.widget.NewDavToggleButton;
 import com.knightcode.appliedstoragesorter.client.gui.widget.ThemedAE2Button;
+import com.knightcode.appliedstoragesorter.ae2.dav.cell.DavCellStack;
 import com.knightcode.appliedstoragesorter.menu.DigitalAssetVaultMenu;
+import com.knightcode.appliedstoragesorter.menu.slot.DavCellSlot;
+import com.knightcode.appliedstoragesorter.menu.slot.StorageCellSlot;
 import com.knightcode.appliedstoragesorter.network.NewDavExpandOncePayload;
 import com.knightcode.appliedstoragesorter.network.NewDavMigrateToSqlPayload;
 import com.knightcode.appliedstoragesorter.network.NewDavTogglePayload;
+import java.util.ArrayList;
+import java.util.List;
+import net.minecraft.ChatFormatting;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
@@ -147,6 +154,62 @@ public class DigitalAssetVaultScreen extends SorterBaseScreen<DigitalAssetVaultM
         renderCustomLabels(guiGraphics);
     }
 
+    @Override
+    protected void renderTooltip(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+        if (hoveredSlot != null && hoveredSlot.isActive() && isHovering(hoveredSlot, mouseX, mouseY)) {
+            if (hoveredSlot instanceof DavCellSlot && hoveredSlot.hasItem()) {
+                drawTooltip(guiGraphics, mouseX, mouseY, buildBuiltInDavCellTooltip(hoveredSlot.getItem()));
+                return;
+            }
+            if (hoveredSlot instanceof DavCellSlot && !hoveredSlot.hasItem()) {
+                drawTooltip(guiGraphics, mouseX, mouseY, List.of(
+                        Component.translatable("screen.appliedinsight.digital_asset_vault.tooltip.built_in_cell_empty")
+                                .withStyle(ChatFormatting.GRAY)));
+                return;
+            }
+            if (hoveredSlot instanceof StorageCellSlot && !hoveredSlot.hasItem()) {
+                drawTooltip(guiGraphics, mouseX, mouseY, List.of(
+                        Component.translatable("screen.appliedinsight.digital_asset_vault.tooltip.input_cell")
+                                .withStyle(ChatFormatting.GRAY)));
+                return;
+            }
+        }
+
+        super.renderTooltip(guiGraphics, mouseX, mouseY);
+    }
+
+    private List<Component> buildBuiltInDavCellTooltip(net.minecraft.world.item.ItemStack stack) {
+        var lines = new ArrayList<Component>();
+        lines.add(Component.translatable("item.appliedinsight.dav_cell").withStyle(ChatFormatting.WHITE));
+        lines.add(Component.translatable("screen.appliedinsight.digital_asset_vault.tooltip.built_in_cell")
+                .withStyle(ChatFormatting.GRAY));
+        lines.add(Component.translatable("screen.appliedinsight.digital_asset_vault.tooltip.built_in_cell.capacity")
+                .withStyle(ChatFormatting.DARK_AQUA));
+        lines.add(Component.translatable("screen.appliedinsight.digital_asset_vault.absorbed_cells",
+                        menu.getAbsorbedCellCount())
+                .withStyle(ChatFormatting.GRAY));
+        lines.add(Component.translatable("screen.appliedinsight.digital_asset_vault.bytes_line",
+                        ByteUnitFormatter.formatPair(menu.getUsedBytes(), menu.getAbsorbedBytes()))
+                .withStyle(ChatFormatting.GRAY));
+        int typePercent = menu.getAbsorbedTypeCapacity() == 0 ? 0
+                : (int) Math.round(100.0 * menu.getUsedTypeCapacity() / menu.getAbsorbedTypeCapacity());
+        lines.add(Component.translatable("screen.appliedinsight.digital_asset_vault.types_used_percent",
+                        menu.getUsedTypeCapacity(), typePercent)
+                .withStyle(ChatFormatting.GRAY));
+        lines.add(Component.translatable("screen.appliedinsight.digital_asset_vault.types_total",
+                        menu.getAbsorbedTypeCapacity())
+                .withStyle(ChatFormatting.DARK_GRAY));
+
+        if (Minecraft.getInstance().options.advancedItemTooltips) {
+            var cellId = DavCellStack.getCellId(stack);
+            if (cellId != null) {
+                lines.add(Component.translatable("item.appliedinsight.dav_cell.tooltip.cell_id", cellId)
+                        .withStyle(ChatFormatting.DARK_GRAY));
+            }
+        }
+        return lines;
+    }
+
     private void renderCustomLabels(GuiGraphics guiGraphics) {
         int rightX = DigitalAssetVaultMenu.ABSORPTION_TEXT_X;
         int textColor = themedTextColor();
@@ -157,6 +220,16 @@ public class DigitalAssetVaultScreen extends SorterBaseScreen<DigitalAssetVaultM
                 Component.translatable("screen.appliedinsight.digital_asset_vault.section.absorption"),
                 leftPos + DigitalAssetVaultMenu.SLOT_LABEL_X,
                 topPos + DigitalAssetVaultMenu.SLOT_LABEL_Y, mutedColor, false);
+
+        guiGraphics.drawString(font,
+                Component.translatable("screen.appliedinsight.digital_asset_vault.label.built_in_cell"),
+                leftPos + DigitalAssetVaultMenu.BUILT_IN_DAV_CELL_SLOT_X,
+                topPos + DigitalAssetVaultMenu.ABSORPTION_HINT_Y, mutedColor, false);
+
+        guiGraphics.drawString(font,
+                Component.translatable("screen.appliedinsight.digital_asset_vault.hint.feed_cell"),
+                leftPos + DigitalAssetVaultMenu.INPUT_SLOT_X,
+                topPos + DigitalAssetVaultMenu.ABSORPTION_HINT_Y, mutedColor, false);
 
         guiGraphics.drawString(font,
                 Component.translatable("screen.appliedinsight.digital_asset_vault.absorbed_cells",
@@ -218,6 +291,10 @@ public class DigitalAssetVaultScreen extends SorterBaseScreen<DigitalAssetVaultM
     }
 
     private int resolveStatusColor(DigitalAssetVaultBlockEntity.Status status, int defaultColor) {
+        if (status == DigitalAssetVaultBlockEntity.Status.NO_DAV_CELL
+                || status == DigitalAssetVaultBlockEntity.Status.INVALID_DAV_CELL) {
+            return 0xFFFFAA44;
+        }
         if (status == DigitalAssetVaultBlockEntity.Status.EXPAND_ONCE_COMPLETED) {
             return 0xFF55FF55;
         }
